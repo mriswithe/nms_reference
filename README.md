@@ -15,6 +15,7 @@ npm test           # unit tests over src/lib against the real dataset
 npm run check      # astro check (types)
 npm run build      # static site in dist/
 npm run preview    # serve dist/
+npm run icons      # fetch item icons into public/icons (runs automatically before dev/build)
 ```
 
 Node 24+ (see `.nvmrc`).
@@ -59,5 +60,7 @@ Dependabot (`.github/dependabot.yml`) opens weekly grouped PRs for action and np
 ## Data
 
 Recipe data comes from the open-source [Assistant for No Man's Sky](https://github.com/AssistantNMS/App) dataset (extracted from game files, up to the Voyagers-era updates). Gathering and buying notes are general guidance.
+
+Item icons come from our fork of that app, [mriswithe/AssistantNMS-App](https://github.com/mriswithe/AssistantNMS-App), pinned to a commit in `scripts/icons.mjs`. The script does a sparse, shallow checkout into `.cache/`, shrinks each icon to a 96 px WebP in `public/icons/<itemId>.webp` (both gitignored), and skips all work when the pin, size and dataset are unchanged. CI caches `public/icons`. If the fetch fails, items fall back to their colour swatch. To update icons, sync the fork with upstream and bump `SOURCE.sha`.
 
 The original single-file version lives at https://github.com/mriswithe/nms_refining_reference.

@@ -43,4 +43,6 @@ export interface Dataset {
   ref: Recipe[];
   /** Nutrient Processor (cooking) recipes */
   cook: Recipe[];
+  /** ids with an icon in public/icons (added at build time, absent in nms.json) */
+  icons?: string[];
 }

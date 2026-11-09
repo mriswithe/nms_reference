@@ -5,8 +5,12 @@ import type { Pool, RecipeGroup } from '../lib/group';
 import type { Qty, Recipe } from '../lib/types';
 import type { Ctx } from './context';
 
+const ICONS = `${import.meta.env.BASE_URL.replace(/\/?$/, '/')}icons/`;
+
 export function swatch(ctx: Ctx, id: string, cls = '') {
   const it = ctx.db.items[id];
+  if (ctx.icons.has(id))
+    return `<span class="sw icon ${cls}" aria-hidden="true"><img src="${ICONS}${esc(id)}.webp" alt="" loading="lazy" decoding="async"></span>`;
   return `<span class="sw ${cls}" style="background:${color(it)}" aria-hidden="true">${esc(abbr(it))}</span>`;
 }
 

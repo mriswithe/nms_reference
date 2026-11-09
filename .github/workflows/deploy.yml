@@ -28,6 +28,11 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # Icons come from a pinned fork of AssistantNMS (scripts/icons.mjs); cache the generated WebPs per pin.
+      - uses: actions/cache@v6
+        with:
+          path: public/icons
+          key: icons-${{ hashFiles('scripts/icons.mjs', 'src/data/nms.json') }}
       - run: npm run check
       - run: npm test
       - run: npm run build

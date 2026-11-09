@@ -2,6 +2,8 @@
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import Base from '../layouts/Base.astro';
+import fs from 'node:fs';
+import path from 'node:path';
 import data from '../data/nms.json';
 import { createDb } from '../lib/db';
 import type { Dataset } from '../lib/types';
@@ -18,8 +20,12 @@ const quickPicks = QUICK_PICKS.flatMap((name) => {
 const n = (x: number) => x.toLocaleString('en-US');
 const stats = `${n(db.ids.length)} items · ${dataset.ref.length} refiner · ${n(db.ids.filter((i) => db.items[i].rq).length)} crafting · ${n(dataset.cook.length)} cooking recipes`;
 
+// Icons are generated into public/icons by scripts/icons.mjs; items without one keep the colour swatch.
+const iconDir = path.join(process.cwd(), 'public', 'icons');
+const icons = fs.existsSync(iconDir) ? fs.readdirSync(iconDir).filter((f) => f.endsWith('.webp')).map((f) => f.slice(0, -5)) : [];
+
 // Embedded as JSON (parsed once by the client) rather than bundled into JS; `<` is escaped so the payload can't close the tag.
-const payload = JSON.stringify(dataset).replace(/</g, '\\u003c');
+const payload = JSON.stringify({ ...dataset, icons }).replace(/</g, '\\u003c');
 ---
 
 <Base title="NMS Recipe Finder">

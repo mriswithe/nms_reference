@@ -19,6 +19,8 @@ export interface Ctx {
   cost: CostModel;
   families: Family[];
   state: UiState;
+  /** ids that have an icon file */
+  icons: Set<string>;
 }
 
 export function createCtx(data: Dataset): Ctx {
@@ -27,6 +29,7 @@ export function createCtx(data: Dataset): Ctx {
     db,
     cost: new CostModel(db),
     families: buildFamilies(db),
+    icons: new Set(data.icons ?? []),
     state: { refSort: 'fewest', treeMode: 'craft', expanded: new Set(), routes: {}, openCycles: new Set() },
   };
 }
