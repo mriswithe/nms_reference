@@ -1,7 +1,7 @@
 /** Small HTML-string building blocks shared by every view. */
 import type { Cheaper } from '../lib/cost';
 import { abbr, color, esc, fmt } from '../lib/format';
-import { rowCost } from '../lib/sourcing';
+import { byTier, rowCost, TIER_LABEL } from '../lib/sourcing';
 import type { Pool, RecipeGroup } from '../lib/group';
 import type { Qty, Recipe } from '../lib/types';
 import type { Ctx } from './context';
@@ -41,6 +41,19 @@ export function recipeRow(ctx: Ctx, r: Recipe, selfId: string | null, extraOp = 
 /** slots with more options than this collapse to a "one of N" toggle */
 const INLINE_ALTS = 3;
 
+/** an expanded option list, one line per tier (makeable / wild-only / creatures only) when they differ */
+function tierList(ctx: Ctx, opts: Qty[], selfId: string | null, title: string, extra = '') {
+  const tiers = byTier(opts, ctx.src);
+  const line = (qs: Qty[]) => `<span class="tc">${qs.map(([i, q]) => chip(ctx, i, q, i === selfId)).join('')}</span>`;
+  const body =
+    tiers.length === 1
+      ? `<div class="tier">${line(tiers[0][1])}</div>`
+      : tiers.map(([t, qs]) => `<div class="tier"><span class="tl"${
+              t === 'free' ? ' title="Can be made without creatures or wild-only plants; fewest refiner / processor steps first"' : ''
+            }>${TIER_LABEL[t]}</span>${line(qs)}</div>`).join('');
+  return `<div class="altlist"><span class="note">${title}</span>${body}${extra}</div>`;
+}
+
 /** "any 2 different of N" toggle; its options and the doubles note open below the row */
 function poolSlot(ctx: Ctx, p: Pool, selfId: string | null, key: string, below: string[]) {
   const k = `${key}:pool`;
@@ -53,11 +66,7 @@ function poolSlot(ctx: Ctx, p: Pool, selfId: string | null, key: string, below: 
       : !missing.length
         ? 'The same ingredient twice also works.'
         : `The same ingredient twice also works, except ${names(missing)}.`;
-    below.push(
-      `<div class="altlist"><span class="note">Any two different:</span>${p.opts
-        .map(([i, q]) => chip(ctx, i, q, i === selfId))
-        .join('')}<span class="note twice">${twice}</span></div>`,
-    );
+    below.push(tierList(ctx, p.opts, selfId, 'Any two different:', `<span class="note twice">${twice}</span>`));
   }
   const hasSelf = p.opts.some(([i]) => i === selfId);
   return `<button class="chip oneof${hasSelf ? ' self' : ''}" data-${open ? 'less' : 'more'}="${esc(k)}" aria-expanded="${open}">any 2 of ${
@@ -77,7 +86,7 @@ export function groupRow(ctx: Ctx, g: RecipeGroup, selfId: string | null, key: s
     if (c.length <= INLINE_ALTS) return `<span class="alts">${c.join('<span class="or">or</span>')}</span>`;
     const k = `${key}:${si}`;
     const open = ctx.state.expanded.has(k);
-    if (open) below.push(`<div class="altlist"><span class="note">Any one of:</span>${c.join('')}</div>`);
+    if (open) below.push(tierList(ctx, s.opts, selfId, 'Any one of:'));
     const hasSelf = s.opts.some(([i]) => i === selfId);
     return `<button class="chip oneof${hasSelf ? ' self' : ''}" data-${open ? 'less' : 'more'}="${esc(k)}" aria-expanded="${open}">one of ${
       c.length

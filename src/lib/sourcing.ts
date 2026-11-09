@@ -62,14 +62,53 @@ function restricted(db: Db, base: (db: Db, id: string) => Base): Set<string> {
   return new Set([...ids].filter((i) => !free.has(i)));
 }
 
+/** gathered, farmed or bought directly without creatures or wild-only plants (0 processing steps) */
+function direct(db: Db, id: string): boolean {
+  const it = db.items[id];
+  const ob = it.ob ?? [];
+  if (ob.some((s) => !ANIMAL_SOURCE.test(s) && !WILD_SOURCE.test(s)) || (it.buy ?? []).length) return true;
+  const m = db.makes[id];
+  return animalBase(db, id) === 'unknown' && wildBase(db, id) === 'unknown' && !m?.ref.length && !m?.cook.length;
+}
+
+/**
+ * Fewest refiner / Nutrient Processor operations to make each item from directly obtainable ones, counting every
+ * operation in the tree (A + B costs 1 + steps(A) + steps(B)). Items with no such route are absent.
+ */
+function processingSteps(db: Db): Map<string, number> {
+  const recipes = [...db.data.cook, ...db.data.ref];
+  const steps = new Map<string, number>();
+  for (const r of recipes) for (const [i] of [...r[0], r[1]]) if (direct(db, i)) steps.set(i, 0);
+  // relax until stable; every recipe adds at least 1, so this terminates
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const [ins, [out]] of recipes) {
+      let n = 1;
+      for (const [i] of ins) n += steps.get(i) ?? Infinity;
+      if (n < (steps.get(out) ?? Infinity)) {
+        steps.set(out, n);
+        changed = true;
+      }
+    }
+  }
+  return steps;
+}
+
 export interface Sourcing {
   /** only obtainable from creatures */
   animal: Set<string>;
   /** only obtainable by harvesting wild, unfarmable plants */
   wild: Set<string>;
+  /** fewest processing steps from directly obtainable items, avoiding both; absent when there is no such route */
+  steps: Map<string, number>;
 }
 
-export const sourcing = (db: Db): Sourcing => ({ animal: restricted(db, animalBase), wild: restricted(db, wildBase) });
+export const sourcing = (db: Db): Sourcing => ({
+  animal: restricted(db, animalBase),
+  wild: restricted(db, wildBase),
+  steps: processingSteps(db),
+});
 export const animalOnly = (db: Db) => restricted(db, animalBase);
 export const wildOnly = (db: Db) => restricted(db, wildBase);
 
@@ -110,7 +149,9 @@ const width = (g: RecipeGroup) => (g.pool ? 2 : g.slots.length);
  * inputs, then most recipes covered; each slot's options are listed cheapest first. Returns new objects.
  */
 export function rankRows(groups: RecipeGroup[], s: Sourcing): RecipeGroup[] {
-  const order = (opts: Qty[]) => [...opts].sort((a, b) => cmpCost(itemCost(s, a), itemCost(s, b)));
+  const steps = (q: Qty) => s.steps.get(q[0]) ?? Number.MAX_SAFE_INTEGER;
+  // least restricted first; within a tier, fewest processing steps (stable for ties)
+  const order = (opts: Qty[]) => [...opts].sort((a, b) => cmpCost(itemCost(s, a), itemCost(s, b)) || steps(a) - steps(b));
   return groups
     .map((g) => ({
       ...g,
@@ -120,4 +161,31 @@ export function rankRows(groups: RecipeGroup[], s: Sourcing): RecipeGroup[] {
     .map((g) => ({ g, c: rowCost(g, s) }))
     .sort((a, b) => cmpCost(a.c, b.c) || width(a.g) - width(b.g) || b.g.recipes.length - a.g.recipes.length)
     .map(({ g }) => g);
+}
+
+export type Tier = 'free' | 'wild' | 'animal' | 'both';
+
+export const TIER_LABEL: Record<Tier, string> = {
+  free: 'Makeable ↑ steps',
+  wild: '🌿 Wild plants only',
+  animal: '🐾 Creatures only',
+  both: '🐾🌿 Creatures and wild plants',
+};
+
+const TIER_ORDER: Tier[] = ['free', 'wild', 'animal', 'both'];
+
+export function tierOf(s: Sourcing, id: string): Tier {
+  const a = s.animal.has(id);
+  const w = s.wild.has(id);
+  return a && w ? 'both' : a ? 'animal' : w ? 'wild' : 'free';
+}
+
+/** options split into non-empty tiers, least restricted first, keeping each tier's existing order */
+export function byTier(opts: Qty[], s: Sourcing): [Tier, Qty[]][] {
+  const out = new Map<Tier, Qty[]>();
+  for (const o of opts) {
+    const t = tierOf(s, o[0]);
+    (out.get(t) ?? out.set(t, []).get(t)!).push(o);
+  }
+  return TIER_ORDER.filter((t) => out.has(t)).map((t) => [t, out.get(t)!]);
 }

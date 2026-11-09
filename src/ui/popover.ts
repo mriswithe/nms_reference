@@ -2,7 +2,7 @@
  * Hover / focus popover on item chips summarising where an item comes from: find, buy, craft, refine, cook.
  * Read-only text (no buttons inside), so it never traps focus; clicking the chip still opens the full page.
  */
-import { rankRows } from '../lib/sourcing';
+import { byTier, rankRows, TIER_LABEL } from '../lib/sourcing';
 import { groupRecipes, type RecipeGroup } from '../lib/group';
 import { esc, fmt } from '../lib/format';
 import type { Qty, Recipe } from '../lib/types';
@@ -20,12 +20,19 @@ const recipeLine = (ctx: Ctx, r: Recipe) => r[0].map((q) => name(ctx, q)).join(p
 /** most options listed under a big slot before "+N more" */
 const MAX_OPTS = 10;
 
-/** indented list of a big slot's options */
-const optList = (ctx: Ctx, opts: Qty[]) =>
-  `<div class="popts">${opts
-    .slice(0, MAX_OPTS)
-    .map((q) => name(ctx, q))
-    .join('')}${opts.length > MAX_OPTS ? `<span class="pmore">+${opts.length - MAX_OPTS} more</span>` : ''}</div>`;
+/** indented list of a big slot's options, grouped by tier when they differ; at most MAX_OPTS names in total */
+function optList(ctx: Ctx, opts: Qty[]) {
+  const tiers = byTier(opts, ctx.src);
+  let left = MAX_OPTS;
+  const lines = tiers.map(([t, qs]) => {
+    const shown = qs.slice(0, Math.max(0, left));
+    left -= shown.length;
+    const more = qs.length - shown.length;
+    const label = tiers.length > 1 ? `<span class="ptl">${TIER_LABEL[t]}</span>` : '';
+    return `<div class="ptier">${label}${shown.map((q) => name(ctx, q)).join('')}${more ? `<span class="pmore">+${more} more</span>` : ''}</div>`;
+  });
+  return `<div class="popts">${lines.join('')}</div>`;
+}
 
 /** a grouped cooking row: small slots inline ("A or B"), big slots and pools as a labelled list of their options */
 function groupLine(ctx: Ctx, g: RecipeGroup) {
@@ -54,6 +61,13 @@ function block(label: string, kind: string, lines: string[], total = lines.lengt
   return `<div class="pb"><div class="pl t-${kind}">${label}</div>${lines.map((l) => `<div class="pr">${l}</div>`).join('')}${more}</div>`;
 }
 
+/** "Makeable in N refiner / processor steps" for items that need processing but no restricted ingredients */
+function stepNote(ctx: Ctx, id: string) {
+  const n = ctx.src.steps.get(id);
+  if (!n || ctx.src.animal.has(id) || ctx.src.wild.has(id)) return '';
+  return `⚙ Makeable in ${n} refiner / processor step${n > 1 ? 's' : ''} from gathered resources`;
+}
+
 export function renderSource(ctx: Ctx, id: string): string {
   const { db } = ctx;
   const it = db.items[id];
@@ -72,7 +86,8 @@ export function renderSource(ctx: Ctx, id: string): string {
 
   const only =
     (ctx.src.animal.has(id) ? '<div class="pan">🐾 Only obtainable from creatures</div>' : '') +
-    (ctx.src.wild.has(id) ? '<div class="pan">🌿 Only harvested from wild plants; cannot be farmed</div>' : '');
+    (ctx.src.wild.has(id) ? '<div class="pan">🌿 Only harvested from wild plants; cannot be farmed</div>' : '') +
+    (stepNote(ctx, id) ? `<div class="pan">${stepNote(ctx, id)}</div>` : '');
   return `<div class="ph">${swatch(ctx, id)}<div><div class="pn">${esc(it.n)}</div><div class="ps">${esc(it.g)}</div></div></div>${only}${
     body || (only ? '' : '<div class="pempty">No source info in the dataset.</div>')
   }`;

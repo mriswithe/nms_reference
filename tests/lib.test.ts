@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import raw from '../src/data/nms.json';
-import { cmpCost, rankRows, rowCost, sourcing } from '../src/lib/sourcing';
+import { byTier, cmpCost, rankRows, rowCost, sourcing } from '../src/lib/sourcing';
 import { CostModel } from '../src/lib/cost';
 import { refinableConsumables } from '../src/lib/consumables';
 import { buildFamilies, oneWayUpgrades, route, stellarExpansions } from '../src/lib/cycles';
@@ -208,6 +208,38 @@ describe('restricted ingredients', () => {
           expect(c).toEqual([...c].sort(cmpCost));
         }
     }
+  });
+
+  it('splits options into tiers, least restricted first, without losing any', () => {
+    const order = ['free', 'wild', 'animal', 'both'];
+    for (const x of db.ids)
+      for (const g of rankRows(groupRecipes(db.makes[x]?.cook ?? []), src))
+        for (const opts of [...g.slots.map((sl) => sl.opts), ...(g.pool ? [g.pool.opts] : [])]) {
+          const tiers = byTier(opts, src);
+          expect(tiers.flatMap(([, qs]) => qs)).toEqual(opts);
+          const idx = tiers.map(([t]) => order.indexOf(t));
+          expect(idx).toEqual([...idx].sort((a, b) => a - b));
+        }
+  });
+
+  it('counts processing steps from gathered resources', () => {
+    const steps = (n: string) => src.steps.get(byName(n));
+    // farmable Mordite -> Meat Flakes -> Meaty Chunks -> Processed Meat
+    expect([steps('Mordite'), steps('Meat Flakes'), steps('Meaty Chunks'), steps('Processed Meat')]).toEqual([0, 1, 2, 3]);
+    expect(steps('Carbon')).toBe(0);
+    expect(steps('Raw Steak')).toBeUndefined();
+  });
+
+  it('lists makeable options fewest steps first', () => {
+    const big = Number.MAX_SAFE_INTEGER;
+    for (const x of db.ids)
+      for (const g of rankRows(groupRecipes(db.makes[x]?.cook ?? []), src))
+        for (const opts of [...g.slots.map((sl) => sl.opts), ...(g.pool ? [g.pool.opts] : [])])
+          for (const [t, qs] of byTier(opts, src)) {
+            if (t !== 'free') continue;
+            const n = qs.map(([i]) => src.steps.get(i) ?? big);
+            expect(n).toEqual([...n].sort((a, b) => a - b));
+          }
   });
 
   it('counts a pool by its best pair', () => {
