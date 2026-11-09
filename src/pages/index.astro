@@ -1,0 +1,33 @@
+---
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import Base from '../layouts/Base.astro';
+import data from '../data/nms.json';
+import { createDb } from '../lib/db';
+import type { Dataset } from '../lib/types';
+
+const dataset = data as unknown as Dataset;
+const db = createDb(dataset);
+
+const QUICK_PICKS = ['Radon', 'Chromatic Metal', 'Magnetised Ferrite', 'Ionised Cobalt', 'Antimatter', 'Warp Cell', 'Stasis Device', 'Glass'];
+const quickPicks = QUICK_PICKS.flatMap((name) => {
+  const id = db.byName(name);
+  return id ? [{ id, name }] : [];
+});
+
+const n = (x: number) => x.toLocaleString('en-US');
+const stats = `${n(db.ids.length)} items · ${dataset.ref.length} refiner · ${n(db.ids.filter((i) => db.items[i].rq).length)} crafting · ${n(dataset.cook.length)} cooking recipes`;
+
+// Embedded as JSON (parsed once by the client) rather than bundled into JS; `<` is escaped so the payload can't close the tag.
+const payload = JSON.stringify(dataset).replace(/</g, '\\u003c');
+---
+
+<Base title="NMS Recipe Finder">
+  <Header stats={stats} quickPicks={quickPicks} />
+  <main id="main"></main>
+  <Footer />
+  <script is:inline id="nmsdata" type="application/json" set:html={payload} />
+  <script>
+    import '../ui/app';
+  </script>
+</Base>
