@@ -1,6 +1,7 @@
 /** Small HTML-string building blocks shared by every view. */
 import type { Cheaper } from '../lib/cost';
 import { abbr, color, esc, fmt } from '../lib/format';
+import { rowCost } from '../lib/sourcing';
 import type { Pool, RecipeGroup } from '../lib/group';
 import type { Qty, Recipe } from '../lib/types';
 import type { Ctx } from './context';
@@ -84,7 +85,16 @@ export function groupRow(ctx: Ctx, g: RecipeGroup, selfId: string | null, key: s
   };
   const left = g.pool ? poolSlot(ctx, g.pool, selfId, key, below) : g.slots.map(slot).join('<span class="plus">+</span>');
   const n = g.recipes.length;
-  return `<div class="row">${left}<span class="arrow">→</span>${chip(ctx, g.out[0], g.out[1], g.out[0] === selfId)}<span class="op">${esc(
+  const cost = rowCost(g, ctx.src);
+  const s = (k: number) => (k > 1 ? 's' : '');
+  const paw =
+    (cost.animal
+      ? `<span class="an" title="Needs at least ${cost.animal} ingredient${s(cost.animal)} only obtainable from creatures">🐾 ${cost.animal}</span> · `
+      : '') +
+    (cost.wild
+      ? `<span class="an" title="Needs at least ${cost.wild} ingredient${s(cost.wild)} only harvested from wild plants (can't be farmed)">🌿 ${cost.wild}</span> · `
+      : '');
+  return `<div class="row">${left}<span class="arrow">→</span>${chip(ctx, g.out[0], g.out[1], g.out[0] === selfId)}<span class="op">${paw}${esc(
     g.op,
   )}${g.time ? ` · ${fmt(g.time)}s` : ''}${n > 1 ? ` · <span class="n">${n} recipes</span>` : ''}</span>${below.join('')}</div>`;
 }

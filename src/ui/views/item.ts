@@ -3,17 +3,14 @@ import { totalCount } from '../../lib/db';
 import { esc, fmt, plural } from '../../lib/format';
 import type { Recipe } from '../../lib/types';
 import type { Ctx } from '../context';
-import { groupRecipes, type RecipeGroup } from '../../lib/group';
+import { rankRows } from '../../lib/sourcing';
+import { groupRecipes } from '../../lib/group';
 import { chip, chips, groupRow, limited, recipeRow, refineBadge, swatch } from '../html';
 
 const byInputs = (a: Recipe, b: Recipe) => a[0].length - b[0].length;
-/** fewest inputs first, then the rows covering the most recipes */
-const width = (g: RecipeGroup) => (g.pool ? 2 : g.slots.length);
-const bySize = (a: RecipeGroup, b: RecipeGroup) => width(a) - width(b) || b.recipes.length - a.recipes.length;
 /** grouped Nutrient Processor rows; `pin` keeps the viewed item as the fixed input */
 const cookRows = (ctx: Ctx, rs: Recipe[], id: string, key: string, pin?: string) =>
-  groupRecipes(rs, pin)
-    .sort(bySize)
+  rankRows(groupRecipes(rs, pin), ctx.src)
     .map((g, i) => groupRow(ctx, g, id, `${key}:${i}`));
 /** outputs per input unit */
 const efficiency = (r: Recipe) => r[1][1] / r[0].reduce((s, [, q]) => s + q, 0);
@@ -140,7 +137,12 @@ export function renderItem(ctx: Ctx, id: string): string {
     .map(([k, l, n]) => `<a href="#" class="t-${k}${n ? '' : ' off'}" data-jump="s-${k}">${l}<b>${n}</b></a>`)
     .join('')}</nav>`;
 
-  if (!totalCount(c))
+  const limits = [
+    ctx.src.animal.has(id) && '🐾 Only obtainable from creatures. No refiner or Nutrient Processor recipe makes it from other sources.',
+    ctx.src.wild.has(id) && '🌿 Only harvested from wild plants on planets. It cannot be farmed, and no recipe makes it from other sources.',
+  ].filter(Boolean);
+  if (limits.length) h += `<section class="card"><p class="note" style="margin:0">${limits.join('<br>')}</p></section>`;
+  else if (!totalCount(c))
     h += `<section class="card"><p class="empty">No refining, crafting, cooking, gathering or purchase info in the dataset for this item. Check the description below.</p></section>`;
 
   if (c.ref)

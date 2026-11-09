@@ -1,3 +1,4 @@
+import { sourcing, type Sourcing } from '../lib/sourcing';
 import { CostModel } from '../lib/cost';
 import { buildFamilies, type Family } from '../lib/cycles';
 import { createDb, type Db } from '../lib/db';
@@ -21,6 +22,8 @@ export interface Ctx {
   state: UiState;
   /** ids that have an icon file */
   icons: Set<string>;
+  /** items only obtainable from creatures / from wild, unfarmable plants */
+  src: Sourcing;
 }
 
 export function createCtx(data: Dataset): Ctx {
@@ -30,6 +33,7 @@ export function createCtx(data: Dataset): Ctx {
     cost: new CostModel(db),
     families: buildFamilies(db),
     icons: new Set(data.icons ?? []),
+    src: sourcing(db),
     state: { refSort: 'fewest', treeMode: 'craft', expanded: new Set(), routes: {}, openCycles: new Set() },
   };
 }

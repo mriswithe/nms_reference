@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import raw from '../src/data/nms.json';
+import { cmpCost, rankRows, rowCost, sourcing } from '../src/lib/sourcing';
 import { CostModel } from '../src/lib/cost';
 import { refinableConsumables } from '../src/lib/consumables';
 import { buildFamilies, oneWayUpgrades, route, stellarExpansions } from '../src/lib/cycles';
 import { createDb } from '../src/lib/db';
 import { expand, groupRecipes, recipeKey } from '../src/lib/group';
+import { createCtx } from '../src/ui/context';
+import { renderSource } from '../src/ui/popover';
 import { abbr, esc } from '../src/lib/format';
 import { createSearch, norm } from '../src/lib/search';
 import type { Dataset, Recipe } from '../src/lib/types';
@@ -152,5 +155,63 @@ describe('recipe grouping', () => {
     expect(gs).toHaveLength(1);
     expect(gs[0].slots[0].opts).toEqual([[mc, 1]]);
     expect(gs[0].slots[1].opts.length).toBeGreaterThan(5);
+  });
+});
+
+describe('source popover', () => {
+  const ctx = createCtx(data);
+  it('summarises how to get an item', () => {
+    const h = renderSource(ctx, id('Meaty Chunks'));
+    expect(h).toContain('Harvested from creatures');
+    expect(h).toContain('Meat Flakes');
+    expect(h).toMatch(/>Cook</);
+    expect(h).not.toMatch(/>Refine</);
+  });
+  it('condenses large cooking groups', () => {
+    const h = renderSource(ctx, id('Mystery Meat Stew'));
+    expect(h).toContain('Any 2 different of');
+    for (const n of ['Raw Steak', 'Scaly Meat', 'Diplo Chunks']) expect(h).toContain(n);
+    expect(h).toContain('except ProtoSausage');
+  });
+});
+
+describe('restricted ingredients', () => {
+  const src = sourcing(db);
+  const byName = (n: string) => db.ids.find((x) => db.items[x].n === n)!;
+  const animal = (n: string) => src.animal.has(byName(n));
+  const wild = (n: string) => src.wild.has(byName(n));
+
+  it('flags items only obtainable from creatures', () => {
+    for (const n of ['Raw Steak', 'Creature Egg', 'Fresh Milk', 'Hypnotic Eye', 'Cream']) expect(animal(n), n).toBe(true);
+  });
+
+  it('treats anything a refiner or Nutrient Processor can make from other sources as makeable', () => {
+    // Mordite is farmable -> Meat Flakes -> Meaty Chunks -> Processed Meat
+    for (const n of ['Mordite', 'Meat Flakes', 'Meaty Chunks', 'Processed Meat', 'Carbon', 'Faecium']) expect(animal(n), n).toBe(false);
+  });
+
+  it('flags wild, unfarmable plants', () => {
+    for (const n of ['Fireberry', 'Heptaploid Wheat', 'Sweetroot', 'Frozen Tubers', 'Grahberry']) expect(wild(n), n).toBe(true);
+    for (const n of ['Solanium', 'Star Bulb', 'Fungal Mould', 'Carbon', 'Raw Steak']) expect(wild(n), n).toBe(false);
+    // not farmable, but a refiner makes them (Sodium + Mordite, Salt + Nitrogen)
+    for (const n of ['Marrow Bulb', 'Kelp Sac']) expect(wild(n), n).toBe(false);
+  });
+
+  it('sorts cooking rows by fewest restricted ingredients, cheapest options first', () => {
+    for (const x of db.ids) {
+      const rows = rankRows(groupRecipes(db.makes[x]?.cook ?? []), src);
+      const costs = rows.map((g) => rowCost(g, src));
+      expect(costs).toEqual([...costs].sort(cmpCost));
+      for (const g of rows)
+        for (const s of g.slots) {
+          const c = s.opts.map((o) => ({ animal: +src.animal.has(o[0]), wild: +src.wild.has(o[0]) }));
+          expect(c).toEqual([...c].sort(cmpCost));
+        }
+    }
+  });
+
+  it('counts a pool by its best pair', () => {
+    const stew = rankRows(groupRecipes(db.makes[id('Mystery Meat Stew')].cook), src)[0];
+    expect(rowCost(stew, src)).toEqual({ animal: 0, wild: 0 });
   });
 });

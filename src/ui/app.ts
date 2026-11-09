@@ -7,6 +7,7 @@ import { createSearch } from '../lib/search';
 import type { Dataset } from '../lib/types';
 import { createCtx } from './context';
 import { swatch } from './html';
+import { initPopover } from './popover';
 import { renderConsumables } from './views/consumables';
 import { renderCycles } from './views/cycles';
 import { renderItem, renderWelcome } from './views/item';
@@ -15,6 +16,7 @@ const data: Dataset = JSON.parse(document.getElementById('nmsdata')!.textContent
 const ctx = createCtx(data);
 const { db, state } = ctx;
 const search = createSearch(db);
+initPopover(ctx);
 
 const VIEWS: Record<string, (c: typeof ctx) => string> = { cycles: renderCycles, consumables: renderConsumables };
 const DEFAULT_ITEM = 'Radon';
