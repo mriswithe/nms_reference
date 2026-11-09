@@ -17,7 +17,7 @@ npm run build      # static site in dist/
 npm run preview    # serve dist/
 ```
 
-Node 22+.
+Node 24+ (see `.nvmrc`).
 
 ## Layout
 
@@ -53,6 +53,8 @@ Common edits:
 ## Deploy
 
 `.github/workflows/deploy.yml` type-checks, tests and builds on every push and PR, and deploys `main` to GitHub Pages. The repo's Pages source must be set to **GitHub Actions**.
+
+Dependabot (`.github/dependabot.yml`) opens weekly grouped PRs for action and npm updates.
 
 ## Data
 
