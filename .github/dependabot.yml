@@ -15,3 +15,9 @@ updates:
     groups:
       minor-and-patch:
         update-types: [minor, patch]
+    ignore:
+      # @astrojs/check only supports TypeScript ^5 || ^6. TS 7 support is waiting on
+      # TS 7.1 (https://github.com/withastro/astro/issues/17268). Remove this once a
+      # @astrojs/check release lists typescript ^7 in its peerDependencies.
+      - dependency-name: typescript
+        update-types: [version-update:semver-major]
