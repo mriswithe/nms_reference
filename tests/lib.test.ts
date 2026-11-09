@@ -4,9 +4,10 @@ import { CostModel } from '../src/lib/cost';
 import { refinableConsumables } from '../src/lib/consumables';
 import { buildFamilies, oneWayUpgrades, route, stellarExpansions } from '../src/lib/cycles';
 import { createDb } from '../src/lib/db';
+import { expand, groupRecipes, recipeKey } from '../src/lib/group';
 import { abbr, esc } from '../src/lib/format';
 import { createSearch, norm } from '../src/lib/search';
-import type { Dataset } from '../src/lib/types';
+import type { Dataset, Recipe } from '../src/lib/types';
 
 const data = raw as unknown as Dataset;
 const db = createDb(data);
@@ -104,4 +105,52 @@ describe('consumables', () => {
 describe('format', () => {
   it('escapes html', () => expect(esc('<a href="x">&')).toBe('&lt;a href=&quot;x&quot;&gt;&amp;'));
   it('abbreviates names', () => expect(abbr({ ...db.items[id('Warp Cell')], ab: undefined })).toBe('WC'));
+});
+
+describe('recipe grouping', () => {
+  const check = (recipes: Recipe[], pin?: string) => {
+    const groups = groupRecipes(recipes, pin);
+    for (const g of groups) {
+      for (const r of g.recipes) {
+        expect(r[1]).toEqual(g.out);
+        expect(r[3]).toBe(g.op);
+      }
+      // a row expands to exactly the recipes it claims, never an invented combination
+      const want = new Set(g.recipes.map((r) => recipeKey(r[0])));
+      expect(expand(g)).toEqual(want);
+    }
+    expect(groups.reduce((s, g) => s + g.recipes.length, 0)).toBe(recipes.length);
+    return groups;
+  };
+
+  it('is exact over every cooking and refiner recipe', () => {
+    expect(check(data.cook).length).toBeLessThan(data.cook.length * 0.7);
+    check(data.ref);
+  });
+
+  it('is exact for every item page, makes and used-in', () => {
+    for (const x of db.ids) {
+      if (db.makes[x]) check(db.makes[x].cook);
+      if (db.uses[x]) check(db.uses[x].cook, x);
+    }
+  });
+
+  it('shows any-two-of pools as one row with their missing doubles', () => {
+    const stew = id('Mystery Meat Stew');
+    const gs = groupRecipes(db.makes[stew].cook);
+    expect(gs).toHaveLength(1);
+    const p = gs[0].pool!;
+    expect(p.opts).toHaveLength(9);
+    const missing = p.opts.filter((o) => !p.doubles.includes(o)).map(([i]) => db.items[i].n);
+    expect(missing).toEqual(['ProtoSausage']);
+  });
+
+  it('keeps the pinned item fixed in used-in lists', () => {
+    const mc = id('Meaty Chunks');
+    const stew = id('Mystery Meat Stew');
+    const gs = groupRecipes(db.uses[mc].cook, mc).filter((g) => g.out[0] === stew);
+    expect(gs).toHaveLength(1);
+    expect(gs[0].slots[0].opts).toEqual([[mc, 1]]);
+    expect(gs[0].slots[1].opts.length).toBeGreaterThan(5);
+  });
 });

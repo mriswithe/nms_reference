@@ -3,9 +3,18 @@ import { totalCount } from '../../lib/db';
 import { esc, fmt, plural } from '../../lib/format';
 import type { Recipe } from '../../lib/types';
 import type { Ctx } from '../context';
-import { chip, chips, limited, recipeRow, refineBadge, swatch } from '../html';
+import { groupRecipes, type RecipeGroup } from '../../lib/group';
+import { chip, chips, groupRow, limited, recipeRow, refineBadge, swatch } from '../html';
 
 const byInputs = (a: Recipe, b: Recipe) => a[0].length - b[0].length;
+/** fewest inputs first, then the rows covering the most recipes */
+const width = (g: RecipeGroup) => (g.pool ? 2 : g.slots.length);
+const bySize = (a: RecipeGroup, b: RecipeGroup) => width(a) - width(b) || b.recipes.length - a.recipes.length;
+/** grouped Nutrient Processor rows; `pin` keeps the viewed item as the fixed input */
+const cookRows = (ctx: Ctx, rs: Recipe[], id: string, key: string, pin?: string) =>
+  groupRecipes(rs, pin)
+    .sort(bySize)
+    .map((g, i) => groupRow(ctx, g, id, `${key}:${i}`));
 /** outputs per input unit */
 const efficiency = (r: Recipe) => r[1][1] / r[0].reduce((s, [, q]) => s + q, 0);
 
@@ -98,7 +107,7 @@ function usedInSection(ctx: Ctx, id: string): string {
   if (uk)
     h += `<div class="note"><b>Nutrient Processor input</b></div><div class="rlist">${limited(
       ctx,
-      u.cook.map((r) => recipeRow(ctx, r, id)),
+      cookRows(ctx, u.cook, id, 'gucook' + id, id),
       'ucook' + id,
       5,
     )}</div>`;
@@ -144,11 +153,12 @@ export function renderItem(ctx: Ctx, id: string): string {
   if (c.craft) h += craftSection(ctx, id);
 
   if (c.cook)
-    h += `<section class="card k-cook" id="s-cook"><h3>Cook <span class="ct">Nutrient Processor · ${c.cook}</span></h3><div class="rlist">${limited(
-      ctx,
-      m.cook.slice().sort(byInputs).map((r) => recipeRow(ctx, r, id)),
-      'cook' + id,
-    )}</div></section>`;
+  {
+    const rows = cookRows(ctx, m.cook, id, 'gcook' + id);
+    h += `<section class="card k-cook" id="s-cook"><h3>Cook <span class="ct">Nutrient Processor · ${plural(c.cook, 'recipe')}${
+      rows.length < c.cook ? ` in ${plural(rows.length, 'row')}` : ''
+    }</span></h3><div class="rlist">${limited(ctx, rows, 'cook' + id)}</div></section>`;
+  }
 
   if (c.mine || c.buy) {
     h += `<div class="grid2">`;
