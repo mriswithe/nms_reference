@@ -24,10 +24,13 @@ export function eatText(e: EatEffect): string {
 export const position = (cv: number) => Math.max(0, 1.15148 * cv - 0.10558);
 
 /**
- * How far in-game readings stray from the fit. Foods with the same CookingValue still differ by a fixed per-item factor
- * (0.968–1.047 of the fit so far), so estimates are shown as a ±5% range.
+ * How far in-game readings stray from the fit, as a shift in position. Foods with the same CookingValue still differ by a
+ * fixed per-item amount (−0.025 to +0.043 of the range so far, across flora analysis and sprint distance).
  */
-export const INGESTOR_SPREAD = 0.05;
+export const POSITION_SPREAD = 0.05;
+
+/** BaseFoodDuration in the gameplay globals; one item lasts about this × CookingValue (2:00 measured at 0.2) */
+export const BASE_FOOD_SECONDS = 600;
 
 export interface Ingestor {
   label: string;
@@ -37,20 +40,41 @@ export interface Ingestor {
   hi: number;
   /** measured in game, when curated */
   measured?: number;
+  /** estimated seconds one item lasts */
+  seconds: number;
 }
 
 /**
  * Nutrient Ingestor bonus. The game stores a min/max per stat (FoodStatValues) and a CookingValue per food;
- * readings for the analysis-reward stats fit min + position(CookingValue) × (max − min), give or take INGESTOR_SPREAD.
- * The fit and the display (value × 100 as a percent) are only confirmed for the analysis-reward stats.
+ * readings fit min + position(CookingValue) × (max − min), give or take POSITION_SPREAD, and the game shows the value
+ * × 100 as a percent. Both are confirmed only for the stats in VERIFIED_STATS.
  */
 export function ingestor(data: Dataset, it: Item): Ingestor | undefined {
   const s = it.ing && data.fstat?.[it.ing[0]];
   if (!s) return undefined;
   const [label, min, max] = s;
-  const est = (min + position(it.ing![1]) * (max - min)) * 100;
-  return { label, est, lo: est * (1 - INGESTOR_SPREAD), hi: est * (1 + INGESTOR_SPREAD), measured: it.ingM };
+  const cv = it.ing![1];
+  const at = (p: number) => (min + Math.max(0, p) * (max - min)) * 100;
+  const p = position(cv);
+  const [a, b] = [at(p - POSITION_SPREAD), at(p + POSITION_SPREAD)];
+  return {
+    label,
+    est: at(p),
+    // ranges that run high to low (lower is better) keep lo <= hi
+    lo: Math.min(a, b),
+    hi: Math.max(a, b),
+    measured: it.ingM,
+    seconds: Math.round(BASE_FOOD_SECONDS * cv),
+  };
 }
 
+/** m:ss */
+export const clock = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+
 /** stats whose ingestor display has been checked against in-game readings */
-export const VERIFIED_STATS = new Set(['Weapon_Scan_Discovery_Flora', 'Weapon_Scan_Discovery_Creature', 'Weapon_Scan_Discovery_Mineral']);
+export const VERIFIED_STATS = new Set([
+  'Weapon_Scan_Discovery_Flora',
+  'Weapon_Scan_Discovery_Creature',
+  'Weapon_Scan_Discovery_Mineral',
+  'Suit_Stamina_Strength',
+]);

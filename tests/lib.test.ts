@@ -290,6 +290,10 @@ describe('food effects', () => {
     expect(html).toContain('+4,233% Flora Analysis Rewards');
     expect(renderItem(ctx, id('Floral Wafer'))).toContain('Restores 25% hazard protection');
     expect(renderItem(ctx, id('Nightmare Sausage'))).toContain('Cannot be eaten directly');
+    // measured: 2:00 of +15% sprint distance
+    const sv = renderItem(ctx, id('Syrupy Viscera'));
+    expect(sv).toContain('+15% Sprint Distance');
+    expect(sv).toContain('about 2:00 per item');
     expect(renderItem(ctx, id('Carbon'))).not.toContain('Food effects');
   });
 });
