@@ -93,7 +93,7 @@ function foodSection(ctx: Ctx, id: string): string {
       ing.measured
         ? `${pct(ing.measured)} ${esc(ing.label)} <span class="q">measured in game</span>`
         : `about ${pct(ing.est)} ${esc(ing.label)} <span class="q">estimated, ${range}</span>`
-    }</li><li><b>Ingestor duration:</b> about ${clock(ing.seconds)} per item <span class="q">estimated</span></li>`;
+    }</li><li><b>Ingestor duration:</b> ${clock(ing.seconds)} per item</li>`;
   }
   h += `</ul>`;
   if (ing && !ing.measured)

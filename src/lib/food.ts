@@ -29,7 +29,7 @@ export const position = (cv: number) => Math.max(0, 1.15148 * cv - 0.10558);
  */
 export const POSITION_SPREAD = 0.05;
 
-/** BaseFoodDuration in the gameplay globals; one item lasts about this × CookingValue (2:00 measured at 0.2) */
+/** BaseFoodDuration in the gameplay globals; one item lasts this × CookingValue (measured: 2:00 at 0.2, 6:36 at 0.66) */
 export const BASE_FOOD_SECONDS = 600;
 
 export interface Ingestor {
@@ -40,7 +40,7 @@ export interface Ingestor {
   hi: number;
   /** measured in game, when curated */
   measured?: number;
-  /** estimated seconds one item lasts */
+  /** seconds one item lasts */
   seconds: number;
 }
 
