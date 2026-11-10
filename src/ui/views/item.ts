@@ -1,7 +1,7 @@
 import { MAX_DEPTH } from '../../lib/cost';
 import { totalCount } from '../../lib/db';
 import { esc, fmt, plural } from '../../lib/format';
-import { clock, eatText, ingestor } from '../../lib/food';
+import { clock, eatText, ingestor, pct } from '../../lib/food';
 import type { Recipe } from '../../lib/types';
 import type { Ctx } from '../context';
 import { rankRows } from '../../lib/sourcing';
@@ -77,7 +77,6 @@ function craftSection(ctx: Ctx, id: string): string {
   return h + `</section>`;
 }
 
-const pct = (n: number) => `+${fmt(Math.round(n))}%`;
 
 /** what eating it does, and its Nutrient Ingestor bonus */
 function foodSection(ctx: Ctx, id: string): string {

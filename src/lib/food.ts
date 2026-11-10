@@ -1,3 +1,5 @@
+import { fmt } from './format';
+import type { Db } from './db';
 import type { Dataset, EatEffect, Item } from './types';
 
 /** plain-English text for what eating an item does */
@@ -68,5 +70,64 @@ export function ingestor(data: Dataset, it: Item): Ingestor | undefined {
   };
 }
 
+/** ingestor bonus as the game shows it, e.g. +4,233% */
+export const pct = (n: number) => `+${fmt(Math.round(n))}%`;
+
 /** m:ss */
 export const clock = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+
+// ---------- cooking reference rankings ----------
+
+/** ids of every Nutrient Processor item (raw ingredients and products) */
+export const foods = (db: Db) => db.ids.filter((id) => db.items[id].c === 'Cooking');
+
+/** cheapest first: breaks ties so the food you'd lose least by using comes first */
+const byValue = (db: Db) => (a: string, b: string) => (db.items[a].v ?? 0) - (db.items[b].v ?? 0);
+
+/** the n most valuable foods to sell */
+export const topBySale = (db: Db, n = 10) =>
+  foods(db)
+    .slice()
+    .sort((a, b) => (db.items[b].v ?? 0) - (db.items[a].v ?? 0))
+    .slice(0, n);
+
+export const EAT_KINDS: [kind: EatEffect[0], label: string][] = [
+  ['life', 'Life support'],
+  ['haz', 'Hazard protection'],
+  ['health', 'Health'],
+  ['sprint', 'Sprint overload'],
+  ['jet', 'Jetpack overload'],
+];
+
+/** best n foods to eat for each effect kind: biggest amount (health: max, then min), ties cheapest first */
+export function topEaten(db: Db, n = 3): Record<string, string[]> {
+  const size = (e: EatEffect) => (e[0] === 'health' ? e[2] * 1000 + e[1] : e[1]);
+  const out: Record<string, string[]> = {};
+  for (const [kind] of EAT_KINDS)
+    out[kind] = foods(db)
+      .filter((id) => db.items[id].eat?.[0] === kind)
+      .sort((a, b) => size(db.items[b].eat!) - size(db.items[a].eat!) || byValue(db)(a, b))
+      .slice(0, n);
+  return out;
+}
+
+/** a food's ingestor bonus for ranking: the in-game reading when measured, else the estimate */
+export const ingestorValue = (g: Ingestor) => g.measured ?? g.est;
+
+/**
+ * best n foods for each ingestor stat, by measured-or-estimated bonus (lower wins for stats whose range runs high to
+ * low, like Mining Speed), ties cheapest first. Stats are in the order the dataset lists them.
+ */
+export function topIngestor(db: Db, n = 3): [stat: string, ids: string[]][] {
+  const out: [string, string[]][] = [];
+  for (const [stat, [, min, max]] of Object.entries(db.data.fstat ?? {})) {
+    const dir = max >= min ? 1 : -1;
+    const val = (id: string) => ingestorValue(ingestor(db.data, db.items[id])!);
+    const ids = foods(db)
+      .filter((id) => db.items[id].ing?.[0] === stat)
+      .sort((a, b) => dir * (val(b) - val(a)) || byValue(db)(a, b))
+      .slice(0, n);
+    if (ids.length) out.push([stat, ids]);
+  }
+  return out;
+}

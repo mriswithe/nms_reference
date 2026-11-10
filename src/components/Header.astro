@@ -29,6 +29,7 @@ const { stats, quickPicks } = Astro.props;
   <div class="quick">
     <button class="pill ref" data-go="cycles">⟳ Conversion cycles</button>
     <button class="pill ref" data-go="consumables">⚗ Refining consumables</button>
+    <button class="pill ref" data-go="cooking">🍳 Cooking reference</button>
     <span class="lbl">Try:</span>
     {quickPicks.map((p) => <button class="pill" data-go={p.id}>{p.name}</button>)}
   </div>

@@ -4,7 +4,7 @@ A No Man's Sky reference for refining, crafting, cooking, gathering and buying: 
 
 Live: https://mriswithe.github.io/nms_reference/
 
-Built with [Astro](https://astro.build) as a single static page. Item views render client-side from an embedded JSON dataset, with hash routing (`#raw1`, `#cycles`, `#consumables`) so links are shareable.
+Built with [Astro](https://astro.build) as a single static page. Item views render client-side from an embedded JSON dataset, with hash routing (`#raw1`, `#cycles`, `#consumables`, `#cooking`) so links are shareable.
 
 ## Develop
 
@@ -38,7 +38,7 @@ src/
     app.ts               entry point: routing, search box, event delegation
     context.ts           shared db / cost model / view state
     html.ts              chip, recipe row, "show all" helpers
-    views/               item, cycles, consumables renderers (return HTML strings)
+    views/               item, cycles, consumables, cooking renderers (return HTML strings)
   components/            Header, Footer (rendered at build time)
   layouts/Base.astro
   pages/index.astro      computes header stats + quick picks at build time, embeds the dataset

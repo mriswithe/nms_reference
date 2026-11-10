@@ -1,5 +1,5 @@
 /**
- * Browser entry point. Hash routing: `#<itemId>` shows an item, `#cycles` / `#consumables` show reference views.
+ * Browser entry point. Hash routing: `#<itemId>` shows an item, `#cycles` / `#consumables` / `#cooking` show reference views.
  * Hash URLs are kept so links to the old single-file site keep working.
  */
 import { esc } from '../lib/format';
@@ -9,6 +9,7 @@ import { createCtx } from './context';
 import { swatch } from './html';
 import { initPopover } from './popover';
 import { renderConsumables } from './views/consumables';
+import { renderCooking } from './views/cooking';
 import { renderCycles } from './views/cycles';
 import { renderItem, renderWelcome } from './views/item';
 
@@ -18,7 +19,7 @@ const { db, state } = ctx;
 const search = createSearch(db);
 initPopover(ctx);
 
-const VIEWS: Record<string, (c: typeof ctx) => string> = { cycles: renderCycles, consumables: renderConsumables };
+const VIEWS: Record<string, (c: typeof ctx) => string> = { cycles: renderCycles, consumables: renderConsumables, cooking: renderCooking };
 const DEFAULT_ITEM = 'Radon';
 
 const main = document.getElementById('main')!;

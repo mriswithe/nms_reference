@@ -9,7 +9,8 @@ import { expand, groupRecipes, recipeKey } from '../src/lib/group';
 import { createCtx } from '../src/ui/context';
 import { renderSource } from '../src/ui/popover';
 import { abbr, esc } from '../src/lib/format';
-import { eatText, ingestor } from '../src/lib/food';
+import { eatText, ingestor, ingestorValue, topBySale, topEaten, topIngestor } from '../src/lib/food';
+import { renderCooking } from '../src/ui/views/cooking';
 import { renderItem } from '../src/ui/views/item';
 import { createSearch, norm } from '../src/lib/search';
 import type { Dataset, Recipe } from '../src/lib/types';
@@ -296,5 +297,38 @@ describe('food effects', () => {
     expect(sv).toContain('2:00 per item');
     expect(html).toContain('6:36 per item');
     expect(renderItem(ctx, id('Carbon'))).not.toContain('Food effects');
+  });
+});
+
+describe('cooking reference', () => {
+  it('lists the 10 most valuable foods, highest first', () => {
+    const top = topBySale(db);
+    expect(top).toHaveLength(10);
+    const v = top.map((x) => db.items[x].v);
+    expect(v).toEqual([...v].sort((a, b) => b - a));
+    expect(db.items[top[0]].n).toBe('Horrifying, Gooey Delight');
+  });
+
+  it('ranks the top 3 per ingestor stat, respecting stats where lower is better', () => {
+    const rows = topIngestor(db);
+    expect(rows.length).toBe(Object.keys(data.fstat!).length);
+    for (const [stat, ids] of rows) {
+      expect(ids.length).toBeLessThanOrEqual(3);
+      const [, min, max] = data.fstat![stat];
+      const vals = ids.map((x) => ingestorValue(ingestor(data, db.items[x])!));
+      expect(vals, stat).toEqual([...vals].sort((a, b) => (max >= min ? b - a : a - b)));
+    }
+  });
+
+  it('ranks the top 3 per eat effect, ties cheapest first', () => {
+    const top = topEaten(db);
+    expect(top.life.map((x) => db.items[x].eat![1])).toEqual([40, 40, 40]);
+    const jet = top.jet.map((x) => db.items[x].v);
+    expect(jet).toEqual([...jet].sort((a, b) => a - b));
+  });
+
+  it('renders the page', () => {
+    const html = renderCooking(createCtx(data));
+    for (const s of ['Top 10 by sale price', 'Flora Analysis Rewards', 'Jetpack overload', 'Horrifying, Gooey Delight']) expect(html).toContain(s);
   });
 });
