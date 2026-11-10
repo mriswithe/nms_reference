@@ -293,7 +293,8 @@ describe('food effects', () => {
     // measured: 2:00 of +15% sprint distance
     const sv = renderItem(ctx, id('Syrupy Viscera'));
     expect(sv).toContain('+15% Sprint Distance');
-    expect(sv).toContain('about 2:00 per item');
+    expect(sv).toContain('2:00 per item');
+    expect(html).toContain('6:36 per item');
     expect(renderItem(ctx, id('Carbon'))).not.toContain('Food effects');
   });
 });
