@@ -47,7 +47,7 @@ export interface Ingestor {
 /**
  * Nutrient Ingestor bonus. The game stores a min/max per stat (FoodStatValues) and a CookingValue per food;
  * readings fit min + position(CookingValue) × (max − min), give or take POSITION_SPREAD, and the game shows the value
- * × 100 as a percent. Both are confirmed only for the stats in VERIFIED_STATS.
+ * × 100 as a percent. Both are confirmed against in-game readings only for Flora Analysis Rewards and Sprint Distance.
  */
 export function ingestor(data: Dataset, it: Item): Ingestor | undefined {
   const s = it.ing && data.fstat?.[it.ing[0]];
@@ -70,11 +70,3 @@ export function ingestor(data: Dataset, it: Item): Ingestor | undefined {
 
 /** m:ss */
 export const clock = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-
-/** stats whose ingestor display has been checked against in-game readings */
-export const VERIFIED_STATS = new Set([
-  'Weapon_Scan_Discovery_Flora',
-  'Weapon_Scan_Discovery_Creature',
-  'Weapon_Scan_Discovery_Mineral',
-  'Suit_Stamina_Strength',
-]);

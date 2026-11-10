@@ -1,7 +1,7 @@
 import { MAX_DEPTH } from '../../lib/cost';
 import { totalCount } from '../../lib/db';
 import { esc, fmt, plural } from '../../lib/format';
-import { clock, eatText, ingestor, VERIFIED_STATS } from '../../lib/food';
+import { clock, eatText, ingestor } from '../../lib/food';
 import type { Recipe } from '../../lib/types';
 import type { Ctx } from '../context';
 import { rankRows } from '../../lib/sourcing';
@@ -95,12 +95,7 @@ function foodSection(ctx: Ctx, id: string): string {
         : `about ${pct(ing.est)} ${esc(ing.label)} <span class="q">estimated, ${range}</span>`
     }</li><li><b>Ingestor duration:</b> ${clock(ing.seconds)} per item</li>`;
   }
-  h += `</ul>`;
-  if (ing && !ing.measured)
-    h += `<p class="note">Estimated from the game's ingestor range for this stat and this food's cooking value (${fmt(it.ing![1])}). Each food shifts it a few percent either way.${
-      VERIFIED_STATS.has(it.ing![0]) ? '' : ' How the game displays this stat has not been checked yet.'
-    }</p>`;
-  return h + `</section>`;
+  return h + `</ul></section>`;
 }
 
 function usedInSection(ctx: Ctx, id: string): string {
