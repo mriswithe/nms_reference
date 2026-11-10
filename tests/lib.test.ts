@@ -9,7 +9,8 @@ import { expand, groupRecipes, recipeKey } from '../src/lib/group';
 import { createCtx } from '../src/ui/context';
 import { renderSource } from '../src/ui/popover';
 import { abbr, esc } from '../src/lib/format';
-import { eatText, ingestor } from '../src/lib/food';
+import { eatText, ingestor, ingestorValue, page, rankedIngestor, shown, tiers, topBySale, topEaten, topIngestor } from '../src/lib/food';
+import { renderCooking } from '../src/ui/views/cooking';
 import { renderItem } from '../src/ui/views/item';
 import { createSearch, norm } from '../src/lib/search';
 import type { Dataset, Recipe } from '../src/lib/types';
@@ -265,21 +266,36 @@ describe('food effects', () => {
     }
   });
 
-  it('measured readings fall inside the estimated range', () => {
-    const measured = food.filter((x) => db.items[x].ingM);
-    expect(measured.length).toBeGreaterThan(0);
-    for (const x of measured) {
-      const g = ingestor(data, db.items[x])!;
-      expect(g.measured, db.items[x].n).toBeGreaterThanOrEqual(g.lo);
-      expect(g.measured, db.items[x].n).toBeLessThanOrEqual(g.hi);
+  /** in-game Nutrient Ingestor readings: [food, percent shown, seconds per item]; used only to check the estimates */
+  const READINGS: [string, number, number?][] = [
+    ['Spore Dunkers', 4233, 396],
+    ['Herbal Crunchie', 4474],
+    ['Floral Wafer', 4136],
+    ['Honied Angel Cake', 6214],
+    ['Nightmare Sausage', 1612],
+    ['Syrupy Viscera', 15, 120],
+  ];
+
+  it('in-game readings fall inside the estimated range', () => {
+    for (const [name, pct, secs] of READINGS) {
+      const g = ingestor(data, db.items[id(name)])!;
+      expect(pct, name).toBeGreaterThanOrEqual(g.lo);
+      expect(pct, name).toBeLessThanOrEqual(g.hi);
+      if (secs) expect(g.seconds, name).toBe(secs);
     }
+  });
+
+  it('known miss: Purged Ribs read +54% Toxic Resistance for 7:30, above the fit', () => {
+    const g = ingestor(data, db.items[id('Purged Ribs')])!;
+    expect(g.est).toBeCloseTo(41.5, 0);
+    expect(g.seconds).toBe(450);
   });
 
   it('describes Spore Dunkers', () => {
     const it = db.items[id('Spore Dunkers')];
     expect(eatText(it.eat!)).toBe('Restores 20% life support');
     const g = ingestor(data, it)!;
-    expect(g).toMatchObject({ label: 'Flora Analysis Rewards', measured: 4233 });
+    expect(g.label).toBe('Flora Analysis Rewards');
     expect(g.est).toBeCloseTo(4272, 0);
   });
 
@@ -287,14 +303,113 @@ describe('food effects', () => {
     const ctx = createCtx(data);
     const html = renderItem(ctx, id('Spore Dunkers'));
     expect(html).toContain('Restores 20% life support');
-    expect(html).toContain('+4,233% Flora Analysis Rewards');
+    expect(html).toContain('about +4,272% Flora Analysis Rewards');
     expect(renderItem(ctx, id('Floral Wafer'))).toContain('Restores 25% hazard protection');
     expect(renderItem(ctx, id('Nightmare Sausage'))).toContain('Cannot be eaten directly');
-    // measured: 2:00 of +15% sprint distance
     const sv = renderItem(ctx, id('Syrupy Viscera'));
-    expect(sv).toContain('+15% Sprint Distance');
+    expect(sv).toContain('about +16% Sprint Distance');
     expect(sv).toContain('2:00 per item');
     expect(html).toContain('6:36 per item');
     expect(renderItem(ctx, id('Carbon'))).not.toContain('Food effects');
+  });
+});
+
+describe('cooking reference', () => {
+  it('lists the 10 most valuable foods, highest first', () => {
+    const top = topBySale(db);
+    expect(top).toHaveLength(10);
+    const v = top.map((x) => db.items[x].v);
+    expect(v).toEqual([...v].sort((a, b) => b - a));
+    expect(db.items[top[0]].n).toBe('Horrifying, Gooey Delight');
+  });
+
+  it('ranks the top 10 per ingestor stat, biggest shown bonus first', () => {
+    const rows = topIngestor(db, 10);
+    expect(rows.length).toBe(Object.keys(data.fstat!).length);
+    for (const [stat, ids] of rows) {
+      expect(ids.length).toBeLessThanOrEqual(10);
+      const vals = ids.map((x) => ingestorValue(ingestor(data, db.items[x])!));
+      expect(vals, stat).toEqual([...vals].sort((a, b) => b - a));
+    }
+  });
+
+  it('shows multipliers as the part above 1 and lower-is-better stats as the part below 1', () => {
+    expect(shown(10, 60, 42.33)).toBeCloseTo(4233);
+    expect(shown(0.1, 0.6, 0.15)).toBeCloseTo(15);
+    expect(shown(1.15, 1.5, 1.54)).toBeCloseTo(54);
+    expect(shown(0.9, 0.7, 0.7)).toBeCloseTo(30);
+    // every estimate is a sensible positive percent, never "+141%" for a 1.15–1.5 multiplier
+    for (const x of db.ids) {
+      const g = db.items[x].ing && ingestor(data, db.items[x]);
+      const [, mn, mx] = g ? data.fstat![db.items[x].ing![0]] : [0, 0, 0];
+      if (g && mn >= 1 && mx <= 3) expect(g.est, db.items[x].n).toBeLessThan(250);
+    }
+  });
+
+  it('ranks the top 3 per eat effect, ties cheapest first', () => {
+    const top = topEaten(db);
+    expect(top.life.map((x) => db.items[x].eat![1])).toEqual([40, 40, 40]);
+    const jet = top.jet.map((x) => db.items[x].v);
+    expect(jet).toEqual([...jet].sort((a, b) => a - b));
+  });
+
+  it('merges foods with the same ingestor bonus into one tier', () => {
+    const all = rankedIngestor(db, 'Weapon_Scan_Discovery_Creature');
+    const t = tiers(db, all);
+    expect(t.reduce((n, x) => n + x.ids.length, 0)).toBe(all.length);
+    expect(t[0].ids.length).toBeGreaterThan(1);
+    const v = t.map((x) => x.value);
+    expect(v).toEqual([...v].sort((a, b) => b - a));
+  });
+
+  it('pages the ingestor table by bonus tier', () => {
+    const ctx = createCtx(data);
+    ctx.state.cookStat = 'Weapon_Scan_Discovery_Creature';
+    // one tier of 22 tied foods: a single page, all 22 shown
+    let html = renderCooking(ctx);
+    const ing = (h: string) => h.slice(h.indexOf('id="ck-ing"'), h.indexOf('id="ck-eat"'));
+    expect(ing(html)).not.toContain('data-cpage');
+    expect(ing(html).match(/<button class="chip/g)!.length).toBe(22);
+    ctx.state.cookStat = 'Suit_Energy';
+    html = renderCooking(ctx);
+    expect(ing(html)).toContain('1–5 of 11 tiers');
+    expect(ing(html).match(/<tr><td class="num">≈/g)!.length).toBe(5);
+  });
+
+  it('shows one eat effect at a time, foods with the same amount in one tier', () => {
+    const ctx = createCtx(data);
+    const eat = (h: string) => h.slice(h.indexOf('id="ck-eat"'));
+    let html = eat(renderCooking(ctx));
+    // life support: 40%, 20% and 5% tiers, biggest first, on one page
+    const amounts = [...html.matchAll(/<tr><td>Restores (\d+)% life support/g)].map((m) => Number(m[1]));
+    expect(amounts).toEqual([40, 20, 5]);
+    expect(html).not.toContain('data-cpage');
+    // sprint: every food gives 15 s, so one tier showing the 12 cheapest and a "Show all" button
+    ctx.state.cookEat = 'sprint';
+    html = eat(renderCooking(ctx));
+    expect(html.match(/<tr><td>/g)!.length).toBe(1);
+    expect(html.match(/<button class="chip/g)!.length).toBe(12);
+    expect(html).toMatch(/Show all \d+/);
+  });
+
+  it('pages a list and clamps out-of-range pages', () => {
+    const list = Array.from({ length: 25 }, (_, i) => i);
+    expect(page(list, 1)).toMatchObject({ items: [10, 11, 12, 13, 14, 15, 16, 17, 18, 19], start: 10, page: 1, pages: 3, total: 25 });
+    expect(page(list, 9)).toMatchObject({ items: [20, 21, 22, 23, 24], page: 2 });
+    expect(page(list, -1).page).toBe(0);
+    expect(page([], 0)).toMatchObject({ items: [], pages: 1 });
+  });
+
+  it('renders the page, with paging past the first 10', () => {
+    const ctx = createCtx(data);
+    const html = renderCooking(ctx);
+    for (const s of ['By sale price', 'best foods per bonus', 'Flora Analysis Rewards', 'Jetpack overload', 'Horrifying, Gooey Delight', '1–10 of'])
+      expect(html).toContain(s);
+    // sale table is just rank, food and base value
+    expect(html.slice(html.indexOf('id="ck-sale"'), html.indexOf('id="ck-ing"'))).not.toContain('Nutrient Ingestor<');
+    ctx.state.cookPage.sale = 1;
+    const p2 = renderCooking(ctx);
+    expect(p2).toContain('11–20 of');
+    expect(p2.slice(p2.indexOf('id="ck-sale"'), p2.indexOf('id="ck-ing"'))).not.toContain('Horrifying, Gooey Delight');
   });
 });

@@ -4,7 +4,7 @@ A No Man's Sky reference for refining, crafting, cooking, gathering and buying: 
 
 Live: https://mriswithe.github.io/nms_reference/
 
-Built with [Astro](https://astro.build) as a single static page. Item views render client-side from an embedded JSON dataset, with hash routing (`#raw1`, `#cycles`, `#consumables`) so links are shareable.
+Built with [Astro](https://astro.build) as a single static page. Item views render client-side from an embedded JSON dataset, with hash routing (`#raw1`, `#cycles`, `#consumables`, `#cooking`) so links are shareable.
 
 ## Develop
 
@@ -38,7 +38,7 @@ src/
     app.ts               entry point: routing, search box, event delegation
     context.ts           shared db / cost model / view state
     html.ts              chip, recipe row, "show all" helpers
-    views/               item, cycles, consumables renderers (return HTML strings)
+    views/               item, cycles, consumables, cooking renderers (return HTML strings)
   components/            Header, Footer (rendered at build time)
   layouts/Base.astro
   pages/index.astro      computes header stats + quick picks at build time, embeds the dataset
@@ -62,7 +62,7 @@ Dependabot (`.github/dependabot.yml`) opens weekly grouped PRs for action and np
 
 Recipe data comes from the open-source [Assistant for No Man's Sky](https://github.com/AssistantNMS/App) dataset (extracted from game files, up to the Voyagers-era updates). Gathering and buying notes are general guidance.
 
-Food effects come from the game's own files instead: what eating an item does (`eat`), its Nutrient Ingestor stat and cooking value (`ing`), and each stat's ingestor range (`fstat`). `scripts/food-effects.mjs` writes them into `src/data/nms.json` from a local install; its header lists the files to unpack with [HGPAKtool](https://pypi.org/project/HGPAKtool/) and convert with [MBINCompiler](https://github.com/monkeyman192/MBINCompiler). The game doesn't store ingestor percentages, so the site estimates them with a fit to in-game readings (`src/lib/food.ts`); readings measured in game are curated as `ingM` and shown instead, and the script leaves them alone.
+Food effects come from the game's own files instead: what eating an item does (`eat`), its Nutrient Ingestor stat and cooking value (`ing`), and each stat's ingestor range (`fstat`). `scripts/food-effects.mjs` writes them into `src/data/nms.json` from a local install; its header lists the files to unpack with [HGPAKtool](https://pypi.org/project/HGPAKtool/) and convert with [MBINCompiler](https://github.com/monkeyman192/MBINCompiler). The game doesn't store ingestor percentages, so the site estimates them with a fit to in-game readings (`src/lib/food.ts`).
 
 Item icons come from our fork of that app, [mriswithe/AssistantNMS-App](https://github.com/mriswithe/AssistantNMS-App), pinned to a commit in `scripts/icons.mjs`. The script does a sparse, shallow checkout into `.cache/`, shrinks each icon to a 96 px WebP in `public/icons/<itemId>.webp` (both gitignored), and skips all work when the pin, size and dataset are unchanged. CI caches `public/icons`. If the fetch fails, items fall back to their colour swatch. To update icons, sync the fork with upstream and bump `SOURCE.sha`.
 

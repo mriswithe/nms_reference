@@ -101,6 +101,22 @@ ul.plain{margin:0;padding-left:18px;display:grid;gap:4px}
 .totals{display:flex;flex-wrap:wrap;gap:6px}
 .note{font-size:13px;color:var(--muted);margin:10px 0 0}
 .note b{color:var(--ink)}
+.tscroll{overflow-x:auto;margin:0 -4px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th,.tbl td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.tbl thead th{font:600 11.5px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:2px}
+.tbl tbody th{font:600 13.5px var(--f-body);white-space:nowrap}
+.tbl tbody tr:last-child>*{border-bottom:0}
+.tbl .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tbl.fit{width:auto;min-width:min(100%,360px)}
+.tbl td .chips{display:flex;flex-wrap:wrap;gap:6px}
+.pick{display:grid;grid-template-columns:11em 1fr;align-items:baseline;gap:4px 10px;margin-top:8px}
+@media (max-width:560px){.pick{grid-template-columns:1fr}}
+.pick-l{font:600 11.5px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.pick .ctrl{margin:0}
+.pager{align-items:center;margin:10px 0 0}
+.pager .q{padding:0 4px}
+.tbl td .chip{text-align:left}
 .pill.ref{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700;margin-right:6px}
 details.cyc>summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:center}
 details.cyc>summary::-webkit-details-marker{display:none}
