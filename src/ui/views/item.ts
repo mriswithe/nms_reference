@@ -1,7 +1,7 @@
 import { MAX_DEPTH } from '../../lib/cost';
 import { totalCount } from '../../lib/db';
 import { esc, fmt, plural } from '../../lib/format';
-import { eatText, ingestor, VERIFIED_STATS } from '../../lib/food';
+import { clock, eatText, ingestor, VERIFIED_STATS } from '../../lib/food';
 import type { Recipe } from '../../lib/types';
 import type { Ctx } from '../context';
 import { rankRows } from '../../lib/sourcing';
@@ -93,7 +93,7 @@ function foodSection(ctx: Ctx, id: string): string {
       ing.measured
         ? `${pct(ing.measured)} ${esc(ing.label)} <span class="q">measured in game</span>`
         : `about ${pct(ing.est)} ${esc(ing.label)} <span class="q">estimated, ${range}</span>`
-    }</li>`;
+    }</li><li><b>Ingestor duration:</b> about ${clock(ing.seconds)} per item <span class="q">estimated</span></li>`;
   }
   h += `</ul>`;
   if (ing && !ing.measured)
