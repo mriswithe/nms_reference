@@ -139,6 +139,15 @@ main.addEventListener('click', (e) => {
   } else if ((el = on('sort'))) {
     state.refSort = el.dataset.sort as typeof state.refSort;
     rerender();
+  } else if ((el = on('cookstat'))) {
+    state.cookStat = el.dataset.cookstat!;
+    rerender();
+  } else if ((el = on('cookeat'))) {
+    state.cookEat = el.dataset.cookeat!;
+    rerender();
+  } else if ((el = on('cpage'))) {
+    state.cookPage[el.dataset.cpage!] = Number(el.dataset.to);
+    rerender();
   } else if ((el = on('more'))) {
     state.expanded.add(el.dataset.more!);
     rerender();

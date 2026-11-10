@@ -36,8 +36,6 @@ export interface Item {
   eat?: EatEffect;
   /** Nutrient Ingestor bonus: [stat key in Dataset.fstat, CookingValue 0..1] */
   ing?: [stat: string, cookingValue: number];
-  /** curated: Nutrient Ingestor bonus measured in game, in percent as the game shows it */
-  ingM?: number;
 }
 
 /**

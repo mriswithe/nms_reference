@@ -1,26 +1,90 @@
-import { clock, EAT_KINDS, eatText, ingestor, pct, topBySale, topEaten, topIngestor } from '../../lib/food';
+import { clock, EAT_KINDS, eatText, page, pct, rankedIngestor, STAT_GROUPS, tiers, topBySale, topEaten } from '../../lib/food';
 import { esc, fmt } from '../../lib/format';
 import type { Ctx } from '../context';
-import { chip, pageHead } from '../html';
+import { chip, limited, pageHead } from '../html';
 
-const table = (head: string[], rows: string[]) =>
-  `<div class="tscroll"><table class="tbl"><thead><tr>${head.map((h) => `<th scope="col">${h}</th>`).join('')}</tr></thead><tbody>${rows.join(
+const table = (head: string[], rows: string[], cls = '') =>
+  `<div class="tscroll"><table class="tbl ${cls}"><thead><tr>${head.map((h) => `<th scope="col">${h}</th>`).join('')}</tr></thead><tbody>${rows.join(
     '',
   )}</tbody></table></div>`;
 
-/** "+6,214% · 10:00" with a "measured" or "≈" marker */
-function ingestorText(ctx: Ctx, id: string, withLabel = false): string {
-  const g = ingestor(ctx.db.data, ctx.db.items[id]);
-  if (!g) return '<span class="q">none</span>';
-  const v = g.measured != null ? `<b>${pct(g.measured)}</b> <span class="q">measured</span>` : `≈ ${pct(g.est)}`;
-  return `${v}${withLabel ? ` ${esc(g.label)}` : ''} <span class="q">· ${clock(g.seconds)}</span>`;
+const chipList = (ctx: Ctx, ids: string[]) => `<div class="chips">${ids.map((id) => chip(ctx, id)).join('')}</div>`;
+
+/** "‹ Previous  11–20 of 385  Next ›"; `key` names the list in state.cookPage */
+function pager(key: string, p: { page: number; pages: number; start: number; total: number }, shown: number, noun: string): string {
+  if (p.pages < 2) return '';
+  const btn = (to: number, label: string, off: boolean) =>
+    `<button data-cpage="${esc(key)}" data-to="${to}"${off ? ' disabled' : ''}>${label}</button>`;
+  return `<div class="ctrl pager" role="group" aria-label="Pages">${btn(p.page - 1, '‹ Previous', p.page === 0)}<span class="q">${fmt(p.start + 1)}–${fmt(
+    p.start + shown,
+  )} of ${fmt(p.total)} ${noun}</span>${btn(p.page + 1, 'Next ›', p.page === p.pages - 1)}</div>`;
 }
 
-const ranked = (ctx: Ctx, ids: string[], detail: (id: string) => string, n = 3) =>
-  Array.from({ length: n }, (_, i) => (ids[i] ? `<td>${chip(ctx, ids[i])}<div class="cell">${detail(ids[i])}</div></td>` : '<td></td>')).join('');
+/** bonus tiers per page in the Nutrient Ingestor table (most bonuses have 5 or fewer; the most is 11) */
+const TIERS_PER_PAGE = 5;
+
+/** bonus picker plus a paged table for the chosen bonus, with tied foods merged into a row */
+function ingestorSection(ctx: Ctx): string {
+  const { db, state } = ctx;
+  const fstat = db.data.fstat ?? {};
+  const stat = fstat[state.cookStat] ? state.cookStat : Object.keys(fstat)[0];
+  const picker = STAT_GROUPS.map(([group, stats]) => {
+    const btns = stats
+      .filter((s) => fstat[s])
+      .map((s) => `<button data-cookstat="${s}" aria-pressed="${s === stat}">${esc(fstat[s][0])}</button>`)
+      .join('');
+    return btns ? `<div class="pick"><span class="pick-l">${esc(group)}</span><div class="ctrl" role="group" aria-label="${esc(group)}">${btns}</div></div>` : '';
+  }).join('');
+
+  const key = 'ing:' + stat;
+  // paged by bonus tier, not by food: a tier of tied foods never splits across pages
+  const p = page(tiers(db, rankedIngestor(db, stat)), state.cookPage[key] ?? 0, TIERS_PER_PAGE);
+  const rows = p.items.map(
+    (t) =>
+      `<tr><td class="num">≈ ${pct(t.value)}</td><td class="num">${clock(
+        t.seconds,
+      )}</td><td>${chipList(ctx, t.ids)}</td></tr>`,
+  );
+  return `<section class="card k-cook" id="ck-ing"><h3>Nutrient Ingestor <span class="ct">best foods per bonus</span></h3>${picker}
+    <div class="note" style="margin:14px 0 6px"><b>${esc(fstat[stat][0])}</b></div>${table(['Bonus', 'Time', 'Foods'], rows)}${pager(
+      key,
+      p,
+      p.items.length,
+      'tiers',
+    )}
+    <p class="note">Time is per item. ≈ marks an estimate from the game's range for the bonus and the food's cooking value, so foods with the same cooking value share a row.</p></section>`;
+}
+
+/** foods in one tier: the cheapest 12, then "Show all" */
+const tierChips = (ctx: Ctx, ids: string[], key: string) => `<div class="chips">${limited(ctx, ids.map((id) => chip(ctx, id)), key, 12)}</div>`;
+
+/** effect picker plus a table of the chosen effect's amounts, foods with the same amount sharing a row */
+function eatenSection(ctx: Ctx): string {
+  const { db, state } = ctx;
+  const all = topEaten(db, Infinity);
+  const kinds = EAT_KINDS.filter(([k]) => all[k].length);
+  const kind = kinds.find(([k]) => k === state.cookEat)?.[0] ?? kinds[0][0];
+  const picker = `<div class="ctrl" role="group" aria-label="Effect">${kinds
+    .map(([k, label]) => `<button data-cookeat="${k}" aria-pressed="${k === kind}">${esc(label)}</button>`)
+    .join('')}</div>`;
+
+  // tiers: foods with the same effect text, biggest first (topEaten order), cheapest first within
+  const groups = new Map<string, string[]>();
+  for (const id of all[kind]) {
+    const t = eatText(db.items[id].eat!);
+    groups.set(t, [...(groups.get(t) ?? []), id]);
+  }
+  const key = 'eat:' + kind;
+  const p = page([...groups], state.cookPage[key] ?? 0, TIERS_PER_PAGE);
+  const rows = p.items.map(([t, ids]) => `<tr><td>${esc(t)}</td><td>${tierChips(ctx, ids, `${key}:${t}`)}</td></tr>`);
+  return `<section class="card k-cook" id="ck-eat"><h3>Eaten directly <span class="ct">best foods per effect</span></h3>${picker}${table(
+    ['Amount', 'Foods'],
+    rows,
+  )}${pager(key, p, p.items.length, 'tiers')}<p class="note">Biggest effect first; foods with the same effect are listed cheapest first, so you give up the least sale value.</p></section>`;
+}
 
 export function renderCooking(ctx: Ctx): string {
-  const { db } = ctx;
+  const { db, state } = ctx;
   let h = pageHead(
     '🍳',
     'var(--cook)',
@@ -30,29 +94,16 @@ export function renderCooking(ctx: Ctx): string {
   h += `<nav class="summary" aria-label="Cooking reference">
     <a href="#" data-jump="ck-sale">Top sale prices</a><a href="#" data-jump="ck-ing">Nutrient Ingestor</a><a href="#" data-jump="ck-eat">Eaten directly</a></nav>`;
 
-  h += `<section class="card k-buy" id="ck-sale"><h3>Top 10 by sale price <span class="ct">base value</span></h3>${table(
-    ['#', 'Food', 'Base value', 'Nutrient Ingestor', 'Eat'],
-    topBySale(db).map((id, i) => {
-      const it = db.items[id];
-      return `<tr><td class="num">${i + 1}</td><td>${chip(ctx, id)}</td><td class="num">${fmt(it.v)}</td><td>${ingestorText(ctx, id, true)}</td><td>${
-        it.eat ? esc(eatText(it.eat)) : '<span class="q">ingestor only</span>'
-      }</td></tr>`;
-    }),
-  )}<p class="note">Terminal prices swing with each system's economy; base value is the reference price.</p></section>`;
-
-  h += `<section class="card k-cook" id="ck-ing"><h3>Nutrient Ingestor <span class="ct">top 3 per bonus</span></h3>${table(
-    ['Bonus', '1st', '2nd', '3rd'],
-    topIngestor(db).map(
-      ([stat, ids]) => `<tr><th scope="row">${esc(db.data.fstat![stat][0])}</th>${ranked(ctx, ids, (id) => ingestorText(ctx, id))}</tr>`,
+  const sale = page(topBySale(db, Infinity), state.cookPage.sale ?? 0);
+  h += `<section class="card k-buy" id="ck-sale"><h3>By sale price <span class="ct">base value</span></h3>${table(
+    ['#', 'Food', 'Base value'],
+    sale.items.map(
+      (id, i) => `<tr><td class="num">${sale.start + i + 1}</td><td>${chip(ctx, id)}</td><td class="num">${fmt(db.items[id].v)}</td></tr>`,
     ),
-  )}<p class="note">Bonus and time per item. ≈ marks an estimate from the game's range for the stat and the food's cooking value; measured values are in-game readings.</p></section>`;
+    'fit',
+  )}${pager('sale', sale, sale.items.length, 'foods')}<p class="note">Terminal prices swing with each system's economy; base value is the reference price.</p></section>`;
 
-  const eaten = topEaten(db);
-  h += `<section class="card k-cook" id="ck-eat"><h3>Eaten directly <span class="ct">top 3 per effect</span></h3>${table(
-    ['Effect', '1st', '2nd', '3rd'],
-    EAT_KINDS.filter(([k]) => eaten[k].length).map(
-      ([k, label]) => `<tr><th scope="row">${esc(label)}</th>${ranked(ctx, eaten[k], (id) => esc(eatText(db.items[id].eat!)))}</tr>`,
-    ),
-  )}<p class="note">Biggest effect first; foods with the same effect are listed cheapest first, so you give up the least sale value.</p></section>`;
+  h += ingestorSection(ctx);
+  h += eatenSection(ctx);
   return h;
 }

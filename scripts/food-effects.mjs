@@ -3,7 +3,6 @@
  *   item.eat   what eating it does            (consumable table -> reward table)
  *   item.ing   Nutrient Ingestor stat + value (product table FoodBonusStat / CookingValue)
  *   fstat      per-stat ingestor ranges        (defaultreality FoodStatValues) + English labels
- * Curated fields (item.ingM, measured in game) are left untouched.
  *
  * Input is a folder of MXML files converted from a local game install:
  *   1. Unpack with HGPAKtool (pip install HGPAKtool), from GAMEDATA/PCBANKS:
@@ -87,7 +86,7 @@ for (const [pid, p] of Object.entries(products)) if (p.name) (byName[p.name.toLo
 let matched = 0;
 const missing = [];
 const usedStats = new Set();
-for (const [id, it] of Object.entries(data.items)) {
+for (const it of Object.values(data.items)) {
   if (it.c !== 'Cooking') continue;
   delete it.eat;
   delete it.ing;

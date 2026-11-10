@@ -31,41 +31,50 @@ export const position = (cv: number) => Math.max(0, 1.15148 * cv - 0.10558);
  */
 export const POSITION_SPREAD = 0.05;
 
-/** BaseFoodDuration in the gameplay globals; one item lasts this × CookingValue (measured: 2:00 at 0.2, 6:36 at 0.66) */
+/** BaseFoodDuration in the gameplay globals; one item lasts this × CookingValue (measured: 2:00 at 0.2, 6:36 at 0.66, 7:30 at 0.75) */
 export const BASE_FOOD_SECONDS = 600;
+
+/**
+ * Stat value -> the percent the game shows. Analysis rewards (10–60) and small additive stats (Sprint Distance 0.1–0.6)
+ * show value × 100: 42.33 is +4,233%, 0.15 is +15%. Multipliers (ranges within 1–3, like Toxic Resistance 1.15–1.5) show
+ * the part above 1: Purged Ribs read +54%, which can't be value × 100 there. Stats where lower is better (Mining Speed
+ * 0.9 to 0.7) are assumed to show the part below 1; that one is unconfirmed.
+ */
+export function shown(min: number, max: number, v: number): number {
+  if (min >= 1 && max <= 3) return (v - 1) * 100;
+  if (max < min) return (1 - v) * 100;
+  return v * 100;
+}
 
 export interface Ingestor {
   label: string;
-  /** percent as the game displays it (stat value × 100) */
+  /** percent as the game displays it (see shown) */
   est: number;
   lo: number;
   hi: number;
-  /** measured in game, when curated */
-  measured?: number;
   /** seconds one item lasts */
   seconds: number;
 }
 
 /**
  * Nutrient Ingestor bonus. The game stores a min/max per stat (FoodStatValues) and a CookingValue per food;
- * readings fit min + position(CookingValue) × (max − min), give or take POSITION_SPREAD, and the game shows the value
- * × 100 as a percent. Both are confirmed against in-game readings only for Flora Analysis Rewards and Sprint Distance.
+ * readings fit min + position(CookingValue) × (max − min), give or take POSITION_SPREAD, shown as a percent by `shown`.
+ * The fit is confirmed for Flora Analysis Rewards and Sprint Distance; Toxic Resistance read higher than it predicts
+ * (Purged Ribs: +54% against about +41%), so multiplier stats may follow a different curve.
  */
 export function ingestor(data: Dataset, it: Item): Ingestor | undefined {
   const s = it.ing && data.fstat?.[it.ing[0]];
   if (!s) return undefined;
   const [label, min, max] = s;
   const cv = it.ing![1];
-  const at = (p: number) => (min + Math.max(0, p) * (max - min)) * 100;
+  const at = (p: number) => shown(min, max, min + Math.max(0, p) * (max - min));
   const p = position(cv);
   const [a, b] = [at(p - POSITION_SPREAD), at(p + POSITION_SPREAD)];
   return {
     label,
     est: at(p),
-    // ranges that run high to low (lower is better) keep lo <= hi
     lo: Math.min(a, b),
     hi: Math.max(a, b),
-    measured: it.ingM,
     seconds: Math.round(BASE_FOOD_SECONDS * cv),
   };
 }
@@ -111,23 +120,78 @@ export function topEaten(db: Db, n = 3): Record<string, string[]> {
   return out;
 }
 
-/** a food's ingestor bonus for ranking: the in-game reading when measured, else the estimate */
-export const ingestorValue = (g: Ingestor) => g.measured ?? g.est;
+/** a food's ingestor bonus for ranking */
+export const ingestorValue = (g: Ingestor) => g.est;
 
 /**
- * best n foods for each ingestor stat, by measured-or-estimated bonus (lower wins for stats whose range runs high to
- * low, like Mining Speed), ties cheapest first. Stats are in the order the dataset lists them.
+ * best n foods for each ingestor stat, biggest shown bonus first (`shown` already turns lower-is-better stats into
+ * bigger-is-better percents), ties cheapest first. Stats are in the order the dataset lists them.
  */
 export function topIngestor(db: Db, n = 3): [stat: string, ids: string[]][] {
   const out: [string, string[]][] = [];
-  for (const [stat, [, min, max]] of Object.entries(db.data.fstat ?? {})) {
-    const dir = max >= min ? 1 : -1;
+  for (const stat of Object.keys(db.data.fstat ?? {})) {
     const val = (id: string) => ingestorValue(ingestor(db.data, db.items[id])!);
     const ids = foods(db)
       .filter((id) => db.items[id].ing?.[0] === stat)
-      .sort((a, b) => dir * (val(b) - val(a)) || byValue(db)(a, b))
+      .sort((a, b) => val(b) - val(a) || byValue(db)(a, b))
       .slice(0, n);
     if (ids.length) out.push([stat, ids]);
   }
   return out;
+}
+
+/** ingestor bonuses grouped for the cooking reference picker; keys are Dataset.fstat stats */
+export const STAT_GROUPS: [group: string, stats: string[]][] = [
+  ['Scanning', ['Weapon_Scan_Discovery_Flora', 'Weapon_Scan_Discovery_Creature', 'Weapon_Scan_Discovery_Mineral', 'Weapon_Scan_Recharge_Time']],
+  ['Mining', ['Weapon_Laser_MiningBonus', 'Weapon_Laser_Mining_Speed']],
+  [
+    'Protection',
+    [
+      'Suit_Protection',
+      'Suit_Protection_HeatDrain',
+      'Suit_Protection_ColdDrain',
+      'Suit_Protection_ToxDrain',
+      'Suit_Protection_RadDrain',
+      'Suit_Protection_WaterDrain',
+      'Suit_Armour_Shield_Strength',
+    ],
+  ],
+  ['Movement', ['Suit_Stamina_Strength', 'Suit_Stamina_Recovery', 'Suit_Jetpack_Tank']],
+  ['Life support and other', ['Suit_Energy', 'Suit_Energy_Regen', 'Suit_AutoTranslator']],
+];
+
+export interface Tier {
+  /** estimated bonus percent */
+  value: number;
+  seconds: number;
+  /** foods sharing this exact bonus and duration, cheapest first */
+  ids: string[];
+}
+
+/** every food for one ingestor stat, best first (see topIngestor for the order) */
+export const rankedIngestor = (db: Db, stat: string) => topIngestor(db, Infinity).find(([s]) => s === stat)?.[1] ?? [];
+
+/**
+ * Groups ranked foods into tiers: consecutive foods with the same estimated bonus and duration share one tier
+ * (estimates can't tell apart foods with the same cooking value).
+ */
+export function tiers(db: Db, ids: string[]): Tier[] {
+  const out: Tier[] = [];
+  for (const id of ids) {
+    const g = ingestor(db.data, db.items[id])!;
+    const value = Math.round(ingestorValue(g));
+    const last = out[out.length - 1];
+    if (last && last.value === value && last.seconds === g.seconds) last.ids.push(id);
+    else out.push({ value, seconds: g.seconds, ids: [id] });
+  }
+  return out;
+}
+
+export const PAGE_SIZE = 10;
+
+/** one page of a ranked list: the slice, its 0-based start, and the clamped page number */
+export function page<T>(list: T[], n: number, size = PAGE_SIZE) {
+  const pages = Math.max(1, Math.ceil(list.length / size));
+  const p = Math.min(Math.max(0, n), pages - 1);
+  return { items: list.slice(p * size, p * size + size), start: p * size, page: p, pages, total: list.length };
 }

@@ -88,11 +88,7 @@ function foodSection(ctx: Ctx, id: string): string {
   h += `<li><b>Eat:</b> ${it.eat ? esc(eatText(it.eat)) : 'Cannot be eaten directly, only through the Nutrient Ingestor'}</li>`;
   if (ing) {
     const range = `${pct(ing.lo)} to ${pct(ing.hi)}`;
-    h += `<li><b>Nutrient Ingestor:</b> ${
-      ing.measured
-        ? `${pct(ing.measured)} ${esc(ing.label)} <span class="q">measured in game</span>`
-        : `about ${pct(ing.est)} ${esc(ing.label)} <span class="q">estimated, ${range}</span>`
-    }</li><li><b>Ingestor duration:</b> ${clock(ing.seconds)} per item</li>`;
+    h += `<li><b>Nutrient Ingestor:</b> about ${pct(ing.est)} ${esc(ing.label)} <span class="q">estimated, ${range}</span></li><li><b>Ingestor duration:</b> ${clock(ing.seconds)} per item</li>`;
   }
   return h + `</ul></section>`;
 }

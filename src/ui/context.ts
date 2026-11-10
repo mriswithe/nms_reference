@@ -13,6 +13,12 @@ export interface UiState {
   routes: Record<string, { a: string; b: string }>;
   /** cycle cards the user opened */
   openCycles: Set<string>;
+  /** ingestor bonus shown on the cooking reference page */
+  cookStat: string;
+  /** eat effect shown on the cooking reference page */
+  cookEat: string;
+  /** cooking reference page number per list: "sale", "eat", "ing:<stat>" */
+  cookPage: Record<string, number>;
 }
 
 export interface Ctx {
@@ -34,6 +40,6 @@ export function createCtx(data: Dataset): Ctx {
     families: buildFamilies(db),
     icons: new Set(data.icons ?? []),
     src: sourcing(db),
-    state: { refSort: 'fewest', treeMode: 'craft', expanded: new Set(), routes: {}, openCycles: new Set() },
+    state: { refSort: 'fewest', treeMode: 'craft', expanded: new Set(), routes: {}, openCycles: new Set(), cookStat: 'Weapon_Scan_Discovery_Flora', cookEat: 'life', cookPage: {} },
   };
 }
