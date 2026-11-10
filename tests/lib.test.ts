@@ -9,6 +9,8 @@ import { expand, groupRecipes, recipeKey } from '../src/lib/group';
 import { createCtx } from '../src/ui/context';
 import { renderSource } from '../src/ui/popover';
 import { abbr, esc } from '../src/lib/format';
+import { eatText, ingestor } from '../src/lib/food';
+import { renderItem } from '../src/ui/views/item';
 import { createSearch, norm } from '../src/lib/search';
 import type { Dataset, Recipe } from '../src/lib/types';
 
@@ -245,5 +247,49 @@ describe('restricted ingredients', () => {
   it('counts a pool by its best pair', () => {
     const stew = rankRows(groupRecipes(db.makes[id('Mystery Meat Stew')].cook), src)[0];
     expect(rowCost(stew, src)).toEqual({ animal: 0, wild: 0 });
+  });
+});
+
+describe('food effects', () => {
+  const food = db.ids.filter((x) => db.items[x].c === 'Cooking');
+
+  it('covers the cooking items', () => {
+    expect(food.filter((x) => db.items[x].eat).length).toBeGreaterThan(300);
+    expect(food.filter((x) => db.items[x].ing).length).toBeGreaterThan(300);
+  });
+
+  it('every ingestor stat has a range', () => {
+    for (const x of food) {
+      const s = db.items[x].ing;
+      if (s) expect(data.fstat?.[s[0]], `${x} ${s[0]}`).toBeDefined();
+    }
+  });
+
+  it('measured readings fall inside the estimated range', () => {
+    const measured = food.filter((x) => db.items[x].ingM);
+    expect(measured.length).toBeGreaterThan(0);
+    for (const x of measured) {
+      const g = ingestor(data, db.items[x])!;
+      expect(g.measured, db.items[x].n).toBeGreaterThanOrEqual(g.lo);
+      expect(g.measured, db.items[x].n).toBeLessThanOrEqual(g.hi);
+    }
+  });
+
+  it('describes Spore Dunkers', () => {
+    const it = db.items[id('Spore Dunkers')];
+    expect(eatText(it.eat!)).toBe('Restores 20% life support');
+    const g = ingestor(data, it)!;
+    expect(g).toMatchObject({ label: 'Flora Analysis Rewards', measured: 4233 });
+    expect(g.est).toBeCloseTo(4272, 0);
+  });
+
+  it('renders a food section on the item page', () => {
+    const ctx = createCtx(data);
+    const html = renderItem(ctx, id('Spore Dunkers'));
+    expect(html).toContain('Restores 20% life support');
+    expect(html).toContain('+4,233% Flora Analysis Rewards');
+    expect(renderItem(ctx, id('Floral Wafer'))).toContain('Restores 25% hazard protection');
+    expect(renderItem(ctx, id('Nightmare Sausage'))).toContain('Cannot be eaten directly');
+    expect(renderItem(ctx, id('Carbon'))).not.toContain('Food effects');
   });
 });

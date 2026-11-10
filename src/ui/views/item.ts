@@ -1,6 +1,7 @@
 import { MAX_DEPTH } from '../../lib/cost';
 import { totalCount } from '../../lib/db';
 import { esc, fmt, plural } from '../../lib/format';
+import { eatText, ingestor, VERIFIED_STATS } from '../../lib/food';
 import type { Recipe } from '../../lib/types';
 import type { Ctx } from '../context';
 import { rankRows } from '../../lib/sourcing';
@@ -73,6 +74,32 @@ function craftSection(ctx: Ctx, id: string): string {
           <div class="totals" style="margin-top:6px">${tot.map(([i, q]) => chip(ctx, i, fmt(q))).join('')}</div></div>
       </div>`;
   }
+  return h + `</section>`;
+}
+
+const pct = (n: number) => `+${fmt(Math.round(n))}%`;
+
+/** what eating it does, and its Nutrient Ingestor bonus */
+function foodSection(ctx: Ctx, id: string): string {
+  const it = ctx.db.items[id];
+  const ing = ingestor(ctx.db.data, it);
+  if (!it.eat && !ing) return '';
+  let h = `<section class="card k-cook" id="s-food"><h3>Food effects</h3><ul class="plain">`;
+  // no consumable entry in the game: it can only be used through the Nutrient Ingestor
+  h += `<li><b>Eat:</b> ${it.eat ? esc(eatText(it.eat)) : 'Cannot be eaten directly, only through the Nutrient Ingestor'}</li>`;
+  if (ing) {
+    const range = `${pct(ing.lo)} to ${pct(ing.hi)}`;
+    h += `<li><b>Nutrient Ingestor:</b> ${
+      ing.measured
+        ? `${pct(ing.measured)} ${esc(ing.label)} <span class="q">measured in game</span>`
+        : `about ${pct(ing.est)} ${esc(ing.label)} <span class="q">estimated, ${range}</span>`
+    }</li>`;
+  }
+  h += `</ul>`;
+  if (ing && !ing.measured)
+    h += `<p class="note">Estimated from the game's ingestor range for this stat and this food's cooking value (${fmt(it.ing![1])}). Each food shifts it a few percent either way.${
+      VERIFIED_STATS.has(it.ing![0]) ? '' : ' How the game displays this stat has not been checked yet.'
+    }</p>`;
   return h + `</section>`;
 }
 
@@ -161,6 +188,8 @@ export function renderItem(ctx: Ctx, id: string): string {
       rows.length < c.cook ? ` in ${plural(rows.length, 'row')}` : ''
     }</span></h3><div class="rlist">${limited(ctx, rows, 'cook' + id)}</div></section>`;
   }
+
+  h += foodSection(ctx, id);
 
   if (c.mine || c.buy) {
     h += `<div class="grid2">`;
