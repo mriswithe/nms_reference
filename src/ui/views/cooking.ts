@@ -8,7 +8,18 @@ const table = (head: string[], rows: string[], cls = '') =>
     '',
   )}</tbody></table></div>`;
 
-const chipList = (ctx: Ctx, ids: string[]) => `<div class="chips">${ids.map((id) => chip(ctx, id)).join('')}</div>`;
+/** a food chip followed by 🐾 / 🌿 when it can only be made with creature parts or wild-only plants */
+function foodChip(ctx: Ctx, id: string): string {
+  const marks =
+    (ctx.src.animal.has(id) ? '<span class="srcm" title="Only obtainable from creatures">🐾</span>' : '') +
+    (ctx.src.wild.has(id) ? '<span class="srcm" title="Needs plants that only grow wild (cannot be farmed)">🌿</span>' : '');
+  return marks ? `<span class="fc">${chip(ctx, id)}${marks}</span>` : chip(ctx, id);
+}
+
+/** what the 🐾 / 🌿 markers mean, shown under each table */
+const LEGEND = "🐾 needs creature parts · 🌿 needs wild plants that can't be farmed; unmarked foods can be made from farmed or gathered ingredients.";
+
+const chipList = (ctx: Ctx, ids: string[]) => `<div class="chips">${ids.map((id) => foodChip(ctx, id)).join('')}</div>`;
 
 /** "‹ Previous  11–20 of 385  Next ›"; `key` names the list in state.cookPage */
 function pager(key: string, p: { page: number; pages: number; start: number; total: number }, shown: number, noun: string): string {
@@ -52,11 +63,11 @@ function ingestorSection(ctx: Ctx): string {
       p.items.length,
       'tiers',
     )}
-    <p class="note">Time is per item. ≈ marks an estimate from the game's range for the bonus and the food's cooking value, so foods with the same cooking value share a row.</p></section>`;
+    <p class="note">Time is per item. ≈ marks an estimate from the game's range for the bonus and the food's cooking value, so foods with the same cooking value share a row.</p><p class="note">${LEGEND}</p></section>`;
 }
 
 /** foods in one tier: the cheapest 12, then "Show all" */
-const tierChips = (ctx: Ctx, ids: string[], key: string) => `<div class="chips">${limited(ctx, ids.map((id) => chip(ctx, id)), key, 12)}</div>`;
+const tierChips = (ctx: Ctx, ids: string[], key: string) => `<div class="chips">${limited(ctx, ids.map((id) => foodChip(ctx, id)), key, 12)}</div>`;
 
 /** effect picker plus a table of the chosen effect's amounts, foods with the same amount sharing a row */
 function eatenSection(ctx: Ctx): string {
@@ -80,7 +91,7 @@ function eatenSection(ctx: Ctx): string {
   return `<section class="card k-cook" id="ck-eat"><h3>Eaten directly <span class="ct">best foods per effect</span></h3>${picker}${table(
     ['Amount', 'Foods'],
     rows,
-  )}${pager(key, p, p.items.length, 'tiers')}<p class="note">Biggest effect first; foods with the same effect are listed cheapest first, so you give up the least sale value.</p></section>`;
+  )}${pager(key, p, p.items.length, 'tiers')}<p class="note">Biggest effect first; foods with the same effect are listed cheapest first, so you give up the least sale value.</p><p class="note">${LEGEND}</p></section>`;
 }
 
 export function renderCooking(ctx: Ctx): string {
@@ -98,10 +109,10 @@ export function renderCooking(ctx: Ctx): string {
   h += `<section class="card k-buy" id="ck-sale"><h3>By sale price <span class="ct">base value</span></h3>${table(
     ['#', 'Food', 'Base value'],
     sale.items.map(
-      (id, i) => `<tr><td class="num">${sale.start + i + 1}</td><td>${chip(ctx, id)}</td><td class="num">${fmt(db.items[id].v)}</td></tr>`,
+      (id, i) => `<tr><td class="num">${sale.start + i + 1}</td><td>${foodChip(ctx, id)}</td><td class="num">${fmt(db.items[id].v)}</td></tr>`,
     ),
     'fit',
-  )}${pager('sale', sale, sale.items.length, 'foods')}<p class="note">Terminal prices swing with each system's economy; base value is the reference price.</p></section>`;
+  )}${pager('sale', sale, sale.items.length, 'foods')}<p class="note">Terminal prices swing with each system's economy; base value is the reference price.</p><p class="note">${LEGEND}</p></section>`;
 
   h += ingestorSection(ctx);
   h += eatenSection(ctx);
