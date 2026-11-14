@@ -9,7 +9,7 @@ import { expand, groupRecipes, recipeKey } from '../src/lib/group';
 import { createCtx } from '../src/ui/context';
 import { renderSource } from '../src/ui/popover';
 import { abbr, esc } from '../src/lib/format';
-import { eatText, ingestor, ingestorValue, page, rankedIngestor, shown, tiers, topBySale, topEaten, topIngestor } from '../src/lib/food';
+import { eatRank, eatText, ingestor, ingestorRank, ingestorValue, page, rankedIngestor, shown, tiers, topBySale, topEaten, topIngestor } from '../src/lib/food';
 import { renderCooking } from '../src/ui/views/cooking';
 import { renderItem } from '../src/ui/views/item';
 import { createSearch, norm } from '../src/lib/search';
@@ -335,6 +335,21 @@ describe('food effects', () => {
     const g = ingestor(data, it)!;
     expect(g.label).toBe('Flora Analysis Rewards');
     expect(g.est).toBeCloseTo(4272, 0);
+  });
+
+  it('ranks a food among others with the same effect, ties sharing a rank', () => {
+    const life = topEaten(db, Infinity).life;
+    expect(eatRank(db, life[0])).toEqual({ rank: 1, of: life.length });
+    // every life-support food at the top amount shares rank 1
+    const top = life.filter((x) => db.items[x].eat![1] === db.items[life[0]].eat![1]);
+    for (const x of top) expect(eatRank(db, x)!.rank).toBe(1);
+    const next = life[top.length];
+    expect(eatRank(db, next)!.rank).toBe(top.length + 1);
+    const sd = id('Spore Dunkers');
+    const r = ingestorRank(db, sd)!;
+    expect(r.rank).toBeGreaterThanOrEqual(1);
+    expect(r.of).toBe(rankedIngestor(db, db.items[sd].ing![0]).length);
+    expect(renderItem(createCtx(data), sd)).toContain(`#${r.rank} of ${r.of}`);
   });
 
   it('puts the in-game description last on the item page', () => {

@@ -1,7 +1,7 @@
 import { MAX_DEPTH } from '../../lib/cost';
 import { totalCount } from '../../lib/db';
 import { esc, fmt, plural } from '../../lib/format';
-import { clock, eatText, ingestor, pct } from '../../lib/food';
+import { clock, eatRank, eatText, ingestor, ingestorRank, pct, type Rank } from '../../lib/food';
 import type { Recipe } from '../../lib/types';
 import type { Ctx } from '../context';
 import { rankRows, rankUses } from '../../lib/sourcing';
@@ -86,10 +86,17 @@ function foodSection(ctx: Ctx, id: string): string {
   if (!it.eat && !ing) return '';
   let h = `<section class="card k-cook" id="s-food"><h3>Food effects</h3><ul class="plain">`;
   // no consumable entry in the game: it can only be used through the Nutrient Ingestor
-  h += `<li><b>Eat:</b> ${it.eat ? esc(eatText(it.eat)) : 'Cannot be eaten directly, only through the Nutrient Ingestor'}</li>`;
+  const rank = (r: Rank | undefined, what: string) =>
+    r ? ` <span class="rank" title="Rank among ${fmt(r.of)} foods ${what}; equal amounts share a rank">#${fmt(r.rank)} of ${fmt(r.of)}</span>` : '';
+  h += `<li><b>Eat:</b> ${
+    it.eat ? esc(eatText(it.eat)) + rank(eatRank(ctx.db, id), 'with this kind of effect') : 'Cannot be eaten directly, only through the Nutrient Ingestor'
+  }</li>`;
   if (ing) {
     const range = `${pct(ing.lo)} to ${pct(ing.hi)}`;
-    h += `<li><b>Nutrient Ingestor:</b> about ${pct(ing.est)} ${esc(ing.label)} <span class="q">estimated, ${range}</span></li><li><b>Ingestor duration:</b> ${clock(ing.seconds)} per item</li>`;
+    h += `<li><b>Nutrient Ingestor:</b> about ${pct(ing.est)} ${esc(ing.label)}${rank(
+      ingestorRank(ctx.db, id),
+      `with a ${ing.label} bonus`,
+    )} <span class="q">estimated, ${range}</span></li><li><b>Ingestor duration:</b> ${clock(ing.seconds)} per item</li>`;
   }
   return h + `</ul></section>`;
 }

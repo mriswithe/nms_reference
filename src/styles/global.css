@@ -67,6 +67,7 @@ main{padding-top:20px;display:grid;gap:18px}
 .chip:hover{background:var(--chip-hover);border-color:var(--line)}
 .chip.self{background:var(--accent-soft);cursor:default}
 .q{font:500 12.5px var(--f-mono);font-variant-numeric:tabular-nums;color:var(--muted)}
+.rank{font:600 12px var(--f-mono);font-variant-numeric:tabular-nums;color:var(--accent);margin-left:4px}
 .plus,.arrow{color:var(--muted);font-family:var(--f-mono)}
 .alts{display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px 6px;padding:2px 4px;border:1px dashed var(--line);border-radius:9px}
 .or{color:var(--muted);font-size:12px;font-style:italic}
