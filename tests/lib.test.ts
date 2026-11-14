@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import raw from '../src/data/nms.json';
-import { byTier, cmpCost, rankRows, rowCost, sourcing } from '../src/lib/sourcing';
+import { byTier, cmpCost, rankRows, rankUses, rowCost, sourcing } from '../src/lib/sourcing';
 import { CostModel } from '../src/lib/cost';
 import { refinableConsumables } from '../src/lib/consumables';
 import { buildFamilies, oneWayUpgrades, route, stellarExpansions } from '../src/lib/cycles';
@@ -26,9 +26,13 @@ const id = (name: string) => {
 
 describe('dataset', () => {
   it('has items and recipes', () => {
-    expect(db.ids.length).toBeGreaterThan(3000);
+    expect(db.ids.length).toBeGreaterThan(2000);
     expect(data.ref.length).toBeGreaterThan(100);
     expect(data.cook.length).toBeGreaterThan(100);
+  });
+
+  it('leaves out starship components and base parts', () => {
+    expect(db.ids.filter((x) => /Starship Component$/.test(db.items[x].g) || db.items[x].c === 'Base part')).toEqual([]);
   });
 
   it('every recipe references known items', () => {
@@ -170,6 +174,20 @@ describe('source popover', () => {
     expect(h).toMatch(/>Cook</);
     expect(h).not.toMatch(/>Refine</);
   });
+  it('names the creature and wild-plant ingredients the cheapest route needs', () => {
+    const names = (n: string) => ctx.src.needs(id(n)).map((x) => x.opts.map((o) => db.items[o].n));
+    // three egg recipes for Viscous Custard merge into one choice; Cream comes from either milk
+    const ice = names('Ice Cream').map((x) => x.sort());
+    expect(ice).toHaveLength(2);
+    expect(ice).toContainEqual(['Creature Egg', 'Giant Egg', 'Tall Eggs']);
+    expect(ice).toContainEqual(['Fresh Milk', 'Wild Milk']);
+    expect(names('Spiced Ice').flat()).toContain('Fireberry');
+    const h = renderSource(ctx, id('Ice Cream'));
+    expect(h).toContain('Needs from creatures / wild plants');
+    for (const n of ['Fresh Milk', 'Wild Milk', 'Creature Egg', 'Tall Eggs', 'Giant Egg']) expect(h).toContain(n);
+    // makeable without either, or itself the creature part
+    for (const n of ['Processed Meat', 'Raw Steak']) expect(renderSource(ctx, id(n))).not.toContain('Needs from');
+  });
   it('condenses large cooking groups', () => {
     const h = renderSource(ctx, id('Mystery Meat Stew'));
     expect(h).toContain('Any 2 different of');
@@ -243,6 +261,26 @@ describe('restricted ingredients', () => {
             const n = qs.map(([i]) => src.steps.get(i) ?? big);
             expect(n).toEqual([...n].sort((a, b) => a - b));
           }
+  });
+
+  it('orders an item\'s cooking uses: irreplaceable, then fewest interchangeable peers, then Creature Pellets', () => {
+    const fc = byName('Frost Crystal');
+    const outs = rankUses(db, rankRows(groupRecipes(db.uses[fc].cook, fc), src), fc).map((g) => db.items[g.out[0]].n);
+    const at = (n: string) => outs.indexOf(n);
+    // nothing replaces Frost Crystal in Iced Screams; Frozen Tubers does in Ice Cream
+    expect(at('Iced Screams')).toBeLessThan(at('Ice Cream'));
+    expect(outs.at(-1)).toBe('Creature Pellets');
+    // Fruity Ice Cream (Very Thick Custard is the only peer) before Cream Fingers (six other creams and custards)
+    const vc = byName('Viscous Custard');
+    const vOuts = rankUses(db, rankRows(groupRecipes(db.uses[vc].cook, vc), src), vc).map((g) => db.items[g.out[0]].n);
+    expect(vOuts.indexOf('Fruity Ice Cream')).toBeLessThan(vOuts.indexOf('Cream Fingers'));
+  });
+
+  it('counts restricted parts across the whole recipe tree', () => {
+    // Viscous Custard needs an egg and Cream (from milk): 2 creature parts, not 1
+    const vc = byName('Viscous Custard');
+    const ice = groupRecipes(db.uses[vc].cook, vc).find((g) => db.items[g.out[0]].n === 'Ice Cream')!;
+    expect(rowCost(ice, src)).toEqual({ animal: 2, wild: 0 });
   });
 
   it('counts a pool by its best pair', () => {
@@ -384,12 +422,12 @@ describe('cooking reference', () => {
     const amounts = [...html.matchAll(/<tr><td>Restores (\d+)% life support/g)].map((m) => Number(m[1]));
     expect(amounts).toEqual([40, 20, 5]);
     expect(html).not.toContain('data-cpage');
-    // sprint: every food gives 15 s, so one tier showing the 12 cheapest and a "Show all" button
+    // sprint: every food gives 15 s, so one tier listing all of them
     ctx.state.cookEat = 'sprint';
     html = eat(renderCooking(ctx));
     expect(html.match(/<tr><td>/g)!.length).toBe(1);
-    expect(html.match(/<button class="chip/g)!.length).toBe(12);
-    expect(html).toMatch(/Show all \d+/);
+    expect(html.match(/<button class="chip/g)!.length).toBe(topEaten(db, Infinity).sprint.length);
+    expect(html).not.toMatch(/Show all|Show fewer/);
   });
 
   it('pages a list and clamps out-of-range pages', () => {

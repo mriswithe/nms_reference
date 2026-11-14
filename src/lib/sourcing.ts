@@ -8,8 +8,8 @@
  * only count when something outside the cycle grounds them.
  */
 import type { Db } from './db';
-import type { RecipeGroup } from './group';
-import type { Qty } from './types';
+import { recipeKey, type RecipeGroup } from './group';
+import type { Qty, Recipe } from './types';
 
 const ANIMAL_SOURCE = /harvested from creatures|caught by fishing|dropped by creatures/i;
 const ANIMAL_GROUP = new Set(['Horrific Sample', 'Monstrosity', 'Intestinal Fragment', 'Vile Larva']);
@@ -102,13 +102,163 @@ export interface Sourcing {
   wild: Set<string>;
   /** fewest processing steps from directly obtainable items, avoiding both; absent when there is no such route */
   steps: Map<string, number>;
+  /** fewest creature-only / wild-only base ingredients in one of each item, across its whole recipe tree */
+  parts: Map<string, Cost>;
+  /** creature-only / wild-only base ingredients on the cheapest route to one of `id`; empty when none are needed */
+  needs(id: string): Need[];
 }
 
-export const sourcing = (db: Db): Sourcing => ({
-  animal: restricted(db, animalBase),
-  wild: restricted(db, wildBase),
-  steps: processingSteps(db),
-});
+/** one restricted base ingredient a route needs: any one of `opts`, `n` of them per item made */
+export interface Need {
+  opts: string[];
+  n: number;
+}
+
+export function sourcing(db: Db): Sourcing {
+  const { best, routes } = minParts(db);
+  return {
+    animal: restricted(db, animalBase),
+    wild: restricted(db, wildBase),
+    steps: processingSteps(db),
+    parts: best,
+    needs: needsOf(db, best, routes),
+  };
+}
+
+/** below this a cost change is rounding noise, so relaxation stops on loops that keep shaving fractions */
+const EPS = 1e-6;
+
+/** [inputs, units made] for every refiner, Nutrient Processor and crafting recipe, by output */
+type Routes = Map<string, [ins: Qty[], n: number][]>;
+
+/**
+ * Least restricted base ingredients (by `cmpCost`) needed for one unit of each item, over refiner, Nutrient Processor
+ * and crafting recipes. Restricted base items count as one part each; anything gathered or bought otherwise is free.
+ */
+function minParts(db: Db): { best: Map<string, Cost>; routes: Routes } {
+  const best = new Map<string, Cost>();
+  for (const id of db.ids) {
+    if (direct(db, id)) best.set(id, ZERO);
+    else {
+      const a = animalBase(db, id) === 'restricted' ? 1 : 0;
+      const w = wildBase(db, id) === 'restricted' ? 1 : 0;
+      if (a || w) best.set(id, { animal: a, wild: w });
+    }
+  }
+  const routes: Routes = new Map();
+  const addRoute = (ins: Qty[], [out, n]: Qty) => (routes.get(out) ?? routes.set(out, []).get(out)!).push([ins, n]);
+  for (const r of [...db.data.ref, ...db.data.cook]) addRoute(r[0], r[1]);
+  for (const id of db.ids) {
+    const it = db.items[id];
+    if (it.rq) addRoute(it.rq, [id, it.q || 1]);
+  }
+  // relax until stable; the round cap guards against loops whose yields keep shrinking costs
+  for (let round = 0, changed = true; changed && round < 100; round++) {
+    changed = false;
+    for (const [out, list] of routes)
+      for (const [ins, n] of list) {
+        const c = routeCost(best, ins, n);
+        const cur = best.get(out);
+        if (!c || (cur && cmpCost(c, cur) > -EPS)) continue;
+        best.set(out, c);
+        changed = true;
+      }
+  }
+  return { best, routes };
+}
+
+/** cost of one unit from a route, or null while an input has no known cost */
+function routeCost(best: Map<string, Cost>, ins: Qty[], n: number): Cost | null {
+  let c: Cost = ZERO;
+  for (const [i, q] of ins) {
+    const ci = best.get(i);
+    if (!ci) return null;
+    c = { animal: c.animal + (q * ci.animal) / n, wild: c.wild + (q * ci.wild) / n };
+  }
+  return c;
+}
+
+const needKey = (ns: Need[]) => ns.map((x) => `${x.n}:${x.opts.join('|')}`).join('+');
+
+/** canonical form: equal option sets combined, sorted so equal lists compare equal */
+function normalize(ns: Need[]): Need[] {
+  const by = new Map<string, Need>();
+  for (const x of ns) {
+    const k = x.opts.join('|');
+    const cur = by.get(k);
+    by.set(k, { opts: x.opts, n: (cur?.n ?? 0) + x.n });
+  }
+  return [...by.values()].sort((a, b) => a.opts.join('|').localeCompare(b.opts.join('|')));
+}
+
+/** merge two need lists that differ in exactly one entry (same count) into one with that entry's options combined */
+function mergeNeeds(a: Need[], b: Need[]): Need[] | null {
+  if (a.length !== b.length) return null;
+  for (let i = 0; i < a.length; i++)
+    for (let j = 0; j < b.length; j++) {
+      if (a[i].n !== b[j].n || needKey(a.filter((_, k) => k !== i)) !== needKey(b.filter((_, k) => k !== j))) continue;
+      const opts = [...new Set([...a[i].opts, ...b[j].opts])].sort();
+      return normalize(a.map((x, k) => (k === i ? { opts, n: x.n } : x)));
+    }
+  return null;
+}
+
+/**
+ * Restricted base ingredients behind each item's cheapest routes. Every route tied for cheapest is followed, and
+ * routes that differ in one ingredient merge into "A or B", so three egg recipes read as one choice of egg.
+ */
+function needsOf(db: Db, best: Map<string, Cost>, routes: Routes): (id: string) => Need[] {
+  const memo = new Map<string, Need[]>();
+  const busy = new Set<string>();
+  const go = (id: string): Need[] | null => {
+    const hit = memo.get(id);
+    if (hit) return hit;
+    const c = best.get(id);
+    if (!c || busy.has(id)) return null;
+    if (!(c.animal + c.wild)) return [];
+    const list = (routes.get(id) ?? []).filter(([ins, n]) => {
+      const rc = routeCost(best, ins, n);
+      return rc && Math.abs(cmpCost(rc, c)) < EPS && Math.abs(rc.animal - c.animal) < EPS;
+    });
+    // a restricted base item is itself a need, alongside any recipe that is just as cheap
+    const self: Need[] = [{ opts: [id], n: 1 }];
+    const isBase = !direct(db, id) && (animalBase(db, id) === 'restricted' || wildBase(db, id) === 'restricted');
+    if (!list.length) return self;
+    busy.add(id);
+    let alts: Need[][] = isBase ? [self] : [];
+    for (const [ins, n] of list) {
+      const parts: Need[] = [];
+      let ok = true;
+      for (const [i, q] of ins) {
+        const sub = go(i);
+        if (!sub) {
+          ok = false;
+          break;
+        }
+        for (const x of sub) parts.push({ opts: x.opts, n: (x.n * q) / n });
+      }
+      if (ok) alts.push(normalize(parts));
+    }
+    busy.delete(id);
+    // merge alternatives until nothing changes
+    for (let changed = true; changed; ) {
+      changed = false;
+      outer: for (let a = 0; a < alts.length; a++)
+        for (let b = a + 1; b < alts.length; b++) {
+          const m = needKey(alts[a]) === needKey(alts[b]) ? alts[a] : mergeNeeds(alts[a], alts[b]);
+          if (!m) continue;
+          alts = [...alts.slice(0, a), m, ...alts.slice(a + 1, b), ...alts.slice(b + 1)];
+          changed = true;
+          break outer;
+        }
+    }
+    // several unmergeable routes: show the one with the most choice
+    const pick = alts.sort((x, y) => y.reduce((s, v) => s + v.opts.length, 0) - x.reduce((s, v) => s + v.opts.length, 0))[0] ?? null;
+    if (pick) memo.set(id, pick);
+    return pick;
+  };
+  return (id) => go(id) ?? [];
+}
 export const animalOnly = (db: Db) => restricted(db, animalBase);
 export const wildOnly = (db: Db) => restricted(db, wildBase);
 
@@ -122,7 +272,13 @@ const ZERO: Cost = { animal: 0, wild: 0 };
 const add = (a: Cost, b: Cost): Cost => ({ animal: a.animal + b.animal, wild: a.wild + b.wild });
 /** fewer restricted ingredients overall first; on a tie, fewer animal parts */
 export const cmpCost = (a: Cost, b: Cost) => a.animal + a.wild - (b.animal + b.wild) || a.animal - b.animal;
-const itemCost = (s: Sourcing, [i]: Qty): Cost => ({ animal: s.animal.has(i) ? 1 : 0, wild: s.wild.has(i) ? 1 : 0 });
+/** whether the item itself is creature-only / wild-only */
+const tierCost = (s: Sourcing, [i]: Qty): Cost => ({ animal: s.animal.has(i) ? 1 : 0, wild: s.wild.has(i) ? 1 : 0 });
+/** restricted base ingredients behind `q` of an item, across its whole recipe tree */
+function itemCost(s: Sourcing, [i, q]: Qty): Cost {
+  const c = s.parts.get(i) ?? tierCost(s, [i, 1]);
+  return { animal: c.animal * q, wild: c.wild * q };
+}
 
 /** the cheapest recipe a grouped row allows, picking the best option in each slot */
 export function rowCost(g: RecipeGroup, s: Sourcing): Cost {
@@ -145,13 +301,14 @@ export function rowCost(g: RecipeGroup, s: Sourcing): Cost {
 const width = (g: RecipeGroup) => (g.pool ? 2 : g.slots.length);
 
 /**
- * Rows ordered by fewest restricted ingredients (animal-only + wild-only, ties to fewer animal parts), then fewest
+ * Rows ordered by fewest restricted base ingredients across the whole recipe tree (animal-only + wild-only, ties to fewer animal parts), then fewest
  * inputs, then most recipes covered; each slot's options are listed cheapest first. Returns new objects.
  */
 export function rankRows(groups: RecipeGroup[], s: Sourcing): RecipeGroup[] {
   const steps = (q: Qty) => s.steps.get(q[0]) ?? Number.MAX_SAFE_INTEGER;
-  // least restricted first; within a tier, fewest processing steps (stable for ties)
-  const order = (opts: Qty[]) => [...opts].sort((a, b) => cmpCost(itemCost(s, a), itemCost(s, b)) || steps(a) - steps(b));
+  // least restricted tier first; within a tier, fewest parts in the whole tree, then fewest processing steps
+  const order = (opts: Qty[]) =>
+    [...opts].sort((a, b) => cmpCost(tierCost(s, a), tierCost(s, b)) || cmpCost(itemCost(s, a), itemCost(s, b)) || steps(a) - steps(b));
   return groups
     .map((g) => ({
       ...g,
@@ -160,6 +317,42 @@ export function rankRows(groups: RecipeGroup[], s: Sourcing): RecipeGroup[] {
     }))
     .map((g) => ({ g, c: rowCost(g, s) }))
     .sort((a, b) => cmpCost(a.c, b.c) || width(a.g) - width(b.g) || b.g.recipes.length - a.g.recipes.length)
+    .map(({ g }) => g);
+}
+
+/** the inputs of `ins` with the `k`th removed, in canonical form */
+const without = (ins: Qty[], k: number) => recipeKey(ins.filter((_, i) => i !== k));
+
+/** ingredients that other recipes for the same output use in place of `id` */
+function peers(db: Db, r: Recipe, id: string): string[] {
+  const k = r[0].findIndex(([i]) => i === id);
+  if (k < 0) return [];
+  const rest = without(r[0], k);
+  const out: string[] = [];
+  for (const r2 of db.makes[r[1][0]]?.cook ?? []) {
+    if (r2 === r || r2[2] !== r[2] || r2[3] !== r[3] || r2[0].length !== r[0].length) continue;
+    r2[0].forEach(([i], j) => {
+      if (i !== id && without(r2[0], j) === rest) out.push(i);
+    });
+  }
+  return out;
+}
+
+/**
+ * Order for an item's "Used in" Nutrient Processor rows (groups pinned on `id`), each tier keeping `rankRows` order:
+ *  0. the item can't be replaced: no other ingredient makes the same output with the same partners
+ *  1. the item is one of several interchangeable ingredients, fewest alternatives first
+ *  2. Creature Pellets (bait accepts almost anything)
+ */
+export function rankUses(db: Db, groups: RecipeGroup[], id: string): RecipeGroup[] {
+  const rank = (g: RecipeGroup): [number, number] => {
+    if (db.items[g.out[0]]?.n === 'Creature Pellets') return [2, 0];
+    const each = g.recipes.map((r) => peers(db, r, id));
+    return each.every((p) => p.length) ? [1, new Set(each.flat()).size] : [0, 0];
+  };
+  return groups
+    .map((g) => ({ g, r: rank(g) }))
+    .sort((a, b) => a.r[0] - b.r[0] || a.r[1] - b.r[1])
     .map(({ g }) => g);
 }
 

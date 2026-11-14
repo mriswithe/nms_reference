@@ -68,6 +68,23 @@ function stepNote(ctx: Ctx, id: string) {
   return `⚙ Makeable in ${n} refiner / processor step${n > 1 ? 's' : ''} from gathered resources`;
 }
 
+/** the creature-only / wild-only ingredients the cheapest route needs, one line per ingredient ("A or B") */
+function needsBlock(ctx: Ctx, id: string) {
+  const needs = ctx.src.needs(id);
+  // nothing restricted, or the item is itself the creature / plant part
+  if (!needs.length || (needs.length === 1 && needs[0].opts.length === 1 && needs[0].opts[0] === id)) return '';
+  const lines = needs.map(({ opts, n }) => {
+    const icon = (opts.some((o) => ctx.src.animal.has(o)) ? '🐾' : '') + (opts.some((o) => ctx.src.wild.has(o)) ? '🌿' : '');
+    const count = n === 1 ? '' : `<span class="pq">${fmt(n)}×</span>`;
+    const body =
+      opts.length <= 4
+        ? opts.map((o) => name(ctx, [o, 1])).join('<span class="pp">or</span>')
+        : `<span class="pi">one of ${opts.length}:</span>${optList(ctx, opts.map((o) => [o, 1]))}`;
+    return `<span aria-hidden="true">${icon}</span>${count}${body}`;
+  });
+  return block('Needs from creatures / wild plants', 'need', lines);
+}
+
 export function renderSource(ctx: Ctx, id: string): string {
   const { db } = ctx;
   const it = db.items[id];
@@ -78,6 +95,7 @@ export function renderSource(ctx: Ctx, id: string): string {
   const cook = rankRows(groupRecipes(m?.cook ?? []), ctx.src);
 
   const body =
+    needsBlock(ctx, id) +
     block('Find', 'mine', ob.slice(0, MAX_LINES).map(esc), ob.length) +
     block('Buy', 'buy', buy.slice(0, MAX_LINES).map(esc), buy.length) +
     block('Craft', 'craft', it.rq ? [it.rq.map((q) => name(ctx, q)).join(plus) + (it.q && it.q > 1 ? ` <span class="pq">→ ${fmt(it.q)}</span>` : '')] : []) +

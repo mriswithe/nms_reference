@@ -7,7 +7,7 @@ import type { Dataset } from '../lib/types';
 export interface UiState {
   refSort: 'fewest' | 'yield';
   treeMode: 'craft' | 'smart';
-  /** list keys the user expanded with "Show all" */
+  /** "one of" / "any 2 of" chips the user expanded */
   expanded: Set<string>;
   /** per-family route-finder selection */
   routes: Record<string, { a: string; b: string }>;
