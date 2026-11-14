@@ -170,14 +170,24 @@ export interface Tier {
   ids: string[];
 }
 
-/** a rank among `of` foods; foods with an equal amount share it (1 + how many are strictly better) */
+/** a food's level among the distinct amounts foods give for the same effect, best first */
 export interface Rank {
+  /** 1 = the biggest amount */
   rank: number;
+  /** how many distinct amounts there are */
   of: number;
+  /** foods giving this exact amount, this one included */
+  shared: number;
+  /** foods with this effect in total */
+  foods: number;
 }
 
-const rankIn = (ids: string[], val: (id: string) => number, id: string): Rank | undefined =>
-  ids.includes(id) ? { rank: 1 + ids.filter((x) => val(x) > val(id)).length, of: ids.length } : undefined;
+function rankIn(ids: string[], val: (id: string) => number, id: string): Rank | undefined {
+  if (!ids.includes(id)) return undefined;
+  const v = val(id);
+  const levels = [...new Set(ids.map(val))].sort((a, b) => b - a);
+  return { rank: levels.indexOf(v) + 1, of: levels.length, shared: ids.filter((x) => val(x) === v).length, foods: ids.length };
+}
 
 /** where a food's eat effect ranks among foods with the same kind of effect */
 export function eatRank(db: Db, id: string): Rank | undefined {

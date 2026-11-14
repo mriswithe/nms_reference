@@ -337,19 +337,19 @@ describe('food effects', () => {
     expect(g.est).toBeCloseTo(4272, 0);
   });
 
-  it('ranks a food among others with the same effect, ties sharing a rank', () => {
-    const life = topEaten(db, Infinity).life;
-    expect(eatRank(db, life[0])).toEqual({ rank: 1, of: life.length });
-    // every life-support food at the top amount shares rank 1
-    const top = life.filter((x) => db.items[x].eat![1] === db.items[life[0]].eat![1]);
-    for (const x of top) expect(eatRank(db, x)!.rank).toBe(1);
-    const next = life[top.length];
-    expect(eatRank(db, next)!.rank).toBe(top.length + 1);
+  it('ranks a food by distinct amount among foods with the same effect', () => {
+    // hazard protection: 36 foods at 50%, 62 at 25%, 5 at 10%
+    const haz = topEaten(db, Infinity).haz;
+    const at = (n: number) => haz.find((x) => db.items[x].eat![1] === n)!;
+    expect(eatRank(db, at(50))).toEqual({ rank: 1, of: 3, shared: 36, foods: 103 });
+    expect(eatRank(db, at(25))).toEqual({ rank: 2, of: 3, shared: 62, foods: 103 });
+    expect(eatRank(db, at(10))).toEqual({ rank: 3, of: 3, shared: 5, foods: 103 });
     const sd = id('Spore Dunkers');
     const r = ingestorRank(db, sd)!;
-    expect(r.rank).toBeGreaterThanOrEqual(1);
-    expect(r.of).toBe(rankedIngestor(db, db.items[sd].ing![0]).length);
+    expect(r.foods).toBe(rankedIngestor(db, db.items[sd].ing![0]).length);
+    expect(r.of).toBeLessThanOrEqual(r.foods);
     expect(renderItem(createCtx(data), sd)).toContain(`#${r.rank} of ${r.of}`);
+    expect(renderItem(createCtx(data), at(25))).toContain('#2 of 3</span> <span class="q">· shared by 62 foods');
   });
 
   it('puts the in-game description last on the item page', () => {

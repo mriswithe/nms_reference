@@ -87,7 +87,11 @@ function foodSection(ctx: Ctx, id: string): string {
   let h = `<section class="card k-cook" id="s-food"><h3>Food effects</h3><ul class="plain">`;
   // no consumable entry in the game: it can only be used through the Nutrient Ingestor
   const rank = (r: Rank | undefined, what: string) =>
-    r ? ` <span class="rank" title="Rank among ${fmt(r.of)} foods ${what}; equal amounts share a rank">#${fmt(r.rank)} of ${fmt(r.of)}</span>` : '';
+    r
+      ? ` <span class="rank" title="Level ${fmt(r.rank)} of the ${fmt(r.of)} different amounts the ${fmt(r.foods)} foods ${what} give, biggest first">#${fmt(
+          r.rank,
+        )} of ${fmt(r.of)}</span>${r.shared > 1 ? ` <span class="q">· shared by ${fmt(r.shared)} foods</span>` : ''}`
+      : '';
   h += `<li><b>Eat:</b> ${
     it.eat ? esc(eatText(it.eat)) + rank(eatRank(ctx.db, id), 'with this kind of effect') : 'Cannot be eaten directly, only through the Nutrient Ingestor'
   }</li>`;
