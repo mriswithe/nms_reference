@@ -1,7 +1,7 @@
 import { MAX_DEPTH } from '../../lib/cost';
 import { totalCount } from '../../lib/db';
 import { esc, fmt, plural } from '../../lib/format';
-import { clock, eatText, ingestor, pct } from '../../lib/food';
+import { clock, eatRank, eatText, ingestor, ingestorRank, pct, type Rank } from '../../lib/food';
 import type { Recipe } from '../../lib/types';
 import type { Ctx } from '../context';
 import { rankRows, rankUses } from '../../lib/sourcing';
@@ -86,12 +86,30 @@ function foodSection(ctx: Ctx, id: string): string {
   if (!it.eat && !ing) return '';
   let h = `<section class="card k-cook" id="s-food"><h3>Food effects</h3><ul class="plain">`;
   // no consumable entry in the game: it can only be used through the Nutrient Ingestor
-  h += `<li><b>Eat:</b> ${it.eat ? esc(eatText(it.eat)) : 'Cannot be eaten directly, only through the Nutrient Ingestor'}</li>`;
+  const rank = (r: Rank | undefined, what: string) =>
+    r
+      ? ` <span class="rank" title="Level ${fmt(r.rank)} of the ${fmt(r.of)} different amounts the ${fmt(r.foods)} foods ${what} give, biggest first">#${fmt(
+          r.rank,
+        )} of ${fmt(r.of)}</span>${r.shared > 1 ? ` <span class="q">· shared by ${fmt(r.shared)} foods</span>` : ''}`
+      : '';
+  h += `<li><b>Eat:</b> ${
+    it.eat ? esc(eatText(it.eat)) + rank(eatRank(ctx.db, id), 'with this kind of effect') : 'Cannot be eaten directly, only through the Nutrient Ingestor'
+  }</li>`;
+  let foot = '';
   if (ing) {
-    const range = `${pct(ing.lo)} to ${pct(ing.hi)}`;
-    h += `<li><b>Nutrient Ingestor:</b> about ${pct(ing.est)} ${esc(ing.label)} <span class="q">estimated, ${range}</span></li><li><b>Ingestor duration:</b> ${clock(ing.seconds)} per item</li>`;
+    // when both ends of the game's range round to the same percent, the shown value is exact
+    const exact = pct(ing.lo) === pct(ing.hi);
+    h += `<li><b>Nutrient Ingestor:</b> ${exact ? '' : 'about '}${pct(ing.est)}${
+      exact ? '' : '<sup class="fn" aria-hidden="true">*</sup>'
+    } ${esc(ing.label)}${rank(ingestorRank(ctx.db, id), `with a ${ing.label} bonus`)}</li><li><b>Ingestor duration:</b> ${clock(
+      ing.seconds,
+    )} per item</li>`;
+    if (!exact)
+      foot = `<p class="note"><span aria-hidden="true">*</span> Estimated from the food's cooking value; the game's range for this bonus is ${pct(
+        ing.lo,
+      )} to ${pct(ing.hi)}.</p>`;
   }
-  return h + `</ul></section>`;
+  return h + `</ul>${foot}</section>`;
 }
 
 function usedInSection(ctx: Ctx, id: string): string {
@@ -183,8 +201,9 @@ export function renderItem(ctx: Ctx, id: string): string {
   }
 
   if (it.note) h += `<section class="card"><p class="note" style="margin:0">${esc(it.note)}</p></section>`;
+  h += usedInSection(ctx, id);
   if (it.d) h += `<section class="card k-use"><h3>In-game description</h3><p class="desc">${esc(it.d)}</p></section>`;
-  return h + usedInSection(ctx, id);
+  return h;
 }
 
 export const renderWelcome = () => `<section class="card welcome"><h2>What do you need?</h2>

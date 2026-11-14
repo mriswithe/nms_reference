@@ -8,8 +8,9 @@ import { createDb } from '../src/lib/db';
 import { expand, groupRecipes, recipeKey } from '../src/lib/group';
 import { createCtx } from '../src/ui/context';
 import { renderSource } from '../src/ui/popover';
+import { groupRow } from '../src/ui/html';
 import { abbr, esc } from '../src/lib/format';
-import { eatText, ingestor, ingestorValue, page, rankedIngestor, shown, tiers, topBySale, topEaten, topIngestor } from '../src/lib/food';
+import { eatRank, eatText, ingestor, ingestorRank, ingestorValue, page, rankedIngestor, shown, tiers, topBySale, topEaten, topIngestor } from '../src/lib/food';
 import { renderCooking } from '../src/ui/views/cooking';
 import { renderItem } from '../src/ui/views/item';
 import { createSearch, norm } from '../src/lib/search';
@@ -190,9 +191,16 @@ describe('source popover', () => {
   });
   it('condenses large cooking groups', () => {
     const h = renderSource(ctx, id('Mystery Meat Stew'));
-    expect(h).toContain('Any 2 different of');
+    expect(h).toContain('Any two*');
+    expect(h).not.toContain('different');
     for (const n of ['Raw Steak', 'Scaly Meat', 'Diplo Chunks']) expect(h).toContain(n);
-    expect(h).toContain('except ProtoSausage');
+    expect(h).toContain('*Except ProtoSausage, which can only be used once.');
+    // the expanded list on the item page says the same
+    const pool = groupRecipes(db.makes[id('Mystery Meat Stew')].cook).find((g) => g.pool)!;
+    ctx.state.expanded.add('t:pool');
+    const row = groupRow(ctx, pool, null, 't');
+    expect(row).toContain('Any two*');
+    expect(row).toContain('*Except ProtoSausage, which can only be used once.');
   });
 });
 
@@ -337,15 +345,42 @@ describe('food effects', () => {
     expect(g.est).toBeCloseTo(4272, 0);
   });
 
+  it('ranks a food by distinct amount among foods with the same effect', () => {
+    // hazard protection: 36 foods at 50%, 62 at 25%, 5 at 10%
+    const haz = topEaten(db, Infinity).haz;
+    const at = (n: number) => haz.find((x) => db.items[x].eat![1] === n)!;
+    expect(eatRank(db, at(50))).toEqual({ rank: 1, of: 3, shared: 36, foods: 103 });
+    expect(eatRank(db, at(25))).toEqual({ rank: 2, of: 3, shared: 62, foods: 103 });
+    expect(eatRank(db, at(10))).toEqual({ rank: 3, of: 3, shared: 5, foods: 103 });
+    const sd = id('Spore Dunkers');
+    const r = ingestorRank(db, sd)!;
+    expect(r.foods).toBe(rankedIngestor(db, db.items[sd].ing![0]).length);
+    expect(r.of).toBeLessThanOrEqual(r.foods);
+    expect(renderItem(createCtx(data), sd)).toContain(`#${r.rank} of ${r.of}`);
+    expect(renderItem(createCtx(data), at(25))).toContain('#2 of 3</span> <span class="q">· shared by 62 foods');
+  });
+
+  it('puts the in-game description last on the item page', () => {
+    const html = renderItem(createCtx(data), id('Viscous Custard'));
+    expect(html.indexOf('Used in')).toBeGreaterThan(-1);
+    expect(html.lastIndexOf('<section')).toBe(html.indexOf('<section class="card k-use"><h3>In-game description'));
+  });
+
   it('renders a food section on the item page', () => {
     const ctx = createCtx(data);
     const html = renderItem(ctx, id('Spore Dunkers'));
     expect(html).toContain('Restores 20% life support');
-    expect(html).toContain('about +4,272% Flora Analysis Rewards');
+    expect(html).toContain('about +4,272%<sup class="fn" aria-hidden="true">*</sup> Flora Analysis Rewards');
+    expect(html).toMatch(/\*<\/span> Estimated from the food's cooking value; the game's range for this bonus is \+[\d,]+% to \+[\d,]+%\./);
+    expect(html).not.toContain('estimated, ');
     expect(renderItem(ctx, id('Floral Wafer'))).toContain('Restores 25% hazard protection');
     expect(renderItem(ctx, id('Nightmare Sausage'))).toContain('Cannot be eaten directly');
     const sv = renderItem(ctx, id('Syrupy Viscera'));
-    expect(sv).toContain('about +16% Sprint Distance');
+    expect(sv).toContain('about +16%<sup class="fn" aria-hidden="true">*</sup> Sprint Distance');
+    // the game's range (about 3.6% to 4.0%) rounds to one value: shown as exact, no footnote
+    const vc = renderItem(ctx, id('Viscous Custard'));
+    expect(vc).toContain('<b>Nutrient Ingestor:</b> +4% Sprint Recovery Time');
+    expect(vc).not.toContain('Estimated from');
     expect(sv).toContain('2:00 per item');
     expect(html).toContain('6:36 per item');
     expect(renderItem(ctx, id('Carbon'))).not.toContain('Food effects');

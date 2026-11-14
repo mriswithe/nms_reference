@@ -54,19 +54,17 @@ function tierList(ctx: Ctx, opts: Qty[], selfId: string | null, title: string, e
   return `<div class="altlist"><span class="note">${title}</span>${body}${extra}</div>`;
 }
 
-/** "any 2 different of N" toggle; its options and the doubles note open below the row */
+/** "any 2 of N" toggle; its options and the doubles note open below the row */
 function poolSlot(ctx: Ctx, p: Pool, selfId: string | null, key: string, below: string[]) {
   const k = `${key}:pool`;
   const open = ctx.state.expanded.has(k);
   if (open) {
     const names = (qs: Qty[]) => qs.map(([i]) => esc(ctx.db.items[i].n)).join(', ');
     const missing = p.opts.filter((o) => !p.doubles.includes(o));
-    const twice = !p.doubles.length
-      ? 'The same ingredient twice does not work.'
-      : !missing.length
-        ? 'The same ingredient twice also works.'
-        : `The same ingredient twice also works, except ${names(missing)}.`;
-    below.push(tierList(ctx, p.opts, selfId, 'Any two different:', `<span class="note twice">${twice}</span>`));
+    // headline matches the common case; the note spells out doubles
+    const title = !p.doubles.length ? 'Any two different:' : missing.length ? 'Any two*' : 'Any two';
+    const twice = p.doubles.length && missing.length ? `*Except ${names(missing)}, which can only be used once.` : '';
+    below.push(tierList(ctx, p.opts, selfId, title, twice && `<span class="note twice">${twice}</span>`));
   }
   const hasSelf = p.opts.some(([i]) => i === selfId);
   return `<button class="chip oneof${hasSelf ? ' self' : ''}" data-${open ? 'less' : 'more'}="${esc(k)}" aria-expanded="${open}">any 2 of ${

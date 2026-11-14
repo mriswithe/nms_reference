@@ -109,8 +109,10 @@ export const EAT_KINDS: [kind: EatEffect[0], label: string][] = [
 ];
 
 /** best n foods to eat for each effect kind: biggest amount (health: max, then min), ties cheapest first */
+/** how big an eat effect is, for ranking foods of the same kind */
+const size = (e: EatEffect) => (e[0] === 'health' ? e[2] * 1000 + e[1] : e[1]);
+
 export function topEaten(db: Db, n = 3): Record<string, string[]> {
-  const size = (e: EatEffect) => (e[0] === 'health' ? e[2] * 1000 + e[1] : e[1]);
   const out: Record<string, string[]> = {};
   for (const [kind] of EAT_KINDS)
     out[kind] = foods(db)
@@ -166,6 +168,37 @@ export interface Tier {
   seconds: number;
   /** foods sharing this exact bonus and duration, cheapest first */
   ids: string[];
+}
+
+/** a food's level among the distinct amounts foods give for the same effect, best first */
+export interface Rank {
+  /** 1 = the biggest amount */
+  rank: number;
+  /** how many distinct amounts there are */
+  of: number;
+  /** foods giving this exact amount, this one included */
+  shared: number;
+  /** foods with this effect in total */
+  foods: number;
+}
+
+function rankIn(ids: string[], val: (id: string) => number, id: string): Rank | undefined {
+  if (!ids.includes(id)) return undefined;
+  const v = val(id);
+  const levels = [...new Set(ids.map(val))].sort((a, b) => b - a);
+  return { rank: levels.indexOf(v) + 1, of: levels.length, shared: ids.filter((x) => val(x) === v).length, foods: ids.length };
+}
+
+/** where a food's eat effect ranks among foods with the same kind of effect */
+export function eatRank(db: Db, id: string): Rank | undefined {
+  const e = db.items[id].eat;
+  return e && rankIn(topEaten(db, Infinity)[e[0]] ?? [], (x) => size(db.items[x].eat!), id);
+}
+
+/** where a food's ingestor bonus ranks among foods for the same stat (by the rounded estimate shown) */
+export function ingestorRank(db: Db, id: string): Rank | undefined {
+  const stat = db.items[id].ing?.[0];
+  return stat === undefined ? undefined : rankIn(rankedIngestor(db, stat), (x) => Math.round(ingestorValue(ingestor(db.data, db.items[x])!)), id);
 }
 
 /** every food for one ingestor stat, best first (see topIngestor for the order) */

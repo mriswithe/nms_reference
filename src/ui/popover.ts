@@ -39,12 +39,9 @@ function groupLine(ctx: Ctx, g: RecipeGroup) {
   if (g.pool) {
     const { opts, doubles } = g.pool;
     const missing = opts.filter((o) => !doubles.includes(o));
-    const note = !doubles.length
-      ? 'not the same one twice'
-      : missing.length
-        ? `same one twice works, except ${missing.map(([i]) => esc(ctx.db.items[i].n)).join(', ')}`
-        : 'same one twice works';
-    return `<span class="pi">Any 2 different of:</span>${optList(ctx, opts)}<div class="pnote">${note}</div>`;
+    const head = !doubles.length ? 'Any two different:' : missing.length ? 'Any two*' : 'Any two';
+    const note = doubles.length && missing.length ? `*Except ${missing.map(([i]) => esc(ctx.db.items[i].n)).join(', ')}, which can only be used once.` : '';
+    return `<span class="pi">${head}</span>${optList(ctx, opts)}${note ? `<div class="pnote">${note}</div>` : ''}`;
   }
   const lists: string[] = [];
   const slot = (opts: Qty[]) => {
