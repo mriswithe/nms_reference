@@ -8,6 +8,7 @@ import { createDb } from '../src/lib/db';
 import { expand, groupRecipes, recipeKey } from '../src/lib/group';
 import { createCtx } from '../src/ui/context';
 import { renderSource } from '../src/ui/popover';
+import { groupRow } from '../src/ui/html';
 import { abbr, esc } from '../src/lib/format';
 import { eatRank, eatText, ingestor, ingestorRank, ingestorValue, page, rankedIngestor, shown, tiers, topBySale, topEaten, topIngestor } from '../src/lib/food';
 import { renderCooking } from '../src/ui/views/cooking';
@@ -190,9 +191,16 @@ describe('source popover', () => {
   });
   it('condenses large cooking groups', () => {
     const h = renderSource(ctx, id('Mystery Meat Stew'));
-    expect(h).toContain('Any 2 different of');
+    expect(h).toContain('Any 2 of (the same one twice works)');
+    expect(h).not.toContain('different');
     for (const n of ['Raw Steak', 'Scaly Meat', 'Diplo Chunks']) expect(h).toContain(n);
-    expect(h).toContain('except ProtoSausage');
+    expect(h).toContain('except ProtoSausage twice');
+    // the expanded list on the item page says the same
+    const pool = groupRecipes(db.makes[id('Mystery Meat Stew')].cook).find((g) => g.pool)!;
+    ctx.state.expanded.add('t:pool');
+    const row = groupRow(ctx, pool, null, 't');
+    expect(row).toContain('Any two, the same one twice included:');
+    expect(row).toContain("Except ProtoSausage, which can't be used twice.");
   });
 });
 
