@@ -174,11 +174,19 @@ describe('source popover', () => {
     expect(h).toMatch(/>Cook</);
     expect(h).not.toMatch(/>Refine</);
   });
-  it('shows the fewest creature and wild-plant parts needed to make an item', () => {
-    expect(renderSource(ctx, id('Ice Cream'))).toContain('Needs at least 🐾 2 creature parts to make');
-    expect(renderSource(ctx, id('Spiced Ice'))).toContain('Needs at least 🐾 2 creature parts + 🌿 1 wild plant to make');
+  it('names the creature and wild-plant ingredients the cheapest route needs', () => {
+    const names = (n: string) => ctx.src.needs(id(n)).map((x) => x.opts.map((o) => db.items[o].n));
+    // three egg recipes for Viscous Custard merge into one choice; Cream comes from either milk
+    const ice = names('Ice Cream').map((x) => x.sort());
+    expect(ice).toHaveLength(2);
+    expect(ice).toContainEqual(['Creature Egg', 'Giant Egg', 'Tall Eggs']);
+    expect(ice).toContainEqual(['Fresh Milk', 'Wild Milk']);
+    expect(names('Spiced Ice').flat()).toContain('Fireberry');
+    const h = renderSource(ctx, id('Ice Cream'));
+    expect(h).toContain('Needs from creatures / wild plants');
+    for (const n of ['Fresh Milk', 'Wild Milk', 'Creature Egg', 'Tall Eggs', 'Giant Egg']) expect(h).toContain(n);
     // makeable without either, or itself the creature part
-    for (const n of ['Processed Meat', 'Raw Steak']) expect(renderSource(ctx, id(n))).not.toContain('Needs at least');
+    for (const n of ['Processed Meat', 'Raw Steak']) expect(renderSource(ctx, id(n))).not.toContain('Needs from');
   });
   it('condenses large cooking groups', () => {
     const h = renderSource(ctx, id('Mystery Meat Stew'));

@@ -68,18 +68,21 @@ function stepNote(ctx: Ctx, id: string) {
   return `⚙ Makeable in ${n} refiner / processor step${n > 1 ? 's' : ''} from gathered resources`;
 }
 
-/** "Needs at least 2 creature parts and 1 wild plant" for anything made, when its cheapest route needs any */
-function partsNote(ctx: Ctx, id: string) {
-  const c = ctx.src.parts.get(id);
-  if (!c || !(c.animal + c.wild) || !(ctx.db.makes[id] || ctx.db.items[id].rq)) return '';
-  const n = (k: number, one: string, many: string) => `${fmt(k)} ${k === 1 ? one : many}`;
-  const parts = [
-    c.animal && `🐾 ${n(c.animal, 'creature part', 'creature parts')}`,
-    c.wild && `🌿 ${n(c.wild, 'wild plant', 'wild plants')}`,
-  ].filter(Boolean);
-  return `<div class="pan" title="Fewest creature-only and wild-only ingredients across the whole recipe tree, for one item">Needs at least ${parts.join(
-    ' + ',
-  )} to make</div>`;
+/** the creature-only / wild-only ingredients the cheapest route needs, one line per ingredient ("A or B") */
+function needsBlock(ctx: Ctx, id: string) {
+  const needs = ctx.src.needs(id);
+  // nothing restricted, or the item is itself the creature / plant part
+  if (!needs.length || (needs.length === 1 && needs[0].opts.length === 1 && needs[0].opts[0] === id)) return '';
+  const lines = needs.map(({ opts, n }) => {
+    const icon = (opts.some((o) => ctx.src.animal.has(o)) ? '🐾' : '') + (opts.some((o) => ctx.src.wild.has(o)) ? '🌿' : '');
+    const count = n === 1 ? '' : `<span class="pq">${fmt(n)}×</span>`;
+    const body =
+      opts.length <= 4
+        ? opts.map((o) => name(ctx, [o, 1])).join('<span class="pp">or</span>')
+        : `<span class="pi">one of ${opts.length}:</span>${optList(ctx, opts.map((o) => [o, 1]))}`;
+    return `<span aria-hidden="true">${icon}</span>${count}${body}`;
+  });
+  return block('Needs from creatures / wild plants', 'need', lines);
 }
 
 export function renderSource(ctx: Ctx, id: string): string {
@@ -92,6 +95,7 @@ export function renderSource(ctx: Ctx, id: string): string {
   const cook = rankRows(groupRecipes(m?.cook ?? []), ctx.src);
 
   const body =
+    needsBlock(ctx, id) +
     block('Find', 'mine', ob.slice(0, MAX_LINES).map(esc), ob.length) +
     block('Buy', 'buy', buy.slice(0, MAX_LINES).map(esc), buy.length) +
     block('Craft', 'craft', it.rq ? [it.rq.map((q) => name(ctx, q)).join(plus) + (it.q && it.q > 1 ? ` <span class="pq">→ ${fmt(it.q)}</span>` : '')] : []) +
@@ -101,7 +105,6 @@ export function renderSource(ctx: Ctx, id: string): string {
   const only =
     (ctx.src.animal.has(id) ? '<div class="pan">🐾 Only obtainable from creatures</div>' : '') +
     (ctx.src.wild.has(id) ? '<div class="pan">🌿 Only harvested from wild plants; cannot be farmed</div>' : '') +
-    partsNote(ctx, id) +
     (stepNote(ctx, id) ? `<div class="pan">${stepNote(ctx, id)}</div>` : '');
   return `<div class="ph">${swatch(ctx, id)}<div><div class="pn">${esc(it.n)}</div><div class="ps">${esc(it.g)}</div></div></div>${only}${
     body || (only ? '' : '<div class="pempty">No source info in the dataset.</div>')
