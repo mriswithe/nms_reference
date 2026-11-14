@@ -62,12 +62,8 @@ function poolSlot(ctx: Ctx, p: Pool, selfId: string | null, key: string, below: 
     const names = (qs: Qty[]) => qs.map(([i]) => esc(ctx.db.items[i].n)).join(', ');
     const missing = p.opts.filter((o) => !p.doubles.includes(o));
     // headline matches the common case; the note spells out doubles
-    const title = p.doubles.length ? 'Any two, the same one twice included:' : 'Any two different:';
-    const twice = !p.doubles.length
-      ? 'The same ingredient twice does not work.'
-      : !missing.length
-        ? ''
-        : `Except ${names(missing)}, which can't be used twice.`;
+    const title = !p.doubles.length ? 'Any two different:' : missing.length ? 'Any two*' : 'Any two';
+    const twice = p.doubles.length && missing.length ? `*Except ${names(missing)}, which can only be used once.` : '';
     below.push(tierList(ctx, p.opts, selfId, title, twice && `<span class="note twice">${twice}</span>`));
   }
   const hasSelf = p.opts.some(([i]) => i === selfId);
