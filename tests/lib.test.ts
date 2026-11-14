@@ -369,6 +369,10 @@ describe('food effects', () => {
     expect(renderItem(ctx, id('Nightmare Sausage'))).toContain('Cannot be eaten directly');
     const sv = renderItem(ctx, id('Syrupy Viscera'));
     expect(sv).toContain('about +16%<sup class="fn" aria-hidden="true">*</sup> Sprint Distance');
+    // the game's range (about 3.6% to 4.0%) rounds to one value: shown as exact, no footnote
+    const vc = renderItem(ctx, id('Viscous Custard'));
+    expect(vc).toContain('<b>Nutrient Ingestor:</b> +4% Sprint Recovery Time');
+    expect(vc).not.toContain('Estimated from');
     expect(sv).toContain('2:00 per item');
     expect(html).toContain('6:36 per item');
     expect(renderItem(ctx, id('Carbon'))).not.toContain('Food effects');

@@ -97,12 +97,17 @@ function foodSection(ctx: Ctx, id: string): string {
   }</li>`;
   let foot = '';
   if (ing) {
-    h += `<li><b>Nutrient Ingestor:</b> about ${pct(ing.est)}<sup class="fn" aria-hidden="true">*</sup> ${esc(ing.label)}${rank(
-      ingestorRank(ctx.db, id),
-      `with a ${ing.label} bonus`,
-    )}</li><li><b>Ingestor duration:</b> ${clock(ing.seconds)} per item</li>`;
-    const range = ing.lo === ing.hi ? pct(ing.lo) : `${pct(ing.lo)} to ${pct(ing.hi)}`;
-    foot = `<p class="note"><span aria-hidden="true">*</span> Estimated from the food's cooking value; the game's range for this bonus is ${range}.</p>`;
+    // when both ends of the game's range round to the same percent, the shown value is exact
+    const exact = pct(ing.lo) === pct(ing.hi);
+    h += `<li><b>Nutrient Ingestor:</b> ${exact ? '' : 'about '}${pct(ing.est)}${
+      exact ? '' : '<sup class="fn" aria-hidden="true">*</sup>'
+    } ${esc(ing.label)}${rank(ingestorRank(ctx.db, id), `with a ${ing.label} bonus`)}</li><li><b>Ingestor duration:</b> ${clock(
+      ing.seconds,
+    )} per item</li>`;
+    if (!exact)
+      foot = `<p class="note"><span aria-hidden="true">*</span> Estimated from the food's cooking value; the game's range for this bonus is ${pct(
+        ing.lo,
+      )} to ${pct(ing.hi)}.</p>`;
   }
   return h + `</ul>${foot}</section>`;
 }
