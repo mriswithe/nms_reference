@@ -108,13 +108,6 @@ export function groupRow(ctx: Ctx, g: RecipeGroup, selfId: string | null, key: s
   )}${g.time ? ` · ${fmt(g.time)}s` : ''}${n > 1 ? ` · <span class="n">${n} recipes</span>` : ''}</span>${below.join('')}</div>`;
 }
 
-/** show the first `n` rows with a "Show all" toggle, remembered under `key` */
-export function limited(ctx: Ctx, rows: string[], key: string, n = 8) {
-  if (rows.length <= n) return rows.join('');
-  if (ctx.state.expanded.has(key)) return rows.join('') + `<button class="more" data-less="${esc(key)}">Show fewer</button>`;
-  return rows.slice(0, n).join('') + `<button class="more" data-more="${esc(key)}">Show all ${rows.length}</button>`;
-}
-
 export const refineBadge = (ch: Cheaper | null) =>
   ch
     ? `<span class="tag t-refine badge" title="Refining uses about ${fmt(Math.round(ch.refine))} units of raw value per item vs ${fmt(

@@ -86,7 +86,6 @@ main{padding-top:20px;display:grid;gap:18px}
 ul.plain{margin:0;padding-left:18px;display:grid;gap:4px}
 .desc{color:var(--muted);white-space:pre-line;max-width:68ch;margin:0}
 .empty{color:var(--muted);font-style:italic;margin:0}
-.more{margin-top:8px;border:0;background:none;color:var(--accent);font:600 13px var(--f-body);cursor:pointer;padding:4px 0}
 .ctrl{display:flex;gap:6px;flex-wrap:wrap;margin:-2px 0 8px}
 .ctrl button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:6px;padding:3px 8px;font:12.5px var(--f-body);cursor:pointer}
 .ctrl button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}

@@ -8,8 +8,8 @@
  * only count when something outside the cycle grounds them.
  */
 import type { Db } from './db';
-import type { RecipeGroup } from './group';
-import type { Qty } from './types';
+import { recipeKey, type RecipeGroup } from './group';
+import type { Qty, Recipe } from './types';
 
 const ANIMAL_SOURCE = /harvested from creatures|caught by fishing|dropped by creatures/i;
 const ANIMAL_GROUP = new Set(['Horrific Sample', 'Monstrosity', 'Intestinal Fragment', 'Vile Larva']);
@@ -160,6 +160,43 @@ export function rankRows(groups: RecipeGroup[], s: Sourcing): RecipeGroup[] {
     }))
     .map((g) => ({ g, c: rowCost(g, s) }))
     .sort((a, b) => cmpCost(a.c, b.c) || width(a.g) - width(b.g) || b.g.recipes.length - a.g.recipes.length)
+    .map(({ g }) => g);
+}
+
+/** the inputs of `ins` with the `k`th removed, in canonical form */
+const without = (ins: Qty[], k: number) => recipeKey(ins.filter((_, i) => i !== k));
+
+/** another recipe for the same output makes it with `id` swapped for a different ingredient */
+function swappable(db: Db, r: Recipe, id: string): boolean {
+  const k = r[0].findIndex(([i]) => i === id);
+  if (k < 0) return false;
+  const rest = without(r[0], k);
+  return (db.makes[r[1][0]]?.cook ?? []).some(
+    (r2) =>
+      r2 !== r &&
+      r2[2] === r[2] &&
+      r2[3] === r[3] &&
+      r2[0].length === r[0].length &&
+      r2[0].some(([i], j) => i !== id && without(r2[0], j) === rest),
+  );
+}
+
+/**
+ * Order for an item's "Used in" Nutrient Processor rows (groups pinned on `id`), each tier keeping `rankRows` order:
+ *  0. unique: the item and fixed partners, and nothing else could stand in for the item
+ *  1. the item is required but its partner varies ("item + one of …")
+ *  2. the item is just one of several interchangeable ingredients
+ *  3. Creature Pellets (bait accepts almost anything)
+ */
+export function rankUses(db: Db, groups: RecipeGroup[], id: string): RecipeGroup[] {
+  const tier = (g: RecipeGroup) => {
+    if (db.items[g.out[0]]?.n === 'Creature Pellets') return 3;
+    if (g.recipes.every((r) => swappable(db, r, id))) return 2;
+    return g.slots.every((s) => s.pinned || s.opts.length === 1) ? 0 : 1;
+  };
+  return groups
+    .map((g) => ({ g, t: tier(g) }))
+    .sort((a, b) => a.t - b.t)
     .map(({ g }) => g);
 }
 

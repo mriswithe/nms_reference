@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import raw from '../src/data/nms.json';
-import { byTier, cmpCost, rankRows, rowCost, sourcing } from '../src/lib/sourcing';
+import { byTier, cmpCost, rankRows, rankUses, rowCost, sourcing } from '../src/lib/sourcing';
 import { CostModel } from '../src/lib/cost';
 import { refinableConsumables } from '../src/lib/consumables';
 import { buildFamilies, oneWayUpgrades, route, stellarExpansions } from '../src/lib/cycles';
@@ -26,9 +26,13 @@ const id = (name: string) => {
 
 describe('dataset', () => {
   it('has items and recipes', () => {
-    expect(db.ids.length).toBeGreaterThan(3000);
+    expect(db.ids.length).toBeGreaterThan(2000);
     expect(data.ref.length).toBeGreaterThan(100);
     expect(data.cook.length).toBeGreaterThan(100);
+  });
+
+  it('leaves out starship components and base parts', () => {
+    expect(db.ids.filter((x) => /Starship Component$/.test(db.items[x].g) || db.items[x].c === 'Base part')).toEqual([]);
   });
 
   it('every recipe references known items', () => {
@@ -245,6 +249,17 @@ describe('restricted ingredients', () => {
           }
   });
 
+  it('orders an item\'s cooking uses: unique, varying partner, interchangeable, Creature Pellets', () => {
+    const fc = byName('Frost Crystal');
+    const outs = rankUses(db, rankRows(groupRecipes(db.uses[fc].cook, fc), src), fc).map((g) => db.items[g.out[0]].n);
+    const at = (n: string) => outs.indexOf(n);
+    // Frost Crystal + Sugar Dough is the only Cough Biscuits recipe
+    expect(at('Cough Biscuits')).toBeLessThan(at('Iced Screams'));
+    // Frost Crystal + one of Hypnotic Eye / Horrifying Mush, before Ice Cream where Frozen Tubers works as well
+    expect(at('Iced Screams')).toBeLessThan(at('Ice Cream'));
+    expect(outs.at(-1)).toBe('Creature Pellets');
+  });
+
   it('counts a pool by its best pair', () => {
     const stew = rankRows(groupRecipes(db.makes[id('Mystery Meat Stew')].cook), src)[0];
     expect(rowCost(stew, src)).toEqual({ animal: 0, wild: 0 });
@@ -384,12 +399,12 @@ describe('cooking reference', () => {
     const amounts = [...html.matchAll(/<tr><td>Restores (\d+)% life support/g)].map((m) => Number(m[1]));
     expect(amounts).toEqual([40, 20, 5]);
     expect(html).not.toContain('data-cpage');
-    // sprint: every food gives 15 s, so one tier showing the 12 cheapest and a "Show all" button
+    // sprint: every food gives 15 s, so one tier listing all of them
     ctx.state.cookEat = 'sprint';
     html = eat(renderCooking(ctx));
     expect(html.match(/<tr><td>/g)!.length).toBe(1);
-    expect(html.match(/<button class="chip/g)!.length).toBe(12);
-    expect(html).toMatch(/Show all \d+/);
+    expect(html.match(/<button class="chip/g)!.length).toBe(topEaten(db, Infinity).sprint.length);
+    expect(html).not.toMatch(/Show all|Show fewer/);
   });
 
   it('pages a list and clamps out-of-range pages', () => {

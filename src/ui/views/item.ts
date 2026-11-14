@@ -4,15 +4,16 @@ import { esc, fmt, plural } from '../../lib/format';
 import { clock, eatText, ingestor, pct } from '../../lib/food';
 import type { Recipe } from '../../lib/types';
 import type { Ctx } from '../context';
-import { rankRows } from '../../lib/sourcing';
+import { rankRows, rankUses } from '../../lib/sourcing';
 import { groupRecipes } from '../../lib/group';
-import { chip, chips, groupRow, limited, recipeRow, refineBadge, swatch } from '../html';
+import { chip, chips, groupRow, recipeRow, refineBadge, swatch } from '../html';
 
 const byInputs = (a: Recipe, b: Recipe) => a[0].length - b[0].length;
 /** grouped Nutrient Processor rows; `pin` keeps the viewed item as the fixed input */
-const cookRows = (ctx: Ctx, rs: Recipe[], id: string, key: string, pin?: string) =>
-  rankRows(groupRecipes(rs, pin), ctx.src)
-    .map((g, i) => groupRow(ctx, g, id, `${key}:${i}`));
+const cookRows = (ctx: Ctx, rs: Recipe[], id: string, key: string, pin?: string) => {
+  const ranked = rankRows(groupRecipes(rs, pin), ctx.src);
+  return (pin ? rankUses(ctx.db, ranked, pin) : ranked).map((g, i) => groupRow(ctx, g, id, `${key}:${i}`));
+};
 /** outputs per input unit */
 const efficiency = (r: Recipe) => r[1][1] / r[0].reduce((s, [, q]) => s + q, 0);
 
@@ -103,28 +104,13 @@ function usedInSection(ctx: Ctx, id: string): string {
   if (!(ur + uc + uk)) return '';
   let h = `<section class="card k-use"><h3>Used in <span class="ct">${ur} refine · ${uc} craft · ${uk} cook</span></h3>`;
   if (ur)
-    h += `<div class="note"><b>Refiner input</b></div><div class="rlist">${limited(
-      ctx,
-      u.ref.slice().sort(byInputs).map((r) => recipeRow(ctx, r, id)),
-      'uref' + id,
-      6,
-    )}</div>`;
+    h += `<div class="note"><b>Refiner input</b></div><div class="rlist">${u.ref.slice().sort(byInputs).map((r) => recipeRow(ctx, r, id)).join('')}</div>`;
   if (uc) {
     const list = u.craft.slice().sort((a, b) => db.items[a].n.localeCompare(db.items[b].n));
-    h += `<div class="note"><b>Crafting ingredient for</b></div><div class="totals" style="margin-top:6px">${limited(
-      ctx,
-      list.map((x) => chip(ctx, x, db.items[x].rq!.find((r) => r[0] === id)![1])),
-      'ucraft' + id,
-      24,
-    )}</div>`;
+    h += `<div class="note"><b>Crafting ingredient for</b></div><div class="totals" style="margin-top:6px">${list.map((x) => chip(ctx, x, db.items[x].rq!.find((r) => r[0] === id)![1])).join('')}</div>`;
   }
   if (uk)
-    h += `<div class="note"><b>Nutrient Processor input</b></div><div class="rlist">${limited(
-      ctx,
-      cookRows(ctx, u.cook, id, 'gucook' + id, id),
-      'ucook' + id,
-      5,
-    )}</div>`;
+    h += `<div class="note"><b>Nutrient Processor input</b></div><div class="rlist">${cookRows(ctx, u.cook, id, 'gucook' + id, id).join('')}</div>`;
   return h + `</section>`;
 }
 
@@ -167,7 +153,7 @@ export function renderItem(ctx: Ctx, id: string): string {
       <div class="ctrl" role="group" aria-label="Sort refiner recipes"><button data-sort="fewest" aria-pressed="${
         state.refSort === 'fewest'
       }">Simplest first</button><button data-sort="yield" aria-pressed="${state.refSort === 'yield'}">Best yield first</button></div>
-      <div class="rlist">${limited(ctx, ref.map((r) => recipeRow(ctx, r, id)), 'ref' + id)}</div></section>`;
+      <div class="rlist">${ref.map((r) => recipeRow(ctx, r, id)).join('')}</div></section>`;
 
   if (c.craft) h += craftSection(ctx, id);
 
@@ -176,7 +162,7 @@ export function renderItem(ctx: Ctx, id: string): string {
     const rows = cookRows(ctx, m.cook, id, 'gcook' + id);
     h += `<section class="card k-cook" id="s-cook"><h3>Cook <span class="ct">Nutrient Processor · ${plural(c.cook, 'recipe')}${
       rows.length < c.cook ? ` in ${plural(rows.length, 'row')}` : ''
-    }</span></h3><div class="rlist">${limited(ctx, rows, 'cook' + id)}</div></section>`;
+    }</span></h3><div class="rlist">${rows.join('')}</div></section>`;
   }
 
   h += foodSection(ctx, id);

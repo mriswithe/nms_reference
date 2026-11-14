@@ -1,7 +1,7 @@
 import { clock, EAT_KINDS, eatText, page, pct, rankedIngestor, STAT_GROUPS, tiers, topBySale, topEaten } from '../../lib/food';
 import { esc, fmt } from '../../lib/format';
 import type { Ctx } from '../context';
-import { chip, limited, pageHead } from '../html';
+import { chip, pageHead } from '../html';
 
 const table = (head: string[], rows: string[], cls = '') =>
   `<div class="tscroll"><table class="tbl ${cls}"><thead><tr>${head.map((h) => `<th scope="col">${h}</th>`).join('')}</tr></thead><tbody>${rows.join(
@@ -66,8 +66,8 @@ function ingestorSection(ctx: Ctx): string {
     <p class="note">Time is per item. ≈ marks an estimate from the game's range for the bonus and the food's cooking value, so foods with the same cooking value share a row.</p><p class="note">${LEGEND}</p></section>`;
 }
 
-/** foods in one tier: the cheapest 12, then "Show all" */
-const tierChips = (ctx: Ctx, ids: string[], key: string) => `<div class="chips">${limited(ctx, ids.map((id) => foodChip(ctx, id)), key, 12)}</div>`;
+/** foods in one tier, cheapest first */
+const tierChips = (ctx: Ctx, ids: string[]) => `<div class="chips">${ids.map((id) => foodChip(ctx, id)).join('')}</div>`;
 
 /** effect picker plus a table of the chosen effect's amounts, foods with the same amount sharing a row */
 function eatenSection(ctx: Ctx): string {
@@ -87,7 +87,7 @@ function eatenSection(ctx: Ctx): string {
   }
   const key = 'eat:' + kind;
   const p = page([...groups], state.cookPage[key] ?? 0, TIERS_PER_PAGE);
-  const rows = p.items.map(([t, ids]) => `<tr><td>${esc(t)}</td><td>${tierChips(ctx, ids, `${key}:${t}`)}</td></tr>`);
+  const rows = p.items.map(([t, ids]) => `<tr><td>${esc(t)}</td><td>${tierChips(ctx, ids)}</td></tr>`);
   return `<section class="card k-cook" id="ck-eat"><h3>Eaten directly <span class="ct">best foods per effect</span></h3>${picker}${table(
     ['Amount', 'Foods'],
     rows,

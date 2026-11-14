@@ -2,7 +2,7 @@ import { oneWayUpgrades, route, stellarExpansions, type Family, type Route } fro
 import { abbr, color, esc, fmt, plural } from '../../lib/format';
 import type { Recipe } from '../../lib/types';
 import type { Ctx } from '../context';
-import { chip, limited, pageHead, recipeRow } from '../html';
+import { chip, pageHead, recipeRow } from '../html';
 
 const byInputs = (a: Recipe, b: Recipe) => a[0].length - b[0].length;
 
@@ -108,12 +108,11 @@ function familyCard(ctx: Ctx, f: Family): string {
   }
   h += `</div>` + routeFinder(ctx, f);
   if (f.side.length)
-    h += `<div class="note"><b>Other ways in</b> (from other raw materials)</div><div class="rlist">${limited(
-      ctx,
-      f.side.slice().sort(byInputs).map((r) => recipeRow(ctx, r, null)),
-      'side' + f.key,
-      4,
-    )}</div>`;
+    h += `<div class="note"><b>Other ways in</b> (from other raw materials)</div><div class="rlist">${f.side
+      .slice()
+      .sort(byInputs)
+      .map((r) => recipeRow(ctx, r, null))
+      .join('')}</div>`;
   return h + `</details>`;
 }
 
@@ -136,11 +135,8 @@ export function renderCycles(ctx: Ctx): string {
   const oneway = oneWayUpgrades(db).sort((p, q) => I[p[1][0]].n.localeCompare(I[q[1][0]].n));
   h += `<details class="card k-refine cyc" data-cy="oneway"${open('oneway')}><summary><h3>One-way upgrades <span class="ct">${
     oneway.length
-  }</span></h3><span class="peek">${[...new Set(oneway.map((r) => I[r[1][0]].n))].sort().join(' · ')}</span></summary><div class="rlist">${limited(
-    ctx,
-    oneway.map((r) => recipeRow(ctx, r, null)),
-    'oneway',
-    12,
-  )}</div></details>`;
+  }</span></h3><span class="peek">${[...new Set(oneway.map((r) => I[r[1][0]].n))].sort().join(' · ')}</span></summary><div class="rlist">${oneway
+    .map((r) => recipeRow(ctx, r, null))
+    .join('')}</div></details>`;
   return h;
 }
