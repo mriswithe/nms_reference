@@ -95,14 +95,16 @@ function foodSection(ctx: Ctx, id: string): string {
   h += `<li><b>Eat:</b> ${
     it.eat ? esc(eatText(it.eat)) + rank(eatRank(ctx.db, id), 'with this kind of effect') : 'Cannot be eaten directly, only through the Nutrient Ingestor'
   }</li>`;
+  let foot = '';
   if (ing) {
-    const range = `${pct(ing.lo)} to ${pct(ing.hi)}`;
-    h += `<li><b>Nutrient Ingestor:</b> about ${pct(ing.est)} ${esc(ing.label)}${rank(
+    h += `<li><b>Nutrient Ingestor:</b> about ${pct(ing.est)}<sup class="fn" aria-hidden="true">*</sup> ${esc(ing.label)}${rank(
       ingestorRank(ctx.db, id),
       `with a ${ing.label} bonus`,
-    )} <span class="q">estimated, ${range}</span></li><li><b>Ingestor duration:</b> ${clock(ing.seconds)} per item</li>`;
+    )}</li><li><b>Ingestor duration:</b> ${clock(ing.seconds)} per item</li>`;
+    const range = ing.lo === ing.hi ? pct(ing.lo) : `${pct(ing.lo)} to ${pct(ing.hi)}`;
+    foot = `<p class="note"><span aria-hidden="true">*</span> Estimated from the food's cooking value; the game's range for this bonus is ${range}.</p>`;
   }
-  return h + `</ul></section>`;
+  return h + `</ul>${foot}</section>`;
 }
 
 function usedInSection(ctx: Ctx, id: string): string {

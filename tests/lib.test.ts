@@ -362,11 +362,13 @@ describe('food effects', () => {
     const ctx = createCtx(data);
     const html = renderItem(ctx, id('Spore Dunkers'));
     expect(html).toContain('Restores 20% life support');
-    expect(html).toContain('about +4,272% Flora Analysis Rewards');
+    expect(html).toContain('about +4,272%<sup class="fn" aria-hidden="true">*</sup> Flora Analysis Rewards');
+    expect(html).toMatch(/\*<\/span> Estimated from the food's cooking value; the game's range for this bonus is \+[\d,]+% to \+[\d,]+%\./);
+    expect(html).not.toContain('estimated, ');
     expect(renderItem(ctx, id('Floral Wafer'))).toContain('Restores 25% hazard protection');
     expect(renderItem(ctx, id('Nightmare Sausage'))).toContain('Cannot be eaten directly');
     const sv = renderItem(ctx, id('Syrupy Viscera'));
-    expect(sv).toContain('about +16% Sprint Distance');
+    expect(sv).toContain('about +16%<sup class="fn" aria-hidden="true">*</sup> Sprint Distance');
     expect(sv).toContain('2:00 per item');
     expect(html).toContain('6:36 per item');
     expect(renderItem(ctx, id('Carbon'))).not.toContain('Food effects');
