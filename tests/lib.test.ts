@@ -337,6 +337,12 @@ describe('food effects', () => {
     expect(g.est).toBeCloseTo(4272, 0);
   });
 
+  it('puts the in-game description last on the item page', () => {
+    const html = renderItem(createCtx(data), id('Viscous Custard'));
+    expect(html.indexOf('Used in')).toBeGreaterThan(-1);
+    expect(html.lastIndexOf('<section')).toBe(html.indexOf('<section class="card k-use"><h3>In-game description'));
+  });
+
   it('renders a food section on the item page', () => {
     const ctx = createCtx(data);
     const html = renderItem(ctx, id('Spore Dunkers'));

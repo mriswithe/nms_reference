@@ -183,8 +183,9 @@ export function renderItem(ctx: Ctx, id: string): string {
   }
 
   if (it.note) h += `<section class="card"><p class="note" style="margin:0">${esc(it.note)}</p></section>`;
+  h += usedInSection(ctx, id);
   if (it.d) h += `<section class="card k-use"><h3>In-game description</h3><p class="desc">${esc(it.d)}</p></section>`;
-  return h + usedInSection(ctx, id);
+  return h;
 }
 
 export const renderWelcome = () => `<section class="card welcome"><h2>What do you need?</h2>
