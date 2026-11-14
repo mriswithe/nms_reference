@@ -249,15 +249,17 @@ describe('restricted ingredients', () => {
           }
   });
 
-  it('orders an item\'s cooking uses: unique, varying partner, interchangeable, Creature Pellets', () => {
+  it('orders an item\'s cooking uses: irreplaceable, then fewest interchangeable peers, then Creature Pellets', () => {
     const fc = byName('Frost Crystal');
     const outs = rankUses(db, rankRows(groupRecipes(db.uses[fc].cook, fc), src), fc).map((g) => db.items[g.out[0]].n);
     const at = (n: string) => outs.indexOf(n);
-    // Frost Crystal + Sugar Dough is the only Cough Biscuits recipe
-    expect(at('Cough Biscuits')).toBeLessThan(at('Iced Screams'));
-    // Frost Crystal + one of Hypnotic Eye / Horrifying Mush, before Ice Cream where Frozen Tubers works as well
+    // nothing replaces Frost Crystal in Iced Screams; Frozen Tubers does in Ice Cream
     expect(at('Iced Screams')).toBeLessThan(at('Ice Cream'));
     expect(outs.at(-1)).toBe('Creature Pellets');
+    // Fruity Ice Cream (Very Thick Custard is the only peer) before Cream Fingers (six other creams and custards)
+    const vc = byName('Viscous Custard');
+    const vOuts = rankUses(db, rankRows(groupRecipes(db.uses[vc].cook, vc), src), vc).map((g) => db.items[g.out[0]].n);
+    expect(vOuts.indexOf('Fruity Ice Cream')).toBeLessThan(vOuts.indexOf('Cream Fingers'));
   });
 
   it('counts a pool by its best pair', () => {

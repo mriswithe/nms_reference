@@ -166,37 +166,36 @@ export function rankRows(groups: RecipeGroup[], s: Sourcing): RecipeGroup[] {
 /** the inputs of `ins` with the `k`th removed, in canonical form */
 const without = (ins: Qty[], k: number) => recipeKey(ins.filter((_, i) => i !== k));
 
-/** another recipe for the same output makes it with `id` swapped for a different ingredient */
-function swappable(db: Db, r: Recipe, id: string): boolean {
+/** ingredients that other recipes for the same output use in place of `id` */
+function peers(db: Db, r: Recipe, id: string): string[] {
   const k = r[0].findIndex(([i]) => i === id);
-  if (k < 0) return false;
+  if (k < 0) return [];
   const rest = without(r[0], k);
-  return (db.makes[r[1][0]]?.cook ?? []).some(
-    (r2) =>
-      r2 !== r &&
-      r2[2] === r[2] &&
-      r2[3] === r[3] &&
-      r2[0].length === r[0].length &&
-      r2[0].some(([i], j) => i !== id && without(r2[0], j) === rest),
-  );
+  const out: string[] = [];
+  for (const r2 of db.makes[r[1][0]]?.cook ?? []) {
+    if (r2 === r || r2[2] !== r[2] || r2[3] !== r[3] || r2[0].length !== r[0].length) continue;
+    r2[0].forEach(([i], j) => {
+      if (i !== id && without(r2[0], j) === rest) out.push(i);
+    });
+  }
+  return out;
 }
 
 /**
  * Order for an item's "Used in" Nutrient Processor rows (groups pinned on `id`), each tier keeping `rankRows` order:
- *  0. unique: the item and fixed partners, and nothing else could stand in for the item
- *  1. the item is required but its partner varies ("item + one of …")
- *  2. the item is just one of several interchangeable ingredients
- *  3. Creature Pellets (bait accepts almost anything)
+ *  0. the item can't be replaced: no other ingredient makes the same output with the same partners
+ *  1. the item is one of several interchangeable ingredients, fewest alternatives first
+ *  2. Creature Pellets (bait accepts almost anything)
  */
 export function rankUses(db: Db, groups: RecipeGroup[], id: string): RecipeGroup[] {
-  const tier = (g: RecipeGroup) => {
-    if (db.items[g.out[0]]?.n === 'Creature Pellets') return 3;
-    if (g.recipes.every((r) => swappable(db, r, id))) return 2;
-    return g.slots.every((s) => s.pinned || s.opts.length === 1) ? 0 : 1;
+  const rank = (g: RecipeGroup): [number, number] => {
+    if (db.items[g.out[0]]?.n === 'Creature Pellets') return [2, 0];
+    const each = g.recipes.map((r) => peers(db, r, id));
+    return each.every((p) => p.length) ? [1, new Set(each.flat()).size] : [0, 0];
   };
   return groups
-    .map((g) => ({ g, t: tier(g) }))
-    .sort((a, b) => a.t - b.t)
+    .map((g) => ({ g, r: rank(g) }))
+    .sort((a, b) => a.r[0] - b.r[0] || a.r[1] - b.r[1])
     .map(({ g }) => g);
 }
 
