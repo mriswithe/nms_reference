@@ -174,6 +174,12 @@ describe('source popover', () => {
     expect(h).toMatch(/>Cook</);
     expect(h).not.toMatch(/>Refine</);
   });
+  it('shows the fewest creature and wild-plant parts needed to make an item', () => {
+    expect(renderSource(ctx, id('Ice Cream'))).toContain('Needs at least 🐾 2 creature parts to make');
+    expect(renderSource(ctx, id('Spiced Ice'))).toContain('Needs at least 🐾 2 creature parts + 🌿 1 wild plant to make');
+    // makeable without either, or itself the creature part
+    for (const n of ['Processed Meat', 'Raw Steak']) expect(renderSource(ctx, id(n))).not.toContain('Needs at least');
+  });
   it('condenses large cooking groups', () => {
     const h = renderSource(ctx, id('Mystery Meat Stew'));
     expect(h).toContain('Any 2 different of');

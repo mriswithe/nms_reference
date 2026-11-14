@@ -102,13 +102,61 @@ export interface Sourcing {
   wild: Set<string>;
   /** fewest processing steps from directly obtainable items, avoiding both; absent when there is no such route */
   steps: Map<string, number>;
+  /** fewest creature / wild-plant parts that go into one of each item (fractional when a recipe yields several) */
+  parts: Map<string, Cost>;
 }
 
 export const sourcing = (db: Db): Sourcing => ({
   animal: restricted(db, animalBase),
   wild: restricted(db, wildBase),
   steps: processingSteps(db),
+  parts: minParts(db),
 });
+
+/** below this a cost change is rounding noise, so relaxation stops on loops that keep shaving fractions */
+const EPS = 1e-6;
+
+/**
+ * Least restricted base ingredients (by `cmpCost`) needed for one unit of each item, over refiner, Nutrient Processor
+ * and crafting recipes. Restricted base items count as one part each; anything gathered or bought otherwise is free.
+ */
+function minParts(db: Db): Map<string, Cost> {
+  const best = new Map<string, Cost>();
+  for (const id of db.ids) {
+    if (direct(db, id)) best.set(id, ZERO);
+    else {
+      const a = animalBase(db, id) === 'restricted' ? 1 : 0;
+      const w = wildBase(db, id) === 'restricted' ? 1 : 0;
+      if (a || w) best.set(id, { animal: a, wild: w });
+    }
+  }
+  const recipes: [ins: Qty[], out: Qty][] = [...db.data.ref, ...db.data.cook].map((r) => [r[0], r[1]]);
+  for (const id of db.ids) {
+    const it = db.items[id];
+    if (it.rq) recipes.push([it.rq, [id, it.q || 1]]);
+  }
+  // relax until stable; the round cap guards against loops whose yields keep shrinking costs
+  for (let round = 0, changed = true; changed && round < 100; round++) {
+    changed = false;
+    for (const [ins, [out, n]] of recipes) {
+      let c: Cost = ZERO;
+      let ok = true;
+      for (const [i, q] of ins) {
+        const ci = best.get(i);
+        if (!ci) {
+          ok = false;
+          break;
+        }
+        c = { animal: c.animal + (q * ci.animal) / n, wild: c.wild + (q * ci.wild) / n };
+      }
+      const cur = best.get(out);
+      if (!ok || (cur && cmpCost(c, cur) > -EPS)) continue;
+      best.set(out, c);
+      changed = true;
+    }
+  }
+  return best;
+}
 export const animalOnly = (db: Db) => restricted(db, animalBase);
 export const wildOnly = (db: Db) => restricted(db, wildBase);
 

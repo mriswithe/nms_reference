@@ -68,6 +68,20 @@ function stepNote(ctx: Ctx, id: string) {
   return `⚙ Makeable in ${n} refiner / processor step${n > 1 ? 's' : ''} from gathered resources`;
 }
 
+/** "Needs at least 2 creature parts and 1 wild plant" for anything made, when its cheapest route needs any */
+function partsNote(ctx: Ctx, id: string) {
+  const c = ctx.src.parts.get(id);
+  if (!c || !(c.animal + c.wild) || !(ctx.db.makes[id] || ctx.db.items[id].rq)) return '';
+  const n = (k: number, one: string, many: string) => `${fmt(k)} ${k === 1 ? one : many}`;
+  const parts = [
+    c.animal && `🐾 ${n(c.animal, 'creature part', 'creature parts')}`,
+    c.wild && `🌿 ${n(c.wild, 'wild plant', 'wild plants')}`,
+  ].filter(Boolean);
+  return `<div class="pan" title="Fewest creature-only and wild-only ingredients across the whole recipe tree, for one item">Needs at least ${parts.join(
+    ' + ',
+  )} to make</div>`;
+}
+
 export function renderSource(ctx: Ctx, id: string): string {
   const { db } = ctx;
   const it = db.items[id];
@@ -87,6 +101,7 @@ export function renderSource(ctx: Ctx, id: string): string {
   const only =
     (ctx.src.animal.has(id) ? '<div class="pan">🐾 Only obtainable from creatures</div>' : '') +
     (ctx.src.wild.has(id) ? '<div class="pan">🌿 Only harvested from wild plants; cannot be farmed</div>' : '') +
+    partsNote(ctx, id) +
     (stepNote(ctx, id) ? `<div class="pan">${stepNote(ctx, id)}</div>` : '');
   return `<div class="ph">${swatch(ctx, id)}<div><div class="pn">${esc(it.n)}</div><div class="ps">${esc(it.g)}</div></div></div>${only}${
     body || (only ? '' : '<div class="pempty">No source info in the dataset.</div>')
