@@ -102,6 +102,8 @@ export interface Sourcing {
   wild: Set<string>;
   /** fewest processing steps from directly obtainable items, avoiding both; absent when there is no such route */
   steps: Map<string, number>;
+  /** fewest creature-only / wild-only base ingredients in one of each item, across its whole recipe tree */
+  parts: Map<string, Cost>;
   /** creature-only / wild-only base ingredients on the cheapest route to one of `id`; empty when none are needed */
   needs(id: string): Need[];
 }
@@ -118,6 +120,7 @@ export function sourcing(db: Db): Sourcing {
     animal: restricted(db, animalBase),
     wild: restricted(db, wildBase),
     steps: processingSteps(db),
+    parts: best,
     needs: needsOf(db, best, routes),
   };
 }
@@ -269,7 +272,13 @@ const ZERO: Cost = { animal: 0, wild: 0 };
 const add = (a: Cost, b: Cost): Cost => ({ animal: a.animal + b.animal, wild: a.wild + b.wild });
 /** fewer restricted ingredients overall first; on a tie, fewer animal parts */
 export const cmpCost = (a: Cost, b: Cost) => a.animal + a.wild - (b.animal + b.wild) || a.animal - b.animal;
-const itemCost = (s: Sourcing, [i]: Qty): Cost => ({ animal: s.animal.has(i) ? 1 : 0, wild: s.wild.has(i) ? 1 : 0 });
+/** whether the item itself is creature-only / wild-only */
+const tierCost = (s: Sourcing, [i]: Qty): Cost => ({ animal: s.animal.has(i) ? 1 : 0, wild: s.wild.has(i) ? 1 : 0 });
+/** restricted base ingredients behind `q` of an item, across its whole recipe tree */
+function itemCost(s: Sourcing, [i, q]: Qty): Cost {
+  const c = s.parts.get(i) ?? tierCost(s, [i, 1]);
+  return { animal: c.animal * q, wild: c.wild * q };
+}
 
 /** the cheapest recipe a grouped row allows, picking the best option in each slot */
 export function rowCost(g: RecipeGroup, s: Sourcing): Cost {
@@ -292,13 +301,14 @@ export function rowCost(g: RecipeGroup, s: Sourcing): Cost {
 const width = (g: RecipeGroup) => (g.pool ? 2 : g.slots.length);
 
 /**
- * Rows ordered by fewest restricted ingredients (animal-only + wild-only, ties to fewer animal parts), then fewest
+ * Rows ordered by fewest restricted base ingredients across the whole recipe tree (animal-only + wild-only, ties to fewer animal parts), then fewest
  * inputs, then most recipes covered; each slot's options are listed cheapest first. Returns new objects.
  */
 export function rankRows(groups: RecipeGroup[], s: Sourcing): RecipeGroup[] {
   const steps = (q: Qty) => s.steps.get(q[0]) ?? Number.MAX_SAFE_INTEGER;
-  // least restricted first; within a tier, fewest processing steps (stable for ties)
-  const order = (opts: Qty[]) => [...opts].sort((a, b) => cmpCost(itemCost(s, a), itemCost(s, b)) || steps(a) - steps(b));
+  // least restricted tier first; within a tier, fewest parts in the whole tree, then fewest processing steps
+  const order = (opts: Qty[]) =>
+    [...opts].sort((a, b) => cmpCost(tierCost(s, a), tierCost(s, b)) || cmpCost(itemCost(s, a), itemCost(s, b)) || steps(a) - steps(b));
   return groups
     .map((g) => ({
       ...g,

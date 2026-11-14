@@ -98,10 +98,10 @@ export function groupRow(ctx: Ctx, g: RecipeGroup, selfId: string | null, key: s
   const s = (k: number) => (k > 1 ? 's' : '');
   const paw =
     (cost.animal
-      ? `<span class="an" title="Needs at least ${cost.animal} ingredient${s(cost.animal)} only obtainable from creatures">🐾 ${cost.animal}</span> · `
+      ? `<span class="an" title="Needs at least ${fmt(cost.animal)} creature-only ingredient${s(cost.animal)} across the whole recipe tree">🐾 ${fmt(cost.animal)}</span> · `
       : '') +
     (cost.wild
-      ? `<span class="an" title="Needs at least ${cost.wild} ingredient${s(cost.wild)} only harvested from wild plants (can't be farmed)">🌿 ${cost.wild}</span> · `
+      ? `<span class="an" title="Needs at least ${fmt(cost.wild)} wild-only plant${s(cost.wild)} (can't be farmed) across the whole recipe tree">🌿 ${fmt(cost.wild)}</span> · `
       : '');
   return `<div class="row">${left}<span class="arrow">→</span>${chip(ctx, g.out[0], g.out[1], g.out[0] === selfId)}<span class="op">${paw}${esc(
     g.op,

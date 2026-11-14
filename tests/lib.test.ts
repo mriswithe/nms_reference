@@ -276,6 +276,13 @@ describe('restricted ingredients', () => {
     expect(vOuts.indexOf('Fruity Ice Cream')).toBeLessThan(vOuts.indexOf('Cream Fingers'));
   });
 
+  it('counts restricted parts across the whole recipe tree', () => {
+    // Viscous Custard needs an egg and Cream (from milk): 2 creature parts, not 1
+    const vc = byName('Viscous Custard');
+    const ice = groupRecipes(db.uses[vc].cook, vc).find((g) => db.items[g.out[0]].n === 'Ice Cream')!;
+    expect(rowCost(ice, src)).toEqual({ animal: 2, wild: 0 });
+  });
+
   it('counts a pool by its best pair', () => {
     const stew = rankRows(groupRecipes(db.makes[id('Mystery Meat Stew')].cook), src)[0];
     expect(rowCost(stew, src)).toEqual({ animal: 0, wild: 0 });
