@@ -1,7 +1,7 @@
 import { MOD_CLASSES, moduleCatalog, MT_TECH, RANGES, type ModClass } from '../../lib/multitool';
 import { esc, fmt } from '../../lib/format';
 import type { Ctx } from '../context';
-import { chip, pageHead } from '../html';
+import { chip, pageHead, swatch } from '../html';
 
 const table = (head: string[], rows: string[], cls = '') =>
   `<div class="tscroll"><table class="tbl ${cls}"><thead><tr>${head.map((h) => `<th scope="col">${h}</th>`).join('')}</tr></thead><tbody>${rows.join(
@@ -45,7 +45,8 @@ function shopSection(ctx: Ctx): string {
     (m) =>
       `<tr><th scope="row">${esc(m.name)}</th>${MOD_CLASSES.map((c) => {
         const id = cat[m.key][c];
-        return `<td>${id ? chip(ctx, id) : '—'}</td>`;
+        // the row names the tech, and the column the class, so each cell is just the icon; the full name is the tooltip
+        return `<td>${id ? `<button class="chip" data-go="${id}" aria-label="${c}-class: ${esc(ctx.db.items[id].n)}" title="${esc(ctx.db.items[id].n)} (${esc(ctx.db.items[id].g)})">${swatch(ctx, id, 'sm')}</button>` : '—'}</td>`;
       }).join('')}</tr>`,
   );
   return card(
@@ -53,7 +54,8 @@ function shopSection(ctx: Ctx): string {
     'k-buy',
     'Shopping list',
     'modules by class',
-    `${table(['Tech', ...MOD_CLASSES.map((c) => `${CLASS_LABEL[c]}<br><span class="q">${price(c)} nanites</span>`)], rows)}
+    `${table(['Tech', ...MOD_CLASSES.map((c) => `${c}<br><span class="q">${price(c)}</span>`)], rows, 'shop')}
+    <p class="note">Prices are in nanites, under each class letter. X is the black-market Suspicious class.</p>
     <ul class="plain note">
       <li><b>C–S</b>: the Technology Merchant on any space station. C is always stocked; which higher classes appear changes from system to system, so check a few stations.</li>
       <li><b>X (Suspicious)</b>: outlaw stations' Salvage Dealer, trader ships and buried caches. The floor is about C-class, the ceiling beats S.</li>
@@ -80,7 +82,7 @@ export function renderMultitool(ctx: Ctx): string {
     `<ol class="plain">
       <li><b>Pick the right tool first.</b> The tool's own class bonuses (damage, mining, scanning) are fixed by its seed and can't be rerolled. Upgrading its class only adds slots and supercharged slots.</li>
       <li><b>Three modules per technology, no more.</b> A fourth of the same family (C, B, A, S and X together) switches all of them off ("Technology overloaded").</li>
-      <li><b>Stats roll when you install, not when you buy.</b> Save first, install, and reload if the roll is bad. See <a href="#" data-jump="mt-reroll">Rerolling</a>.</li>
+      <li><b>Stats roll when you install, not when you buy.</b> Save first, install, and reload if the roll is bad. See <a href="#" class="jl" data-jump="mt-reroll">Rerolling</a>.</li>
       <li><b>Cluster each technology with its three modules</b> in a square, on the supercharged slots when you can.</li>
       <li><b>S is not always best.</b> X-class (Suspicious) modules can beat S on the stat you care about, and can also roll near C-class. They're worth rerolling.</li>
     </ol>`,
@@ -115,7 +117,7 @@ export function renderMultitool(ctx: Ctx): string {
       <li><b>Put your three best modules on them first.</b> On an S-class tool, the main technology plus its three modules in a 2×2 square over the supercharged slots is the strongest single build.</li>
       <li><b>Adjacency</b>: every touching side between related technologies adds a bonus, summed before the class bonus. A tight square of one technology and its modules touches more sides than a line.</li>
       <li><b>Craftable add-ons don't count toward the cap of three.</b> Optical Drill, Advanced Mining Laser and the like are separate technologies; slot them next to the Mining Beam group.</li>
-      <li><b>Sentinel Weapons Shards</b> (Forbidden modules, from Salvaged Glass) boost the Boltcaster and are a separate family. The wiki says you can add up to three of them on top of three Boltcaster modules. That hasn't been tested here.</li>
+      <li><b>Sentinel Weapons Shards</b> (Forbidden modules, from Salvaged Glass) boost the Boltcaster and are a separate family. The wiki says you can add up to three of them on top of three Boltcaster modules. Players report this; it isn't confirmed in the game files.</li>
     </ul>`,
   );
 

@@ -84,6 +84,9 @@ main{padding-top:20px;display:grid;gap:18px}
 .op .an{font-family:var(--f-mono);color:var(--ink)}
 .op{margin-left:auto;color:var(--muted);font-size:12.5px;text-align:right}
 .op .ratio{font-family:var(--f-mono);color:var(--ink)}
+a.jl{color:var(--accent)}
+.tbl.shop tbody th{white-space:normal}
+.tbl.shop .chip{padding:3px 4px}
 ul.plain,ol.plain{margin:0;padding-left:18px;display:grid;gap:4px}
 .desc{color:var(--muted);white-space:pre-line;max-width:68ch;margin:0}
 .empty{color:var(--muted);font-style:italic;margin:0}
