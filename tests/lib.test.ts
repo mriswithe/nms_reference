@@ -13,6 +13,8 @@ import { abbr, esc } from '../src/lib/format';
 import { eatRank, eatText, ingestor, ingestorRank, ingestorValue, page, rankedIngestor, shown, tiers, topBySale, topEaten, topIngestor } from '../src/lib/food';
 import { renderCooking } from '../src/ui/views/cooking';
 import { renderItem } from '../src/ui/views/item';
+import { renderMultitool } from '../src/ui/views/multitool';
+import { MOD_CLASSES, moduleCatalog, MT_TECH, RANGES } from '../src/lib/multitool';
 import { createSearch, norm } from '../src/lib/search';
 import type { Dataset, Recipe } from '../src/lib/types';
 
@@ -484,5 +486,32 @@ describe('cooking reference', () => {
     const p2 = renderCooking(ctx);
     expect(p2).toContain('11–20 of');
     expect(p2.slice(p2.indexOf('id="ck-sale"'), p2.indexOf('id="ck-ing"'))).not.toContain('Horrifying, Gooey Delight');
+  });
+});
+
+describe('multi-tool guide', () => {
+  it('finds a module of every class for every technology', () => {
+    const cat = moduleCatalog(db);
+    for (const t of MT_TECH) for (const c of MOD_CLASSES) expect(cat[t.key][c], `${t.name} ${c}`).toBeTruthy();
+    expect(db.items[cat.mining.S!].g).toBe('Supreme Mining Beam Upgrade');
+    expect(db.items[cat.mining.X!].g).toBe('Banned Mining Beam Upgrade');
+  });
+
+  it('has a range row of the right width for every class', () => {
+    for (const t of MT_TECH) {
+      const r = RANGES[t.key];
+      expect(r, t.key).toBeTruthy();
+      for (const c of MOD_CLASSES) expect(r.rows[c]?.length, `${t.key} ${c}`).toBe(r.stats.length + 1);
+    }
+  });
+
+  it('renders every technology tab', () => {
+    const ctx = createCtx(data);
+    for (const t of MT_TECH) {
+      ctx.state.mtTech = t.key;
+      const h = renderMultitool(ctx);
+      expect(h).toContain(`data-mttech="${t.key}" aria-pressed="true"`);
+      expect(h).toContain('id="mt-shop"');
+    }
   });
 });
