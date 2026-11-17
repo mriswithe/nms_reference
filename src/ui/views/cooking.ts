@@ -1,4 +1,4 @@
-import { clock, EAT_KINDS, eatText, page, pct, rankedIngestor, STAT_GROUPS, tiers, topBySale, topEaten } from '../../lib/food';
+import { clock, EAT_KINDS, eatText, fewestHarvest, harvestOnly, page, pct, rankedIngestor, STAT_GROUPS, tiers, topBySale, topEaten } from '../../lib/food';
 import { esc, fmt } from '../../lib/format';
 import type { Ctx } from '../context';
 import { chip, pageHead } from '../html';
@@ -8,9 +8,14 @@ const table = (head: string[], rows: string[], cls = '') =>
     '',
   )}</tbody></table></div>`;
 
-/** a food chip followed by 🐾 / 🌿 when it can only be made with creature parts or wild-only plants */
-function foodChip(ctx: Ctx, id: string): string {
+/** ⭐ on a food that needs the fewest harvest-only ingredients in its ingestor tier */
+const easiestMark = (n: number) =>
+  `<span class="srcm" title="Fewest harvest-only ingredients for this bonus (${n === 0 ? 'none' : fmt(n)})">⭐</span>`;
+
+/** a food chip followed by ⭐ (see easiestMark), then 🐾 / 🌿 when it can only be made with creature parts or wild-only plants */
+function foodChip(ctx: Ctx, id: string, star = ''): string {
   const marks =
+    star +
     (ctx.src.animal.has(id) ? '<span class="srcm" title="Only obtainable from creatures">🐾</span>' : '') +
     (ctx.src.wild.has(id) ? '<span class="srcm" title="Needs plants that only grow wild (cannot be farmed)">🌿</span>' : '');
   return marks ? `<span class="fc">${chip(ctx, id)}${marks}</span>` : chip(ctx, id);
@@ -50,12 +55,15 @@ function ingestorSection(ctx: Ctx): string {
   const key = 'ing:' + stat;
   // paged by bonus tier, not by food: a tier of tied foods never splits across pages
   const p = page(tiers(db, rankedIngestor(db, stat)), state.cookPage[key] ?? 0, TIERS_PER_PAGE);
-  const rows = p.items.map(
-    (t) =>
-      `<tr><td class="num">≈ ${pct(t.value)}</td><td class="num">${clock(
-        t.seconds,
-      )}</td><td>${chipList(ctx, t.ids)}</td></tr>`,
-  );
+  const rows = p.items.map((t) => {
+    // easiest first: fewest harvest-only ingredients, then cheapest (t.ids is cheapest first and sort is stable)
+    const best = fewestHarvest(ctx.src, t.ids);
+    // a star only helps pick between foods: skip rows where every food ties
+    const starred = best.ids.size < t.ids.length ? best.ids : new Set<string>();
+    const ids = t.ids.slice().sort((a, b) => harvestOnly(ctx.src, a) - harvestOnly(ctx.src, b));
+    const chips = `<div class="chips">${ids.map((id) => foodChip(ctx, id, starred.has(id) ? easiestMark(best.n) : '')).join('')}</div>`;
+    return `<tr><td class="num">≈ ${pct(t.value)}</td><td class="num">${clock(t.seconds)}</td><td>${chips}</td></tr>`;
+  });
   return `<section class="card k-cook" id="ck-ing"><h3>Nutrient Ingestor <span class="ct">best foods per bonus</span></h3>${picker}
     <div class="note" style="margin:14px 0 6px"><b>${esc(fstat[stat][0])}</b></div>${table(['Bonus', 'Time', 'Foods'], rows)}${pager(
       key,
@@ -63,7 +71,7 @@ function ingestorSection(ctx: Ctx): string {
       p.items.length,
       'tiers',
     )}
-    <p class="note">Time is per item. ≈ marks an estimate from the game's range for the bonus and the food's cooking value, so foods with the same cooking value share a row.</p><p class="note">${LEGEND}</p></section>`;
+    <p class="note">Time is per item. ⭐ marks the foods in each row that need the fewest harvest-only ingredients (creature parts and wild-only plants) across the whole recipe, when they don't all tie; foods are listed fewest first. ≈ marks an estimate from the game's range for the bonus and the food's cooking value, so foods with the same cooking value share a row.</p><p class="note">${LEGEND}</p></section>`;
 }
 
 /** foods in one tier, cheapest first */

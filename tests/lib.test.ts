@@ -10,7 +10,7 @@ import { createCtx } from '../src/ui/context';
 import { renderSource } from '../src/ui/popover';
 import { groupRow } from '../src/ui/html';
 import { abbr, esc } from '../src/lib/format';
-import { eatRank, eatText, ingestor, ingestorRank, ingestorValue, page, rankedIngestor, shown, tiers, topBySale, topEaten, topIngestor } from '../src/lib/food';
+import { eatRank, eatText, fewestHarvest, ingestor, ingestorRank, ingestorValue, page, rankedIngestor, shown, tiers, topBySale, topEaten, topIngestor } from '../src/lib/food';
 import { renderCooking } from '../src/ui/views/cooking';
 import { renderItem } from '../src/ui/views/item';
 import { createSearch, norm } from '../src/lib/search';
@@ -447,6 +447,24 @@ describe('cooking reference', () => {
     html = renderCooking(ctx);
     expect(ing(html)).toContain('1–5 of 11 tiers');
     expect(ing(html).match(/<tr><td class="num">≈/g)!.length).toBe(5);
+  });
+
+  it('stars the foods with the fewest harvest-only ingredients in each ingestor tier, listed first', () => {
+    const ctx = createCtx(data);
+    const ing = (h: string) => h.slice(h.indexOf('id="ck-ing"'), h.indexOf('id="ck-eat"'));
+    ctx.state.cookStat = 'Weapon_Scan_Discovery_Mineral';
+    let html = ing(renderCooking(ctx));
+    const top = tiers(db, rankedIngestor(db, 'Weapon_Scan_Discovery_Mineral'))[0];
+    const best = fewestHarvest(ctx.src, top.ids);
+    expect(best.n).toBe(2);
+    expect([...best.ids].map((x) => db.items[x].n)).toEqual(['Caramel Curiosity']);
+    const row = html.slice(html.indexOf('<tr><td class="num">≈'));
+    expect(row.indexOf('Caramel Curiosity')).toBeLessThan(row.indexOf('Angelic Fruitcake'));
+    expect(row.slice(0, row.indexOf('</tr>')).match(/⭐/g)!.length).toBe(1);
+    ctx.state.cookStat = 'Weapon_Scan_Discovery_Creature';
+    html = ing(renderCooking(ctx));
+    expect(fewestHarvest(ctx.src, tiers(db, rankedIngestor(db, 'Weapon_Scan_Discovery_Creature'))[0].ids).n).toBe(3);
+    expect(html).toContain('Fewest harvest-only ingredients for this bonus (3)');
   });
 
   it('shows one eat effect at a time, foods with the same amount in one tier', () => {

@@ -1,5 +1,6 @@
 import { fmt } from './format';
 import type { Db } from './db';
+import type { Sourcing } from './sourcing';
 import type { Dataset, EatEffect, Item } from './types';
 
 /** plain-English text for what eating an item does */
@@ -218,6 +219,21 @@ export function tiers(db: Db, ids: string[]): Tier[] {
     else out.push({ value, seconds: g.seconds, ids: [id] });
   }
   return out;
+}
+
+/** creature-only + wild-only base ingredients on a food's cheapest route */
+export const harvestOnly = (src: Sourcing, id: string) => {
+  const c = src.parts.get(id);
+  return c ? c.animal + c.wild : Infinity;
+};
+
+/**
+ * The foods in `ids` (one tier) needing the fewest harvest-only ingredients, and that count. These are the
+ * easiest way to get the tier's bonus.
+ */
+export function fewestHarvest(src: Sourcing, ids: string[]): { ids: Set<string>; n: number } {
+  const n = Math.min(...ids.map((id) => harvestOnly(src, id)));
+  return { ids: new Set(ids.filter((id) => harvestOnly(src, id) === n)), n };
 }
 
 export const PAGE_SIZE = 10;
