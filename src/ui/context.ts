@@ -21,6 +21,9 @@ export interface UiState {
   cookPage: Record<string, number>;
   /** technology shown in the Multi-Tool guide's roll-range table */
   mtTech: string;
+  /** platform shown on the ship & suit upgrades page, and the technology picked per platform */
+  upPlat: string;
+  upTech: Record<string, string>;
 }
 
 export interface Ctx {
@@ -42,6 +45,6 @@ export function createCtx(data: Dataset): Ctx {
     families: buildFamilies(db),
     icons: new Set(data.icons ?? []),
     src: sourcing(db),
-    state: { refSort: 'fewest', treeMode: 'craft', expanded: new Set(), routes: {}, openCycles: new Set(), cookStat: 'Weapon_Scan_Discovery_Flora', cookEat: 'life', cookPage: {}, mtTech: 'mining' },
+    state: { refSort: 'fewest', treeMode: 'craft', expanded: new Set(), routes: {}, openCycles: new Set(), cookStat: 'Weapon_Scan_Discovery_Flora', cookEat: 'life', cookPage: {}, mtTech: 'mining', upPlat: 'starship', upTech: {} },
   };
 }

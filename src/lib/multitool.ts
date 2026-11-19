@@ -158,3 +158,56 @@ export const RANGES: Record<string, StatTable> = {
     judge: 'For terrain clearing and mining deposits, crater radius matters more than damage.',
   },
 };
+
+export interface SpecialTech {
+  /** item id in the dataset */
+  id: string;
+  /** MT_TECH key of the technology it boosts, or 'all' */
+  tech: string;
+  what: string;
+}
+
+/**
+ * Non-procedural Multi-Tool upgrades. Shard ranges are nomansskyrecipes.com's UP_SENGUN table (Forsaken 7.1);
+ * shatter odds are a community count of 1,800 Salvaged Glass.
+ */
+export const SPECIAL = {
+  shard: {
+    id: 'prod166',
+    glass: 'cur80',
+    stats: [
+      ['Damage', '1–4'],
+      ['Reload time', '−1 to −15%'],
+      ['Fire rate', '1–20%'],
+    ] as [string, string][],
+    notes: [
+      'A "Forbidden Multi-Tool Module". It rolls 2–4 of the stats below when installed, like any other module, and players report the same save-and-reload reroll works.',
+      'It boosts the <b>Boltcaster</b> only. Players run three shards beside three normal Boltcaster modules without overloading, so the shards appear to have their own cap of three. That comes from player builds, not the game files.',
+      'Get it by shattering Salvaged Glass (from Sentinel drops, 0–1 per wreck) in your inventory. In a community count of 1,800 glass, about 19% gave a Weapons Shard and 21% a Sentinel Exosuit Fragment; the rest were nanites, Vy\'keen Effigies and other salvage.',
+      'Another source gives a much lower damage ceiling (+2). The 1–4 here is the game-file number.',
+    ],
+  },
+  blueprints: [
+    { id: 'tech73', tech: 'bolt', what: 'less recoil and burst cooldown' },
+    { id: 'tech184', tech: 'bolt', what: 'shots ricochet' },
+    { id: 'tech83', tech: 'pulse', what: 'bigger clip' },
+    { id: 'tech185', tech: 'pulse', what: 'shots ricochet' },
+    { id: 'tech207', tech: 'pulse', what: 'sets targets on fire' },
+    { id: 'tech79', tech: 'blaze', what: 'more damage' },
+    { id: 'tech209', tech: 'neutron', what: 'faster, stronger charged shots' },
+    { id: 'tech70', tech: 'mining', what: 'mines large and rare deposits' },
+    { id: 'tech71', tech: 'mining', what: 'more yield per harvest' },
+    { id: 'tech64', tech: 'scanner', what: 'faster scanner recharge' },
+    { id: 'tech210', tech: 'all', what: 'every weapon does more damage to stunned targets (pair with the Paralysis Mortar)' },
+    { id: 'tech68', tech: 'all', what: 'zoom when aiming' },
+  ] as SpecialTech[],
+  typed: [
+    { id: 'tech241', tech: 'mining', what: 'Sentinel Multi-Tools only: built-in mining laser in place of the Mining Beam.' },
+    { id: 'tech249', tech: 'mining', what: 'Atlantid Multi-Tools only: built-in mining laser with a cloaking mode. Players report it works alongside a normal Mining Beam.' },
+    { id: 'tech167', tech: 'mining', what: 'Starbirth quest reward: turns terrain deposits into Solanium. Does no damage.' },
+    { id: 'tech168', tech: 'mining', what: 'Starbirth quest reward: an overloaded mining laser.' },
+    { id: 'tech247', tech: 'scanner', what: 'From the "They Who Returned" quest: reveals cloaked Autophage.' },
+    { id: 'tech248', tech: 'scanner', what: 'From the Autophage quest: locates Autophage gatherings.' },
+    { id: 'tech242', tech: 'scanner', what: 'Finds sentience echoes on dissonant worlds.' },
+  ] as SpecialTech[],
+};

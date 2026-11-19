@@ -85,6 +85,8 @@ main{padding-top:20px;display:grid;gap:18px}
 .op{margin-left:auto;color:var(--muted);font-size:12.5px;text-align:right}
 .op .ratio{font-family:var(--f-mono);color:var(--ink)}
 a.jl{color:var(--accent)}
+.card h4.sub{font:700 13px var(--f-display);letter-spacing:.06em;text-transform:uppercase;margin:14px 0 6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.card h4.sub:first-of-type{margin-top:0}
 .tbl.shop tbody th{white-space:normal}
 .tbl.shop .chip{padding:3px 4px}
 ul.plain,ol.plain{margin:0;padding-left:18px;display:grid;gap:4px}

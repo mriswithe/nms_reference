@@ -1,5 +1,5 @@
 /**
- * Browser entry point. Hash routing: `#<itemId>` shows an item, `#cycles` / `#consumables` / `#cooking` / `#multitool` show reference views.
+ * Browser entry point. Hash routing: `#<itemId>` shows an item, `#cycles` / `#consumables` / `#cooking` / `#multitool` / `#mtupgrades` / `#upgrades` show reference views.
  * Hash URLs are kept so links to the old single-file site keep working.
  */
 import { esc } from '../lib/format';
@@ -12,7 +12,8 @@ import { renderConsumables } from './views/consumables';
 import { renderCooking } from './views/cooking';
 import { renderCycles } from './views/cycles';
 import { renderItem, renderWelcome } from './views/item';
-import { renderMultitool } from './views/multitool';
+import { renderMtUpgrades, renderMultitool } from './views/multitool';
+import { renderUpgrades } from './views/upgrades';
 
 const data: Dataset = JSON.parse(document.getElementById('nmsdata')!.textContent!);
 const ctx = createCtx(data);
@@ -20,7 +21,7 @@ const { db, state } = ctx;
 const search = createSearch(db);
 initPopover(ctx);
 
-const VIEWS: Record<string, (c: typeof ctx) => string> = { cycles: renderCycles, consumables: renderConsumables, cooking: renderCooking, multitool: renderMultitool };
+const VIEWS: Record<string, (c: typeof ctx) => string> = { cycles: renderCycles, consumables: renderConsumables, cooking: renderCooking, multitool: renderMultitool, mtupgrades: renderMtUpgrades, upgrades: renderUpgrades };
 const DEFAULT_ITEM = 'Radon';
 
 const main = document.getElementById('main')!;
@@ -148,6 +149,12 @@ main.addEventListener('click', (e) => {
     rerender();
   } else if ((el = on('mttech'))) {
     state.mtTech = el.dataset.mttech!;
+    rerender();
+  } else if ((el = on('upplat'))) {
+    state.upPlat = el.dataset.upplat!;
+    rerender();
+  } else if ((el = on('uptech'))) {
+    state.upTech[state.upPlat] = el.dataset.uptech!;
     rerender();
   } else if ((el = on('cpage'))) {
     state.cookPage[el.dataset.cpage!] = Number(el.dataset.to);

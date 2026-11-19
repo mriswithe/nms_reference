@@ -13,8 +13,10 @@ import { abbr, esc } from '../src/lib/format';
 import { eatRank, eatText, fewestHarvest, ingestor, ingestorRank, ingestorValue, page, rankedIngestor, shown, tiers, topBySale, topEaten, topIngestor } from '../src/lib/food';
 import { renderCooking } from '../src/ui/views/cooking';
 import { renderItem } from '../src/ui/views/item';
-import { renderMultitool } from '../src/ui/views/multitool';
-import { MOD_CLASSES, moduleCatalog, MT_TECH, RANGES } from '../src/lib/multitool';
+import { renderMtUpgrades, renderMultitool } from '../src/ui/views/multitool';
+import { renderUpgrades } from '../src/ui/views/upgrades';
+import { MOD_CLASSES, moduleCatalog, MT_TECH, RANGES, SPECIAL } from '../src/lib/multitool';
+import { PLATFORMS, upgradeCatalog } from '../src/lib/upgrades';
 import { createSearch, norm } from '../src/lib/search';
 import type { Dataset, Recipe } from '../src/lib/types';
 
@@ -523,13 +525,57 @@ describe('multi-tool guide', () => {
     }
   });
 
-  it('renders every technology tab', () => {
+  it('renders every technology tab on the upgrades half', () => {
     const ctx = createCtx(data);
     for (const t of MT_TECH) {
       ctx.state.mtTech = t.key;
-      const h = renderMultitool(ctx);
+      const h = renderMtUpgrades(ctx);
       expect(h).toContain(`data-mttech="${t.key}" aria-pressed="true"`);
       expect(h).toContain('id="mt-shop"');
+      expect(h).toContain('id="mt-special"');
+    }
+  });
+
+  it('splits the guide: tools on one page, modules on the other', () => {
+    const ctx = createCtx(data);
+    const tools = renderMultitool(ctx);
+    expect(tools).toContain('id="mt-tool"');
+    expect(tools).not.toContain('id="mt-ranges"');
+    expect(tools).toContain('data-go="mtupgrades"');
+    expect(renderMtUpgrades(ctx)).toContain('data-go="multitool"');
+  });
+
+  it('links every special upgrade to a real item', () => {
+    for (const id of [SPECIAL.shard.id, SPECIAL.shard.glass, ...SPECIAL.blueprints.map((b) => b.id), ...SPECIAL.typed.map((b) => b.id)])
+      expect(db.items[id], id).toBeTruthy();
+    expect(db.items[SPECIAL.shard.id].g).toBe('Forbidden Multi-Tool Module');
+  });
+});
+
+describe('ship & suit upgrades', () => {
+  it('has a module item for every class it lists ranges for, and row widths match', () => {
+    for (const p of PLATFORMS) {
+      const cat = upgradeCatalog(db, p);
+      for (const t of p.techs) {
+        for (const c of MOD_CLASSES) {
+          const r = t.rows[c];
+          if (r) expect(r.length, `${t.key} ${c}`).toBe(t.stats.length + 1);
+          if (t.match) expect(!!cat[t.key][c], `${p.key} ${t.key} ${c}`).toBe(!!r);
+        }
+      }
+    }
+  });
+
+  it('renders every platform and technology', () => {
+    const ctx = createCtx(data);
+    for (const p of PLATFORMS) {
+      ctx.state.upPlat = p.key;
+      for (const t of p.techs) {
+        ctx.state.upTech[p.key] = t.key;
+        const h = renderUpgrades(ctx);
+        expect(h).toContain(`data-upplat="${p.key}" aria-pressed="true"`);
+        expect(h).toContain(`data-uptech="${t.key}" aria-pressed="true"`);
+      }
     }
   });
 });
