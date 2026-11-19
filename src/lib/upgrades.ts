@@ -1,5 +1,5 @@
 /**
- * Upgrade-module roll ranges for the starship, living ship, exosuit and freighter, plus which dataset item is
+ * Upgrade-module roll ranges for the starship, living ship, freighter and exosuit, plus which dataset item is
  * which class. The Multi-Tool has its own page (multitool.ts); this reuses its class letters and table shape.
  *
  * Ranges are datamined (nomansskyrecipes.com, Forsaken 7.1, data dated 2026-10-28). That site stores some
@@ -66,7 +66,7 @@ const NA = '—';
 const EXOSUIT: Platform = {
   key: 'exosuit',
   name: 'Exosuit',
-  icon: '🧑‍🚀',
+  icon: '🥽',
   where: [
     '<b>B–S</b>: the Exosuit Technology Merchant on any space station. Which classes are stocked changes from system to system.',
     '<b>X (Suspicious)</b>: outlaw stations\' Salvage Dealer. Hazard Protection only comes as X.',
@@ -443,6 +443,9 @@ const LIVING: Platform = {
   ],
 };
 
-export const PLATFORMS: Platform[] = [STARSHIP, LIVING, EXOSUIT, FREIGHTER];
+/** the Ship upgrades page; the Exosuit has a page of its own */
+export const SHIP_PLATFORMS: Platform[] = [STARSHIP, LIVING, FREIGHTER];
+export { EXOSUIT };
+export const PLATFORMS: Platform[] = [...SHIP_PLATFORMS, EXOSUIT];
 
 export { MOD_CLASSES };

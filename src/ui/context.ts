@@ -21,7 +21,7 @@ export interface UiState {
   cookPage: Record<string, number>;
   /** technology shown in the Multi-Tool guide's roll-range table */
   mtTech: string;
-  /** platform shown on the ship & suit upgrades page, and the technology picked per platform */
+  /** platform shown on the Ship upgrades page, and the technology picked per platform (Exosuit page included) */
   upPlat: string;
   upTech: Record<string, string>;
 }

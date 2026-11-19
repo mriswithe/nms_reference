@@ -4,7 +4,7 @@ A No Man's Sky reference for refining, crafting, cooking, gathering and buying: 
 
 Live: https://mriswithe.github.io/nms_reference/
 
-Built with [Astro](https://astro.build) as a single static page. Item views render client-side from an embedded JSON dataset, with hash routing (`#raw1`, `#cycles`, `#consumables`, `#cooking`, `#multitool`, `#mtupgrades`, `#upgrades`) so links are shareable.
+Built with [Astro](https://astro.build) as a single static page. Item views render client-side from an embedded JSON dataset, with hash routing (`#raw1`, `#cycles`, `#consumables`, `#cooking`, `#multitool`, `#mtupgrades`, `#upgrades`, `#exosuit`) so links are shareable.
 
 ## Develop
 
@@ -34,7 +34,7 @@ src/
     consumables.ts       refinable consumables list
     food.ts              eat effects and Nutrient Ingestor estimates
     multitool.ts         Multi-Tool upgrade modules by class, datamined roll ranges, Sentinel and blueprint upgrades
-    upgrades.ts          starship, living ship, exosuit and freighter module roll ranges by class
+    upgrades.ts          starship, living ship, freighter and exosuit module roll ranges by class
     format.ts            escaping and number/label formatting
   ui/                    browser code
     app.ts               entry point: routing, search box, event delegation

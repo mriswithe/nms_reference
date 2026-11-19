@@ -14,9 +14,9 @@ import { eatRank, eatText, fewestHarvest, ingestor, ingestorRank, ingestorValue,
 import { renderCooking } from '../src/ui/views/cooking';
 import { renderItem } from '../src/ui/views/item';
 import { renderMtUpgrades, renderMultitool } from '../src/ui/views/multitool';
-import { renderUpgrades } from '../src/ui/views/upgrades';
+import { renderExosuit, renderUpgrades } from '../src/ui/views/upgrades';
 import { MOD_CLASSES, moduleCatalog, MT_TECH, RANGES, SPECIAL } from '../src/lib/multitool';
-import { PLATFORMS, upgradeCatalog } from '../src/lib/upgrades';
+import { EXOSUIT, PLATFORMS, SHIP_PLATFORMS, upgradeCatalog } from '../src/lib/upgrades';
 import { createSearch, norm } from '../src/lib/search';
 import type { Dataset, Recipe } from '../src/lib/types';
 
@@ -552,7 +552,7 @@ describe('multi-tool guide', () => {
   });
 });
 
-describe('ship & suit upgrades', () => {
+describe('ship and exosuit upgrades', () => {
   it('has a module item for every class it lists ranges for, and row widths match', () => {
     for (const p of PLATFORMS) {
       const cat = upgradeCatalog(db, p);
@@ -568,16 +568,28 @@ describe('ship & suit upgrades', () => {
     }
   });
 
-  it('renders every platform and technology', () => {
+  it('renders every ship platform and technology', () => {
     const ctx = createCtx(data);
-    for (const p of PLATFORMS) {
+    for (const p of SHIP_PLATFORMS) {
       ctx.state.upPlat = p.key;
       for (const t of p.techs) {
         ctx.state.upTech[p.key] = t.key;
         const h = renderUpgrades(ctx);
         expect(h).toContain(`data-upplat="${p.key}" aria-pressed="true"`);
-        expect(h).toContain(`data-uptech="${t.key}" aria-pressed="true"`);
+        expect(h).toContain(`data-uptech="${t.key}" data-plat="${p.key}" aria-pressed="true"`);
+        expect(h).not.toContain('data-upplat="exosuit"');
       }
+    }
+  });
+
+  it('gives the Exosuit its own page', () => {
+    const ctx = createCtx(data);
+    for (const t of EXOSUIT.techs) {
+      ctx.state.upTech.exosuit = t.key;
+      const h = renderExosuit(ctx);
+      expect(h).toContain(`data-uptech="${t.key}" data-plat="exosuit" aria-pressed="true"`);
+      expect(h).not.toContain('data-upplat=');
+      expect(h).toContain('data-go="upgrades"');
     }
   });
 });
