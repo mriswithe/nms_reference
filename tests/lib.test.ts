@@ -15,6 +15,7 @@ import { renderCooking } from '../src/ui/views/cooking';
 import { renderItem } from '../src/ui/views/item';
 import { renderMtUpgrades, renderMultitool } from '../src/ui/views/multitool';
 import { renderExosuit, renderUpgrades } from '../src/ui/views/upgrades';
+import { renderReroll } from '../src/ui/views/reroll';
 import { MOD_CLASSES, moduleCatalog, MT_TECH, RANGES, SPECIAL } from '../src/lib/multitool';
 import { EXOSUIT, PLATFORMS, SHIP_PLATFORMS, upgradeCatalog } from '../src/lib/upgrades';
 import { createSearch, norm } from '../src/lib/search';
@@ -543,6 +544,17 @@ describe('multi-tool guide', () => {
     expect(tools).not.toContain('id="mt-ranges"');
     expect(tools).toContain('data-go="mtupgrades"');
     expect(renderMtUpgrades(ctx)).toContain('data-go="multitool"');
+  });
+
+  it('keeps the reroll method on its own page, linked from every upgrades page', () => {
+    const ctx = createCtx(data);
+    const mt = renderMtUpgrades(ctx);
+    expect(mt).not.toContain('id="mt-reroll"');
+    expect(mt).not.toContain('data-jump="mt-reroll"');
+    for (const h of [mt, renderUpgrades(ctx), renderExosuit(ctx)]) expect(h).toContain('data-go="reroll"');
+    const r = renderReroll(ctx);
+    for (const id of ['rr-how', 'rr-steps', 'rr-which', 'rr-tips']) expect(r).toContain(`id="${id}"`);
+    for (const v of ['mtupgrades', 'upgrades', 'exosuit']) expect(r).toContain(`data-go="${v}"`);
   });
 
   it('links every special upgrade to a real item', () => {

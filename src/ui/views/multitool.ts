@@ -28,7 +28,7 @@ export function renderMultitool(ctx: Ctx): string {
     'Multi-Tools',
     'Which Multi-Tool to start from: type bonuses, class odds and upgrade costs, slots and supercharged slots, and builds.',
   );
-  h += `<p class="note">Part 1 of the Multi-Tool guide. Part 2, ${toPage('mtupgrades', 'Multi-Tool upgrades')}, covers modules: roll ranges, rerolling, layout and where to buy them.</p>`;
+  h += `<p class="note">Part 1 of the Multi-Tool guide. Part 2, ${toPage('mtupgrades', 'Multi-Tool upgrades')}, covers modules: roll ranges, layout, special upgrades and where to buy them.</p>`;
   h += nav('Multi-Tools', [
     ['mt-rules', 'The short version'],
     ['mt-tool', 'Tool types'],
@@ -212,13 +212,12 @@ export function renderMtUpgrades(ctx: Ctx): string {
     '🔩',
     'var(--craft)',
     'Multi-Tool upgrades',
-    'How to get the most out of Multi-Tool upgrade modules: what each class can roll, how to reroll, where to place modules, the Sentinel and blueprint upgrades, and where to buy.',
+    'How to get the most out of Multi-Tool upgrade modules: what each class can roll, where to place modules, the Sentinel and blueprint upgrades, and where to buy.',
   );
   h += `<p class="note">Part 2 of the Multi-Tool guide. Part 1, ${toPage('multitool', 'Multi-Tools')}, covers choosing and upgrading the tool itself.</p>`;
   h += nav('Multi-Tool upgrades', [
     ['mt-mrules', 'The short version'],
     ['mt-ranges', 'Roll ranges'],
-    ['mt-reroll', 'Rerolling'],
     ['mt-layout', 'Layout'],
     ['mt-special', 'Special upgrades'],
     ['mt-shop', 'Shopping list'],
@@ -231,31 +230,14 @@ export function renderMtUpgrades(ctx: Ctx): string {
     '',
     `<ol class="plain">
       <li><b>Three modules per technology, no more.</b> A fourth of the same family (C, B, A, S and X together) switches all of them off ("Technology overloaded").</li>
-      <li><b>Stats roll when you install, not when you buy.</b> Save first, install, and reload if the roll is bad. See <a href="#" class="jl" data-jump="mt-reroll">Rerolling</a>.</li>
+      <li><b>Stats roll when you install, not when you buy.</b> Save first, install, and reload if the roll is bad. See ${toPage('reroll', 'Rerolling upgrades')}.</li>
       <li><b>Cluster each technology with its three modules</b> in a square, on the supercharged slots when you can.</li>
-      <li><b>S is not always best.</b> X-class (Suspicious) modules can beat S on the stat you care about, and can also roll near C-class. They're worth rerolling.</li>
+      <li><b>S is not always best.</b> X-class (Suspicious) modules can beat S on the stat you care about, and can also roll near C-class. They're worth ${toPage('reroll', 'rerolling')}.</li>
       <li><b>Blueprint upgrades and Sentinel Weapons Shards are extra.</b> They sit outside the cap of three; see <a href="#" class="jl" data-jump="mt-special">Special upgrades</a>.</li>
     </ol>`,
   );
 
   h += rangesSection(ctx);
-
-  h += card(
-    'mt-reroll',
-    'k-refine',
-    'Rerolling a module',
-    'save-scumming',
-    `<p class="note" style="margin-top:0">A module's stats are not stored on it when you buy it. They come from a roll sequence that moves on <b>each time you install any upgrade module</b>. Station, merchant slot and purchase order don't matter. Reloading alone gives the same roll again, and dismantling a module doesn't move the sequence on.</p>
-    <ol class="plain">
-      <li>Buy the module you want plus a few cheap C-class modules of any type.</li>
-      <li>Make a restore point: get in and out of your ship, or use a save beacon.</li>
-      <li>Install the expensive module and read its stats.</li>
-      <li>Bad roll? Reload. Install one C-class module (this moves the sequence on), then dismantle it.</li>
-      <li>Install the expensive module again. Repeat until the stats you care about are near the top of the range.</li>
-    </ol>
-    <p class="note">Once a module is installed you can move it between slots, and pack it up to put into another tool. Leaving a system and coming back restocks its merchants, and so does reloading a save from before you bought.</p>
-    <p class="note">This has worked since the NEXT update and no patch since has changed it. If a reload gives you a different roll, the game has changed: fall back to buying from several stations.</p>`,
-  );
 
   h += card(
     'mt-layout',
@@ -271,6 +253,6 @@ export function renderMtUpgrades(ctx: Ctx): string {
 
   h += specialSection(ctx);
   h += shopSection(ctx);
-  h += `<p class="note">Sources: datamined module tables (nomansskyrecipes.com, Forsaken 7.1) and the No Man's Sky Wiki. The reroll method and the Sentinel Weapons Shard cap come from player testing, not game files.</p>`;
+  h += `<p class="note">Sources: datamined module tables (nomansskyrecipes.com, Forsaken 7.1) and the No Man's Sky Wiki. The Sentinel Weapons Shard cap comes from player testing, not game files.</p>`;
   return h;
 }

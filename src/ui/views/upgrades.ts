@@ -14,7 +14,7 @@ const modChip = (ctx: Ctx, id: string, c: ModClass) => {
   return `<button class="chip" data-go="${id}" aria-label="${c}-class: ${esc(it.n)}" title="${esc(it.n)} (${esc(it.g)})">${swatch(ctx, id, 'sm')}</button>`;
 };
 
-const RULES = `The same rules as Multi-Tool modules apply: three modules per technology, stats roll on install, and the <a href="#mtupgrades" class="jl" data-go="mtupgrades">save-and-reload reroll</a> works on every module.`;
+const RULES = `The same rules as Multi-Tool modules apply: three modules per technology, stats roll on install, and the <a href="#reroll" class="jl" data-go="reroll">save-and-reload reroll</a> works on every module.`;
 
 const SOURCES = `<p class="note">Sources: datamined module tables (nomansskyrecipes.com, Forsaken 7.1). Some of that site's percentages are stored as "value − 100%" and are shown here as the game displays them.</p>`;
 
