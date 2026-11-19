@@ -109,6 +109,7 @@ ul.plain,ol.plain{margin:0;padding-left:18px;display:grid;gap:4px}
 .note b{color:var(--ink)}
 .tscroll{overflow-x:auto;margin:0 -4px}
 .tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl.fit{width:auto;min-width:min(100%,320px)}
 .tbl th,.tbl td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
 .tbl thead th{font:600 11.5px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:2px}
 .tbl tbody th{font:600 13.5px var(--f-body);white-space:nowrap}

@@ -167,7 +167,7 @@ function specialSection(ctx: Ctx): string {
     'Sentinel, blueprint and tool-type tech',
     `<h4 class="sub">${chip(ctx, shard.id)} <span class="q">from</span> ${chip(ctx, shard.glass)}</h4>
     <ul class="plain note">${shard.notes.map((n) => `<li>${n}</li>`).join('')}</ul>
-    ${shardRows.length ? table(['Stat', 'Range'], shardRows) : ''}
+    ${shardRows.length ? table(['Stat', 'Range'], shardRows, 'fit') : ''}
     <h4 class="sub">Blueprint upgrades</h4>
     <p class="note">Fixed-stat technologies, not random modules: they don't roll, don't count toward the cap of three, and get adjacency from the technology they boost, so slot them next to its group.</p>
     <ul class="plain">${bp.join('')}${general.map((b) => `<li>${chip(ctx, b.id)} ${esc(b.what)}</li>`).join('')}</ul>
