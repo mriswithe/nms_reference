@@ -44,17 +44,17 @@ const grp = (g: string) => (it: Item) => isModule(it) && it.g.replace(/^(Signifi
 /** module whose name, minus "Suspicious ", is `n` (for groups shared by several technologies) */
 const named = (n: string) => (it: Item) => isModule(it) && it.n.replace(/^Suspicious /, '') === n;
 
-/** tech key -> class -> item id */
-export function upgradeCatalog(db: Db, p: Platform): Record<string, Partial<Record<ModClass, string>>> {
-  const out: Record<string, Partial<Record<ModClass, string>>> = {};
+/** tech key -> class -> item ids (several when one tab covers modules that roll the same, like the fleet bonuses) */
+export function upgradeCatalog(db: Db, p: Platform): Record<string, Partial<Record<ModClass, string[]>>> {
+  const out: Record<string, Partial<Record<ModClass, string[]>>> = {};
   for (const t of p.techs) {
-    const row: Partial<Record<ModClass, string>> = {};
+    const row: Partial<Record<ModClass, string[]>> = {};
     if (t.match)
       for (const id of db.ids) {
         const it = db.items[id];
         if (!t.match(it)) continue;
         const c = classOf(it);
-        if (c && !row[c]) row[c] = id;
+        if (c) (row[c] ??= []).push(id);
       }
     out[t.key] = row;
   }
@@ -170,11 +170,11 @@ const EXOSUIT: Platform = {
   ],
 };
 
-/** freighter modules each roll one stat, the same ladder for the five fleet bonuses */
-const fleet = (key: string, name: string, stat: string, item: string): UpTech => ({
+/** freighter modules each roll one stat, the same ladder for every fleet bonus */
+const fleet = (key: string, name: string, stat: string, items: string[]): UpTech => ({
   key,
   name,
-  match: named(item),
+  match: (it) => items.some((n) => named(n)(it)),
   stats: [stat],
   rows: { C: ['1', '1–5%'], B: ['1', '5–10%'], A: ['1', '10–14%'], S: ['1', '15%'] },
   judge: 'One stat. S is fixed at 15% and a top A roll is 14%, so a high A is nearly as good.',
@@ -198,7 +198,7 @@ const FREIGHTER: Platform = {
       rows: { C: ['1', '50–100 ly'], B: ['1–2', '100–150 ly'], A: ['2', '150–200 ly'], S: ['2', '200–250 ly'] },
       judge: 'Jump distance. A and S also roll a jumps-per-cell stat, but its stored range is zero, so it adds nothing.',
     },
-    fleet('fspeed', 'Expedition Speed', 'Expedition speed', 'Salvaged Fleet Beacon'),
+    fleet('fspeed', 'Expedition Speed', 'Expedition speed', ['Salvaged Fleet Beacon']),
     {
       key: 'ffuel',
       name: 'Expedition Efficiency',
@@ -207,10 +207,16 @@ const FREIGHTER: Platform = {
       rows: { C: ['1', '−1 to −5%'], B: ['1', '−5 to −10%'], A: ['1', '−10 to −15%'], S: ['1', '−15 to −20%'] },
       judge: 'One stat; the more negative, the less fuel each expedition burns.',
     },
-    fleet('fcombat', 'Expedition Defences', 'Combat', 'Salvaged Fleet Combat Unit'),
-    fleet('fexplore', 'Scientific Control', 'Exploration', 'Salvaged Fleet Exploration Unit'),
-    fleet('fmine', 'Mining Control', 'Industry', 'Salvaged Fleet Mining Unit'),
-    fleet('ftrade', 'Trade Control', 'Trade', 'Salvaged Fleet Trade Unit'),
+    {
+      // Expedition Defences, Scientific Control, Mining Control and Trade Control roll identically
+      ...fleet('fmission', 'Defences / Scientific / Mining / Trade', 'Expedition bonus', [
+        'Salvaged Fleet Combat Unit',
+        'Salvaged Fleet Exploration Unit',
+        'Salvaged Fleet Mining Unit',
+        'Salvaged Fleet Trade Unit',
+      ]),
+      note: 'Expedition Defences (combat), Scientific Control (exploration), Mining Control (industry) and Trade Control (trade) roll exactly the same ranges; each boosts its own expedition type.',
+    },
   ],
 };
 

@@ -39,7 +39,7 @@ export function renderUpgrades(ctx: Ctx): string {
   const hasItems = Object.keys(row).length > 0;
   const rows = MOD_CLASSES.filter((c) => tech.rows[c]).map((c) => {
     const [n, ...vals] = tech.rows[c]!;
-    const item = hasItems ? `<td>${row[c] ? modChip(ctx, row[c]!, c) : '—'}</td>` : '';
+    const item = hasItems ? `<td>${row[c] ? row[c]!.map((id) => modChip(ctx, id, c)).join('') : '—'}</td>` : '';
     return `<tr><th scope="row">${CLASS_LABEL[c]}</th>${item}<td class="num">${n}</td>${vals.map((v) => `<td class="num">${esc(v)}</td>`).join('')}</tr>`;
   });
   h += `<section class="card k-craft" id="up-ranges"><h3>${esc(plat.name)} roll ranges <span class="ct">per module class</span></h3>

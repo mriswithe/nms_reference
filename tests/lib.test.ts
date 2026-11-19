@@ -561,6 +561,8 @@ describe('ship & suit upgrades', () => {
           const r = t.rows[c];
           if (r) expect(r.length, `${t.key} ${c}`).toBe(t.stats.length + 1);
           if (t.match) expect(!!cat[t.key][c], `${p.key} ${t.key} ${c}`).toBe(!!r);
+          // one module per class, except the tab that covers the four identical fleet bonuses
+          if (r && t.match) expect(cat[t.key][c]!.length, `${p.key} ${t.key} ${c}`).toBe(t.key === 'fmission' ? 4 : 1);
         }
       }
     }
