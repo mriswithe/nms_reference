@@ -24,8 +24,6 @@ function foodChip(ctx: Ctx, id: string, star = ''): string {
 /** what the 🐾 / 🌿 markers mean, shown under each table */
 const LEGEND = "🐾 needs creature parts · 🌿 needs wild plants that can't be farmed; unmarked foods can be made from farmed or gathered ingredients.";
 
-const chipList = (ctx: Ctx, ids: string[]) => `<div class="chips">${ids.map((id) => foodChip(ctx, id)).join('')}</div>`;
-
 /** "‹ Previous  11–20 of 385  Next ›"; `key` names the list in state.cookPage */
 function pager(key: string, p: { page: number; pages: number; start: number; total: number }, shown: number, noun: string): string {
   if (p.pages < 2) return '';

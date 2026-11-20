@@ -30,7 +30,7 @@ export function renderConsumables(ctx: Ctx): string {
       )}<span class="out"><span class="arrow">→</span>${chip(ctx, id, it.q || 1, true)}</span></div></div>`;
     else h += `<p class="note" style="margin:0">No crafting recipe; refining is the only way to make it.</p>`;
 
-    h += `<div class="note"><b>Refine</b> · ${plural(rs.length, 'recipe')}</div><div class="rlist">`;
+    h += `<div class="note"><b>Refine</b> · ${plural(rs.length, 'recipe')}</div><div class="rlist stack">`;
     rs.forEach(({ r, cost: c }, k) => {
       const cheapest = k === 0 && rs.length > 1 && c < rs[1].cost * 0.995 ? '<span class="tag t-cook">Cheapest</span>' : '';
       const vsCraft =

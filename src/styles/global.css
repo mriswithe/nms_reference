@@ -59,11 +59,9 @@ nav.views a{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;pa
 nav.views a:hover{color:var(--ink)}
 nav.views a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--accent)}
 @media (max-width:760px){.bar{grid-template-columns:1fr}.brand{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}}
-@media (max-width:560px){
-  header.top{position:static}
-  /* the nav scrolls sideways; fade the edge so it reads as more to come */
-  nav.views{-webkit-mask-image:linear-gradient(to right,#000 85%,transparent);mask-image:linear-gradient(to right,#000 85%,transparent);padding-right:24px}
-}
+/* below this the nav scrolls sideways; fade the edge so it reads as more to come */
+@media (max-width:1000px){nav.views{-webkit-mask-image:linear-gradient(to right,#000 88%,transparent);mask-image:linear-gradient(to right,#000 88%,transparent);padding-right:24px}}
+@media (max-width:560px){header.top{position:static}}
 
 /* ---------- page heads, jump bars, cards ---------- */
 .sw{width:44px;height:44px;border-radius:9px;display:grid;place-items:center;font:700 14px var(--f-display);color:#fff;flex-shrink:0;text-shadow:0 1px 2px rgb(0 0 0 / .35)}
@@ -84,6 +82,7 @@ nav.views a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--acce
 .card h3{font:700 17px var(--f-display);letter-spacing:.07em;text-transform:uppercase;margin:0 0 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .card h3 .ct{font:500 12px var(--f-mono);color:var(--muted);letter-spacing:0;text-transform:none}
 .card h3::before{content:"";width:10px;height:10px;border-radius:2px;background:var(--k,var(--accent))}
+.head h3::before{display:none}
 .card h4.sub{font:700 14px var(--f-display);letter-spacing:.06em;text-transform:uppercase;margin:16px 0 6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .card h4.sub:first-of-type{margin-top:0}
 .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:18px}
@@ -108,6 +107,8 @@ main>.callout{margin:0}
 .rlist{display:grid;gap:0}
 .row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding:9px 0;border-top:1px solid var(--line)}
 .row:first-child{border-top:0}
+/* on wide screens the process note sits far right; a hover band ties it to its recipe */
+@media (hover:hover) and (min-width:561px){.row{margin-inline:-8px;padding-inline:8px;border-radius:6px}.row:hover{background:var(--chip)}.row:hover+.row,.row:hover{border-top-color:transparent}}
 /* the arrow never wraps away from the result it points at */
 .out{display:inline-flex;align-items:center;gap:8px;min-width:0}
 .chip{display:inline-flex;align-items:center;gap:6px;background:var(--chip);border:1px solid transparent;border-radius:7px;padding:3px 8px 3px 4px;cursor:pointer;color:inherit;font:inherit;font-size:14px;text-align:left}
@@ -127,6 +128,7 @@ main>.callout{margin:0}
 .altlist .tl{font:600 10.5px/1 var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);flex:0 0 9.5em;padding-top:9px}
 .altlist .tc{display:flex;flex-wrap:wrap;gap:6px;min-width:0}
 .op{margin-left:auto;color:var(--muted);font-size:12.5px;text-align:right}
+.rlist.stack .op{flex-basis:100%;margin-left:0;text-align:left}
 .op .n,.op .an{font-family:var(--f-mono)}
 .op .an,.op .ratio{color:var(--ink)}
 .op .ratio{font-family:var(--f-mono)}
@@ -162,7 +164,7 @@ main>.callout{margin:0}
 .tscroll{overflow-x:auto;margin:0 -4px}
 .tbl{width:100%;border-collapse:collapse;font-size:14px}
 .tbl.fit{width:auto;min-width:min(100%,360px)}
-.tbl th,.tbl td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.tbl th,.tbl td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
 .tbl thead th{font:600 11.5px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:2px;vertical-align:bottom}
 .tbl tbody th{font:600 13.5px var(--f-body);white-space:nowrap}
 .tbl tbody tr:last-child>*{border-bottom:0}
@@ -171,7 +173,6 @@ main>.callout{margin:0}
 .tbl.shop tbody th{white-space:normal}
 .tbl.shop .chip{padding:3px 4px}
 /* roll ranges: even number columns, class column pinned while scrolling sideways */
-.tbl.ranges tbody>tr>*,.tbl.sale tbody>tr>*,.tbl.tiers tbody>tr>*{vertical-align:middle}
 .tbl.ranges{table-layout:fixed;min-width:540px}
 .tbl.ranges th:first-child{width:8.5em;position:sticky;left:0;background:var(--panel);z-index:1}
 .tbl.ranges th.mod{width:4.5em}
