@@ -11,12 +11,6 @@ import type { Dataset } from '../lib/types';
 const dataset = data as unknown as Dataset;
 const db = createDb(dataset);
 
-const QUICK_PICKS = ['Radon', 'Chromatic Metal', 'Magnetised Ferrite', 'Ionised Cobalt', 'Antimatter', 'Warp Cell', 'Stasis Device', 'Glass'];
-const quickPicks = QUICK_PICKS.flatMap((name) => {
-  const id = db.byName(name);
-  return id ? [{ id, name }] : [];
-});
-
 const n = (x: number) => x.toLocaleString('en-US');
 const stats = `${n(db.ids.length)} items · ${dataset.ref.length} refiner · ${n(db.ids.filter((i) => db.items[i].rq).length)} crafting · ${n(dataset.cook.length)} cooking recipes`;
 
@@ -29,7 +23,7 @@ const payload = JSON.stringify({ ...dataset, icons }).replace(/</g, '\\u003c');
 ---
 
 <Base title="NMS Recipe Finder">
-  <Header stats={stats} quickPicks={quickPicks} />
+  <Header stats={stats} />
   <main id="main"></main>
   <Footer />
   <script is:inline id="nmsdata" type="application/json" set:html={payload} />

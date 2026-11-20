@@ -79,7 +79,7 @@ function routeFinder(ctx: Ctx, f: Family): string {
       fmt(rt.need),
     )}${Object.entries(rt.extras)
       .map(([x, q]) => '<span class="plus">+</span>' + chip(ctx, x, fmt(q)))
-      .join('')}<span class="arrow">→</span>${chip(ctx, c.b, 1)}</div>`;
+      .join('')}<span class="out"><span class="arrow">→</span>${chip(ctx, c.b, 1)}</span></div>`;
   h += `<p class="note">${plural(best.steps.length, 'step')}: ${[c.a, ...best.steps.map((s) => s.to)].map((i) => esc(I[i].n)).join(' → ')}</p>`;
   h += line(best, 'Fewest ' + I[c.a].n);
   if (solo && JSON.stringify(Object.keys(solo.extras)) !== JSON.stringify(Object.keys(best.extras))) h += line(solo, 'No catalyst');

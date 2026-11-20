@@ -24,11 +24,22 @@ initPopover(ctx);
 
 const VIEWS: Record<string, (c: typeof ctx) => string> = { cycles: renderCycles, consumables: renderConsumables, cooking: renderCooking, multitool: renderMultitool, mtupgrades: renderMtUpgrades, upgrades: renderUpgrades, exosuit: renderExosuit, reroll: renderReroll };
 const DEFAULT_ITEM = 'Radon';
+/** shown in the empty search box's dropdown and on the welcome page */
+const POPULAR = ['Radon', 'Chromatic Metal', 'Magnetised Ferrite', 'Ionised Cobalt', 'Antimatter', 'Warp Cell', 'Stasis Device', 'Glass']
+  .map((n) => db.byName(n))
+  .filter((id): id is string => !!id);
 
 const main = document.getElementById('main')!;
 const qEl = document.getElementById('q') as HTMLInputElement;
 const resEl = document.getElementById('results')!;
 const header = document.querySelector<HTMLElement>('header.top')!;
+const navLinks = [...document.querySelectorAll<HTMLAnchorElement>('nav.views a')];
+const viewSrc = document.getElementById('viewsrc')!;
+
+// sticky offsets (jump links, the crafting-totals column) follow the header's real height
+const syncHeader = () =>
+  document.documentElement.style.setProperty('--hh', `${getComputedStyle(header).position === 'sticky' ? header.offsetHeight : 0}px`);
+new ResizeObserver(syncHeader).observe(header);
 
 // ---------- search box ----------
 let sel = 0;
@@ -41,10 +52,10 @@ function hideResults() {
 }
 
 function showResults() {
-  cur = search(qEl.value);
+  const empty = !qEl.value.trim();
+  cur = empty ? POPULAR : search(qEl.value);
   sel = 0;
-  if (!qEl.value.trim()) return hideResults();
-  resEl.innerHTML = cur.length
+  resEl.innerHTML = (empty ? '<div class="res-h">Popular</div>' : '') + (cur.length
     ? cur
         .map((id, i) => {
           const it = db.items[id];
@@ -67,16 +78,14 @@ function showResults() {
           )}</div></span><span class="tags">${tags}</span></button>`;
         })
         .join('')
-    : `<p class="empty" style="padding:10px">No items match “${esc(qEl.value)}”.</p>`;
+    : `<p class="empty" style="padding:10px">No items match “${esc(qEl.value)}”.</p>`);
   resEl.hidden = false;
   qEl.setAttribute('aria-expanded', 'true');
   if (cur.length) qEl.setAttribute('aria-activedescendant', 'opt0');
 }
 
 qEl.addEventListener('input', showResults);
-qEl.addEventListener('focus', () => {
-  if (qEl.value) showResults();
-});
+qEl.addEventListener('focus', showResults);
 qEl.addEventListener('keydown', (e) => {
   if (resEl.hidden) return;
   if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
@@ -94,15 +103,43 @@ qEl.addEventListener('keydown', (e) => {
 
 // ---------- navigation ----------
 let current: string | null = null;
+/** a hash that matched nothing, reported on the welcome page */
+let missing = '';
 
 function rerender() {
-  if (!current) main.innerHTML = renderWelcome();
+  if (!current) main.innerHTML = renderWelcome(ctx, POPULAR, missing);
   else main.innerHTML = VIEWS[current] ? VIEWS[current](ctx) : renderItem(ctx, current);
+  // a view's "Sources" note moves into the page footer
+  const src = main.querySelector(':scope > .src');
+  viewSrc.innerHTML = src ? src.innerHTML : '';
+  viewSrc.hidden = !src;
+  src?.remove();
+  // right-align each numeric column's head to sit over its values
+  for (const t of main.querySelectorAll('table.tbl')) {
+    const heads = t.querySelector('thead tr')?.children;
+    const first = t.querySelector('tbody tr')?.children;
+    if (!heads || !first) continue;
+    [...first].forEach((c, i) => c.classList.contains('num') && heads[i]?.classList.add('num'));
+  }
+  for (const a of navLinks) {
+    if (a.dataset.go === current) a.setAttribute('aria-current', 'page');
+    else a.removeAttribute('aria-current');
+  }
+}
+
+function home(push = true) {
+  current = null;
+  missing = '';
+  hideResults();
+  rerender();
+  window.scrollTo({ top: 0 });
+  if (push) history.pushState(null, '', '#home');
 }
 
 function go(id: string | undefined, push = true) {
   if (!id || !(VIEWS[id] || db.items[id])) return;
   current = id;
+  missing = '';
   hideResults();
   if (db.items[id]) {
     qEl.value = '';
@@ -115,6 +152,11 @@ function go(id: string | undefined, push = true) {
 
 document.addEventListener('click', (e) => {
   const target = e.target as Element;
+  if (target.closest('[data-home]')) {
+    e.preventDefault();
+    home();
+    return;
+  }
   const t = target.closest<HTMLElement>('[data-go]');
   if (t) {
     e.preventDefault();
@@ -170,7 +212,7 @@ main.addEventListener('click', (e) => {
     e.preventDefault();
     const dest = document.getElementById(el.dataset.jump!);
     if (dest) {
-      const y = dest.getBoundingClientRect().top + scrollY - header.offsetHeight - 10;
+      const y = dest.getBoundingClientRect().top + scrollY - (getComputedStyle(header).position === 'sticky' ? header.offsetHeight : 0) - 10;
       scrollTo({ top: y, behavior: 'smooth' });
     }
   }
@@ -204,10 +246,16 @@ window.addEventListener('popstate', () => {
   if (db.items[h] || VIEWS[h]) go(h, false);
   else {
     current = null;
+    missing = h === 'home' ? '' : h;
     rerender();
   }
 });
 
 const start = decodeURIComponent(location.hash.slice(1));
 if (db.items[start] || VIEWS[start]) go(start, false);
-else go(db.byName(DEFAULT_ITEM), false);
+else if (start === 'home') rerender();
+else if (start) {
+  // an unknown link: say so on the welcome page rather than silently showing something else
+  missing = start;
+  rerender();
+} else go(db.byName(DEFAULT_ITEM), false);

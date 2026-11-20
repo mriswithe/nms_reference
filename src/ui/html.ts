@@ -30,12 +30,12 @@ export const chips = (ctx: Ctx, list: Qty[], sep = '<span class="plus">+</span>'
 export function recipeRow(ctx: Ctx, r: Recipe, selfId: string | null, extraOp = '', rowStyle = '') {
   const [ins, [oid, oq], t, op] = r;
   const left = ins.map(([i, q]) => chip(ctx, i, q, i === selfId)).join('<span class="plus">+</span>');
-  return `<div class="row"${rowStyle ? ` style="${rowStyle}"` : ''}>${left}<span class="arrow">→</span>${chip(
+  return `<div class="row"${rowStyle ? ` style="${rowStyle}"` : ''}>${left}<span class="out"><span class="arrow">→</span>${chip(
     ctx,
     oid,
     oq,
     oid === selfId,
-  )}<span class="op">${extraOp}${esc(op)}${t ? ` · ${fmt(t)}s` : ''}</span></div>`;
+  )}</span><span class="op">${extraOp}${esc(op)}${t ? ` · ${fmt(t)}s` : ''}</span></div>`;
 }
 
 /** slots with more options than this collapse to a "one of N" toggle */
@@ -101,7 +101,7 @@ export function groupRow(ctx: Ctx, g: RecipeGroup, selfId: string | null, key: s
     (cost.wild
       ? `<span class="an" title="Needs at least ${fmt(cost.wild)} wild-only plant${s(cost.wild)} (can't be farmed) across the whole recipe tree">🌿 ${fmt(cost.wild)}</span> · `
       : '');
-  return `<div class="row">${left}<span class="arrow">→</span>${chip(ctx, g.out[0], g.out[1], g.out[0] === selfId)}<span class="op">${paw}${esc(
+  return `<div class="row">${left}<span class="out"><span class="arrow">→</span>${chip(ctx, g.out[0], g.out[1], g.out[0] === selfId)}</span><span class="op">${paw}${esc(
     g.op,
   )}${g.time ? ` · ${fmt(g.time)}s` : ''}${n > 1 ? ` · <span class="n">${n} recipes</span>` : ''}</span>${below.join('')}</div>`;
 }
