@@ -68,6 +68,7 @@ export function renderMultitool(ctx: Ctx): string {
     `${table(
       ['Type', 'Damage %', 'Mining %', 'Scanning %', 'Slots found', 'Where'],
       types.map(([t, ...r]) => `<tr><th scope="row">${t}</th>${r.map((v, i) => `<td${i < 4 ? ' class="num"' : ''}>${esc(v)}</td>`).join('')}</tr>`),
+      'types',
     )}
     <p class="note">Lower classes follow the same pattern with smaller numbers. These bonuses are fixed per tool. To get better ones, find another tool of the same type (reload, or re-warp to the same cabinet or Pillar) rather than upgrading.</p>
     <p class="note">Sentinel and Atlantid tools come with their own mining lasers; see Special upgrades in ${toPage('mtupgrades', 'Multi-Tool upgrades')}.</p>`,

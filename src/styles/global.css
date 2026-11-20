@@ -178,6 +178,8 @@ main>.callout{margin:0}
 .tbl.ranges th.mod{width:4.5em}
 .tbl.ranges thead th.num{white-space:normal}
 .tbl.ranges .num{padding-right:12px}
+/* tool types: scroll sideways rather than squeeze the "Where" column into tall rows */
+.tbl.types{min-width:640px}
 /* cooking: sale list with its simplest recipe; tier tables keep the numbers narrow */
 .tbl.sale td:first-child{width:3em;color:var(--muted)}
 .tbl.tiers td.num{width:1%}
