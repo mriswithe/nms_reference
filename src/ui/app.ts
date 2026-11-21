@@ -4,6 +4,7 @@
  */
 import { esc } from '../lib/format';
 import { createSearch } from '../lib/search';
+import { nextSort, sortRows, textKey } from '../lib/tablesort';
 import type { Dataset } from '../lib/types';
 import { createCtx } from './context';
 import { swatch } from './html';
@@ -121,10 +122,41 @@ function rerender() {
     if (!heads || !first) continue;
     [...first].forEach((c, i) => c.classList.contains('num') && heads[i]?.classList.add('num'));
   }
+  main.querySelectorAll<HTMLTableElement>('table.tbl').forEach(sortable);
   for (const a of navLinks) {
     if (a.dataset.go === current) a.setAttribute('aria-current', 'page');
     else a.removeAttribute('aria-current');
   }
+}
+
+/**
+ * Column heads become sort buttons. A table sorts its own rows here unless it has `data-pager`: a paged table's view
+ * sorts the whole list before paging (see the cooking page), since sorting here would only reorder the shown page.
+ * Heads marked `data-nosort` (lists of chips) stay plain; a cell's `data-sort` overrides its text as the sort key.
+ */
+function sortable(t: HTMLTableElement, i: number) {
+  const heads = [...(t.tHead?.rows[0]?.cells ?? [])];
+  const body = t.tBodies[0];
+  if (!heads.length || !body || body.rows.length < 2) return;
+  const key = t.dataset.sortkey ?? `${current}:${i}`;
+  const saved = state.tableSort[key];
+  // a picker can swap in a table with fewer columns under the same key
+  const sort = saved && saved.col < heads.length ? saved : undefined;
+  heads.forEach((th, col) => {
+    if (th.hasAttribute('data-nosort') || !th.textContent!.trim()) return;
+    th.innerHTML = `<button type="button" class="sorth" data-tsort="${esc(key)}" data-col="${col}">${th.innerHTML}</button>`;
+    th.setAttribute('aria-sort', sort?.col === col ? (sort.dir === 1 ? 'ascending' : 'descending') : 'none');
+  });
+  if (!sort || t.hasAttribute('data-pager')) return;
+  const { col } = sort;
+  const numeric = heads[col].classList.contains('num');
+  const cellKey = (tr: HTMLTableRowElement) => {
+    const c = tr.cells[col];
+    if (!c) return null;
+    const ds = c.dataset.sort;
+    return ds !== undefined ? (ds !== '' && !isNaN(+ds) ? +ds : ds) : textKey(c.textContent!, numeric);
+  };
+  body.append(...sortRows([...body.rows], sort, heads.map((_, c) => (c === col ? cellKey : () => null))));
 }
 
 function home(push = true) {
@@ -199,6 +231,17 @@ main.addEventListener('click', (e) => {
   } else if ((el = on('uptech'))) {
     state.upTech[el.dataset.plat!] = el.dataset.uptech!;
     rerender();
+  } else if ((el = on('tsort'))) {
+    const key = el.dataset.tsort!;
+    const col = Number(el.dataset.col);
+    const sort = nextSort(state.tableSort[key], col);
+    if (sort) state.tableSort[key] = sort;
+    else delete state.tableSort[key];
+    // a paged list starts over at its first page in the new order
+    const pager = el.closest('table')?.dataset.pager;
+    if (pager) delete state.cookPage[pager];
+    rerender();
+    main.querySelector<HTMLElement>(`[data-tsort="${CSS.escape(key)}"][data-col="${col}"]`)?.focus();
   } else if ((el = on('cpage'))) {
     state.cookPage[el.dataset.cpage!] = Number(el.dataset.to);
     rerender();

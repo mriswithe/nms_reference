@@ -19,6 +19,7 @@ import { renderReroll } from '../src/ui/views/reroll';
 import { MOD_CLASSES, moduleCatalog, MT_TECH, RANGES, SPECIAL } from '../src/lib/multitool';
 import { EXOSUIT, PLATFORMS, SHIP_PLATFORMS, upgradeCatalog } from '../src/lib/upgrades';
 import { createSearch, norm } from '../src/lib/search';
+import { compareKeys, nextSort, numKey, sortRows, textKey } from '../src/lib/tablesort';
 import type { Dataset, Recipe } from '../src/lib/types';
 
 const data = raw as unknown as Dataset;
@@ -603,5 +604,47 @@ describe('ship and exosuit upgrades', () => {
       expect(h).not.toContain('data-upplat=');
       expect(h).toContain('data-go="upgrades"');
     }
+  });
+});
+
+describe('sortable tables', () => {
+  it('reads numbers, clocks and ranges from cell text', () => {
+    expect(numKey('≈ 12%')).toBe(12);
+    expect(numKey('−30 to −50%')).toBe(-30);
+    expect(numKey('10,000')).toBe(10000);
+    expect(numKey('1:30')).toBe(90);
+    expect(numKey('Restores 25% life support')).toBe(25);
+    expect(textKey('—', true)).toBeNull();
+    expect(textKey('  ', false)).toBeNull();
+  });
+
+  it('sorts stably, empty cells last both ways, and cycles asc → desc → off', () => {
+    const rows = ['b10', 'a', '', 'b9', 'A'];
+    const key = [(r: string) => textKey(r, false)];
+    expect(sortRows(rows, { col: 0, dir: 1 }, key)).toEqual(['a', 'A', 'b9', 'b10', '']);
+    expect(sortRows(rows, { col: 0, dir: -1 }, key)).toEqual(['b10', 'b9', 'a', 'A', '']);
+    expect(sortRows(rows, undefined, key)).toBe(rows);
+    expect(compareKeys(2, 10, 1)).toBeLessThan(0);
+    expect(nextSort(undefined, 2)).toEqual({ col: 2, dir: 1 });
+    expect(nextSort({ col: 2, dir: 1 }, 2)).toEqual({ col: 2, dir: -1 });
+    expect(nextSort({ col: 2, dir: -1 }, 2)).toBeUndefined();
+    expect(nextSort({ col: 2, dir: -1 }, 0)).toEqual({ col: 0, dir: 1 });
+  });
+
+  it("sorts a paged cooking list as a whole, keeping each food's rank", () => {
+    const ctx = createCtx(data);
+    const sale = (h: string) => h.slice(h.indexOf('id="ck-sale"'), h.indexOf('id="ck-ing"'));
+    const ranks = (h: string) => [...sale(h).matchAll(/<tr><td class="num">(\d+)<\/td>/g)].map((m) => Number(m[1]));
+    expect(ranks(renderCooking(ctx))).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    // base value ascending: the cheapest foods overall, i.e. the last ranks, on page one
+    ctx.state.tableSort.sale = { col: 2, dir: 1 };
+    const all = topBySale(db, Infinity);
+    const vals = ranks(renderCooking(ctx)).map((r) => db.items[all[r - 1]].v ?? 0);
+    expect(vals[0]).toBe(Math.min(...all.map((f) => db.items[f].v ?? 0)));
+    expect(vals).toEqual(vals.slice().sort((a, b) => a - b));
+    expect(ranks(renderCooking(ctx))).not.toContain(1);
+    expect(sale(renderCooking(ctx))).toContain('data-pager="sale"');
+    // chip columns get no sort button
+    expect(sale(renderCooking(ctx))).toContain('<th scope="col" data-nosort>Simplest recipe</th>');
   });
 });

@@ -167,6 +167,14 @@ main>.callout{margin:0}
 .tbl th,.tbl td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
 .tbl thead th{font:600 11.5px var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:2px;vertical-align:bottom}
 .tbl tbody th{font:600 13.5px var(--f-body);white-space:nowrap}
+/* sortable column heads: the whole head is the button; ▲ / ▼ shows the sorted column, a faint ↕ the others on hover */
+.tbl .sorth{all:unset;cursor:pointer;display:inline;text-align:inherit}
+.tbl .sorth::after{content:"↕";margin-left:4px;opacity:0;font-size:10px}
+.tbl th:hover .sorth::after,.tbl .sorth:focus-visible::after{opacity:.5}
+.tbl th[aria-sort="ascending"] .sorth::after{content:"▲";opacity:1}
+.tbl th[aria-sort="descending"] .sorth::after{content:"▼";opacity:1}
+.tbl th[aria-sort="ascending"],.tbl th[aria-sort="descending"]{color:var(--ink)}
+.tbl .sorth:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
 .tbl tbody tr:last-child>*{border-bottom:0}
 .tbl .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .tbl td .chips{display:flex;flex-wrap:wrap;gap:6px}

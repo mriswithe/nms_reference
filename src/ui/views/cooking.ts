@@ -1,12 +1,17 @@
 import { clock, EAT_KINDS, eatText, fewestHarvest, harvestOnly, page, pct, rankedIngestor, STAT_GROUPS, tiers, topBySale, topEaten } from '../../lib/food';
 import { esc, fmt } from '../../lib/format';
+import { numKey, sortRows, textKey } from '../../lib/tablesort';
 import type { Ctx } from '../context';
 import { chip, pageHead } from '../html';
 
-const table = (head: string[], rows: string[], cls = '') =>
-  `<div class="tscroll"><table class="tbl ${cls}"><thead><tr>${head.map((h) => `<th scope="col">${h}</th>`).join('')}</tr></thead><tbody>${rows.join(
-    '',
-  )}</tbody></table></div>`;
+/**
+ * `pager` names a paged list (its state.cookPage key, also its sort key): the view sorts it before paging, so the
+ * browser doesn't re-sort the shown page. Heads in `nosort` (chip lists) can't be sorted on.
+ */
+const table = (head: string[], rows: string[], cls = '', pager?: { key: string; sort: string }, nosort: string[] = []) =>
+  `<div class="tscroll"><table class="tbl ${cls}"${pager ? ` data-pager="${esc(pager.key)}" data-sortkey="${esc(pager.sort)}"` : ''}><thead><tr>${head
+    .map((h) => `<th scope="col"${nosort.includes(h) ? ' data-nosort' : ''}>${h}</th>`)
+    .join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
 
 /** ⭐ on a food that needs the fewest harvest-only ingredients in its ingestor tier */
 const easiestMark = (n: number) =>
@@ -52,7 +57,8 @@ function ingestorSection(ctx: Ctx): string {
 
   const key = 'ing:' + stat;
   // paged by bonus tier, not by food: a tier of tied foods never splits across pages
-  const p = page(tiers(db, rankedIngestor(db, stat)), state.cookPage[key] ?? 0, TIERS_PER_PAGE);
+  const all = sortRows(tiers(db, rankedIngestor(db, stat)), state.tableSort.ing, [(t) => t.value, (t) => t.seconds]);
+  const p = page(all, state.cookPage[key] ?? 0, TIERS_PER_PAGE);
   const rows = p.items.map((t) => {
     // easiest first: fewest harvest-only ingredients, then cheapest (t.ids is cheapest first and sort is stable)
     const best = fewestHarvest(ctx.src, t.ids);
@@ -63,7 +69,7 @@ function ingestorSection(ctx: Ctx): string {
     return `<tr><td class="num">≈ ${pct(t.value)}</td><td class="num">${clock(t.seconds)}</td><td>${chips}</td></tr>`;
   });
   return `<section class="card k-cook" id="ck-ing"><h3>Nutrient Ingestor <span class="ct">best foods per bonus</span></h3>${picker}
-    <div class="note" style="margin:14px 0 6px"><b>${esc(fstat[stat][0])}</b></div>${table(['Bonus', 'Time', 'Foods'], rows, 'tiers')}${pager(
+    <div class="note" style="margin:14px 0 6px"><b>${esc(fstat[stat][0])}</b></div>${table(['Bonus', 'Time', 'Foods'], rows, 'tiers', { key, sort: 'ing' }, ['Foods'])}${pager(
       key,
       p,
       p.items.length,
@@ -92,12 +98,14 @@ function eatenSection(ctx: Ctx): string {
     groups.set(t, [...(groups.get(t) ?? []), id]);
   }
   const key = 'eat:' + kind;
-  const p = page([...groups], state.cookPage[key] ?? 0, TIERS_PER_PAGE);
+  const p = page(sortRows([...groups], state.tableSort.eat, [([t]) => numKey(t)]), state.cookPage[key] ?? 0, TIERS_PER_PAGE);
   const rows = p.items.map(([t, ids]) => `<tr><td>${esc(t)}</td><td>${tierChips(ctx, ids)}</td></tr>`);
   return `<section class="card k-cook" id="ck-eat"><h3>Eaten directly <span class="ct">best foods per effect</span></h3>${picker}${table(
     ['Amount', 'Foods'],
     rows,
     'tiers',
+    { key, sort: 'eat' },
+    ['Foods'],
   )}${pager(key, p, p.items.length, 'tiers')}<p class="note">Biggest effect first; foods with the same effect are listed cheapest first, so you give up the least sale value.</p><p class="note">${LEGEND}</p></section>`;
 }
 
@@ -118,17 +126,24 @@ export function renderCooking(ctx: Ctx): string {
   h += `<nav class="summary" aria-label="Cooking reference">
     <a href="#" data-jump="ck-sale">Top sale prices</a><a href="#" data-jump="ck-ing">Nutrient Ingestor</a><a href="#" data-jump="ck-eat">Eaten directly</a></nav>`;
 
-  const sale = page(topBySale(db, Infinity), state.cookPage.sale ?? 0);
+  // [id, rank by sale price]; the rank stays with the food when the table is sorted on another column
+  const ranked = topBySale(db, Infinity).map((id, i) => [id, i + 1] as const);
+  const sale = page(
+    sortRows(ranked, state.tableSort.sale, [([, r]) => r, ([id]) => textKey(db.items[id].n, false), ([id]) => db.items[id].v ?? null]),
+    state.cookPage.sale ?? 0,
+  );
   h += `<section class="card k-buy" id="ck-sale"><h3>By sale price <span class="ct">base value</span></h3>${table(
     ['#', 'Food', 'Base value', 'Simplest recipe'],
     sale.items.map(
-      (id, i) =>
-        `<tr><td class="num">${sale.start + i + 1}</td><td>${foodChip(ctx, id)}</td><td class="num">${fmt(db.items[id].v)}</td><td>${simplest(
+      ([id, rank]) =>
+        `<tr><td class="num">${rank}</td><td>${foodChip(ctx, id)}</td><td class="num">${fmt(db.items[id].v)}</td><td>${simplest(
           ctx,
           id,
         )}</td></tr>`,
     ),
     'sale',
+    { key: 'sale', sort: 'sale' },
+    ['Simplest recipe'],
   )}${pager('sale', sale, sale.items.length, 'foods')}<p class="note">Terminal prices swing with each system's economy; base value is the reference price.</p><p class="note">${LEGEND}</p></section>`;
 
   h += ingestorSection(ctx);

@@ -3,10 +3,11 @@ import { esc, fmt } from '../../lib/format';
 import type { Ctx } from '../context';
 import { chip, pageHead, swatch } from '../html';
 
-const table = (head: string[], rows: string[], cls = '') =>
-  `<div class="tscroll"><table class="tbl ${cls}"><thead><tr>${head.map((h) => `<th scope="col">${h}</th>`).join('')}</tr></thead><tbody>${rows.join(
-    '',
-  )}</tbody></table></div>`;
+/** columns in `nosort` (icon cells) get no sort button */
+const table = (head: string[], rows: string[], cls = '', nosort: number[] = []) =>
+  `<div class="tscroll"><table class="tbl ${cls}"><thead><tr>${head
+    .map((h, i) => `<th scope="col"${nosort.includes(i) ? ' data-nosort' : ''}>${h}</th>`)
+    .join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
 
 const CLASS_LABEL: Record<ModClass, string> = { C: 'C', B: 'B', A: 'A', S: 'S', X: 'X (Suspicious)' };
 
@@ -140,7 +141,7 @@ function rangesSection(ctx: Ctx): string {
   ).join('')}</div>`;
   const rows = MOD_CLASSES.filter((c) => t.rows[c]).map((c) => {
     const [n, ...vals] = t.rows[c]!;
-    return `<tr><th scope="row">${CLASS_LABEL[c]}</th><td class="num">${n}</td>${vals.map((v) => `<td class="num">${v}</td>`).join('')}</tr>`;
+    return `<tr><th scope="row" data-sort="${MOD_CLASSES.indexOf(c)}">${CLASS_LABEL[c]}</th><td class="num">${n}</td>${vals.map((v) => `<td class="num">${v}</td>`).join('')}</tr>`;
   });
   return card(
     'mt-ranges',
@@ -198,7 +199,7 @@ function shopSection(ctx: Ctx): string {
     'k-buy',
     'Shopping list',
     'modules by class',
-    `${table(['Tech', ...MOD_CLASSES.map((c) => `${c}<br><span class="q">${price(c)}</span>`)], rows, 'shop')}
+    `${table(['Tech', ...MOD_CLASSES.map((c) => `${c}<br><span class="q">${price(c)}</span>`)], rows, 'shop', MOD_CLASSES.map((_, i) => i + 1))}
     <p class="note">Prices are in nanites, under each class letter. X is the black-market Suspicious class.</p>
     <ul class="plain note">
       <li><b>C–S</b>: the Technology Merchant on any space station. C is always stocked; which higher classes appear changes from system to system, so check a few stations.</li>

@@ -2,6 +2,7 @@ import { sourcing, type Sourcing } from '../lib/sourcing';
 import { CostModel } from '../lib/cost';
 import { buildFamilies, type Family } from '../lib/cycles';
 import { createDb, type Db } from '../lib/db';
+import type { TableSort } from '../lib/tablesort';
 import type { Dataset } from '../lib/types';
 
 export interface UiState {
@@ -24,6 +25,8 @@ export interface UiState {
   /** platform shown on the Ship upgrades page, and the technology picked per platform (Exosuit page included) */
   upPlat: string;
   upTech: Record<string, string>;
+  /** column each table is sorted on, by its data-sortkey (or "<view>:<table index>") */
+  tableSort: Record<string, TableSort>;
 }
 
 export interface Ctx {
@@ -45,6 +48,6 @@ export function createCtx(data: Dataset): Ctx {
     families: buildFamilies(db),
     icons: new Set(data.icons ?? []),
     src: sourcing(db),
-    state: { refSort: 'fewest', treeMode: 'craft', expanded: new Set(), routes: {}, openCycles: new Set(), cookStat: 'Weapon_Scan_Discovery_Flora', cookEat: 'life', cookPage: {}, mtTech: 'mining', upPlat: 'starship', upTech: {} },
+    state: { refSort: 'fewest', treeMode: 'craft', expanded: new Set(), routes: {}, openCycles: new Set(), cookStat: 'Weapon_Scan_Discovery_Flora', cookEat: 'life', cookPage: {}, mtTech: 'mining', upPlat: 'starship', upTech: {}, tableSort: {} },
   };
 }
