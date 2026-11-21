@@ -42,7 +42,7 @@ function craftSection(ctx: Ctx, id: string): string {
   const { db, cost, state } = ctx;
   const it = db.items[id];
   let h = `<section class="card k-craft" id="s-craft"><h3>Craft <span class="ct">${it.q! > 1 ? 'makes ' + fmt(it.q!) : ''}</span></h3>
-    <div class="rlist"><div class="row">${chips(ctx, it.rq!)}<span class="arrow">→</span>${chip(ctx, id, it.q || 1, true)}</div></div>`;
+    <div class="rlist"><div class="row">${chips(ctx, it.rq!)}<span class="out"><span class="arrow">→</span>${chip(ctx, id, it.q || 1, true)}</span></div></div>`;
 
   const self = cost.cheaper(id);
   if (self)
@@ -69,7 +69,7 @@ function craftSection(ctx: Ctx, id: string): string {
         <div><div class="note"><b>Full ${smart ? 'build' : 'crafting'} tree</b></div>
           <div class="ctrl" style="margin-top:6px"><button data-tree="open">Expand all</button><button data-tree="close">Collapse all</button></div>
           <div class="tree">${tree(ctx, id, 1, 0, new Set())}</div></div>
-        <div><div class="note"><b>Total base ingredients</b> (${smart ? 'refining where cheaper' : 'crafting every part'}) · about ${fmt(
+        <div class="stick"><div class="note"><b>Total base ingredients</b> (${smart ? 'refining where cheaper' : 'crafting every part'}) · about ${fmt(
           Math.round(cost.totalValue(tot)),
         )} units of raw value</div>
           <div class="totals" style="margin-top:6px">${tot.map(([i, q]) => chip(ctx, i, fmt(q))).join('')}</div></div>
@@ -154,9 +154,12 @@ export function renderItem(ctx: Ctx, id: string): string {
     ['mine', 'Find / gather', c.mine],
     ['buy', 'Buy', c.buy],
   ];
-  h += `<nav class="summary" aria-label="Ways to get it">${sum
-    .map(([k, l, n]) => `<a href="#" class="t-${k}${n ? '' : ' off'}" data-jump="s-${k}">${l}<b>${n}</b></a>`)
-    .join('')}</nav>`;
+  const ways = sum.filter(([, , n]) => n);
+  // only ways that exist; a lone way is already the next card, so no jump bar
+  if (ways.length > 1)
+    h += `<nav class="summary" aria-label="Ways to get it">${ways
+      .map(([k, l, n]) => `<a href="#" class="k-${k}" data-jump="s-${k}">${l}<b>${n}</b></a>`)
+      .join('')}</nav>`;
 
   const limits = [
     ctx.src.animal.has(id) && '🐾 Only obtainable from creatures. No refiner or Nutrient Processor recipe makes it from other sources.',
@@ -206,6 +209,26 @@ export function renderItem(ctx: Ctx, id: string): string {
   return h;
 }
 
-export const renderWelcome = () => `<section class="card welcome"><h2>What do you need?</h2>
-  <p>Search for any item to see every way to get it: refiner recipes, crafting blueprints, Nutrient Processor recipes, where to mine or gather it, and where to buy it.</p>
-  <p>Each page also shows what the item is used in, and for crafted items, a full ingredient tree down to base materials.</p></section>`;
+/** reference guides on the welcome page: route, icon, swatch colour, title, one-line pitch */
+const GUIDES: [string, string, string, string, string][] = [
+  ['cycles', '⟳', 'var(--refine)', 'Conversion cycles', 'Refiner loops that turn one gas or mineral into another.'],
+  ['consumables', '⚗', 'var(--refine)', 'Refining consumables', 'Charges, fuels and ammo from a refiner vs crafting.'],
+  ['cooking', '🍳', 'var(--cook)', 'Cooking reference', 'Best foods to sell, eat, and feed the Nutrient Ingestor.'],
+  ['multitool', '🔧', 'var(--craft)', 'Multi-Tools', 'Tool types, classes, slots and supercharged slots.'],
+  ['mtupgrades', '🔩', 'var(--craft)', 'Multi-Tool upgrades', 'Module roll ranges, layout and where to buy them.'],
+  ['upgrades', '🚀', 'var(--craft)', 'Ship upgrades', 'Starship, living ship and freighter roll ranges.'],
+  ['exosuit', '🥽', 'var(--craft)', 'Exosuit upgrades', 'Life support, jetpack and hazard module ranges.'],
+  ['reroll', '🎲', 'var(--buy)', 'Rerolling upgrades', 'How module stats roll and how to reroll them.'],
+];
+
+export const renderWelcome = (ctx: Ctx, popular: string[], missing = '') => `${
+  missing ? `<p class="callout warn" role="status">Nothing called “${esc(missing)}” here. Search for it below or pick a guide.</p>` : ''
+}<section class="card welcome"><h2>What do you need?</h2>
+  <p>Search for any item to see every way to get it: refiner recipes, crafting blueprints, Nutrient Processor recipes, where to mine or gather it, and where to buy it. Each page also shows what the item is used in, and for crafted items, a full ingredient tree down to base materials.</p>
+  <div class="totals" style="margin-top:12px">${popular.map((id) => chip(ctx, id)).join('')}</div></section>
+  <section><h3 class="sect">Guides</h3><div class="tiles">${GUIDES.map(
+    ([id, icon, bg, title, pitch]) =>
+      `<a class="tile" href="#${id}" data-go="${id}"><span class="sw sm" style="background:${bg}" aria-hidden="true">${icon}</span><span><b>${esc(
+        title,
+      )}</b><span class="tp">${esc(pitch)}</span></span></a>`,
+  ).join('')}</div></section>`;

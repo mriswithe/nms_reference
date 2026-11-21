@@ -1,43 +1,47 @@
 ---
 interface Props {
   stats: string;
-  quickPicks: { id: string; name: string }[];
 }
-const { stats, quickPicks } = Astro.props;
+const { stats } = Astro.props;
+
+/** reference views, in nav order; `id` is the hash route */
+const VIEWS = [
+  { id: 'cycles', icon: '⟳', label: 'Cycles', title: 'Conversion cycles' },
+  { id: 'consumables', icon: '⚗', label: 'Consumables', title: 'Refining consumables' },
+  { id: 'cooking', icon: '🍳', label: 'Cooking', title: 'Cooking reference' },
+  { id: 'multitool', icon: '🔧', label: 'Multi-Tools', title: 'Multi-Tools' },
+  { id: 'mtupgrades', icon: '🔩', label: 'Multi-Tool upgrades', title: 'Multi-Tool upgrades' },
+  { id: 'upgrades', icon: '🚀', label: 'Ship upgrades', title: 'Ship upgrades' },
+  { id: 'exosuit', icon: '🥽', label: 'Exosuit upgrades', title: 'Exosuit upgrades' },
+  { id: 'reroll', icon: '🎲', label: 'Rerolling', title: 'Rerolling upgrades' },
+];
 ---
 
 <header class="top">
-  <div class="brand"><h1>NMS Recipe Finder</h1><span id="stats">{stats}</span></div>
-  <div class="search">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
-      <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path>
-    </svg>
-    <input
-      id="q"
-      type="search"
-      autocomplete="off"
-      spellcheck="false"
-      placeholder="I need… (e.g. Radon, Chromatic Metal, Warp Cell)"
-      aria-label="Search items"
-      role="combobox"
-      aria-expanded="false"
-      aria-controls="results"
-      aria-autocomplete="list"
-    />
-    <div id="results" class="results" role="listbox" hidden></div>
+  <div class="bar">
+    <div class="brand"><h1><a href="#home" data-home>NMS Recipe Finder</a></h1><span id="stats">{stats}</span></div>
+    <div class="search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path>
+      </svg>
+      <input
+        id="q"
+        type="search"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="I need… (e.g. Radon, Chromatic Metal, Warp Cell)"
+        aria-label="Search items"
+        role="combobox"
+        aria-expanded="false"
+        aria-controls="results"
+        aria-autocomplete="list"
+      />
+      <div id="results" class="results" role="listbox" hidden></div>
+    </div>
   </div>
-  <div class="quick">
-    <span class="lbl">Try:</span>
-    {quickPicks.map((p) => <button class="pill" data-go={p.id}>{p.name}</button>)}
-  </div>
-  <div class="quick">
-    <button class="pill ref" data-go="cycles">⟳ Conversion cycles</button>
-    <button class="pill ref" data-go="consumables">⚗ Refining consumables</button>
-    <button class="pill ref" data-go="cooking">🍳 Cooking reference</button>
-    <button class="pill ref" data-go="multitool">🔧 Multi-Tools</button>
-    <button class="pill ref" data-go="mtupgrades">🔩 Multi-Tool upgrades</button>
-    <button class="pill ref" data-go="upgrades">🚀 Ship upgrades</button>
-    <button class="pill ref" data-go="exosuit">🥽 Exosuit upgrades</button>
-    <button class="pill ref" data-go="reroll">🎲 Rerolling upgrades</button>
-  </div>
+  <nav class="views" aria-label="Guides">
+    {VIEWS.map((v) => (
+      <a href={`#${v.id}`} data-go={v.id} title={v.title}><span aria-hidden="true">{v.icon}</span>{v.label}</a>
+    ))}
+  </nav>
 </header>

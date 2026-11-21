@@ -24,8 +24,6 @@ function foodChip(ctx: Ctx, id: string, star = ''): string {
 /** what the 🐾 / 🌿 markers mean, shown under each table */
 const LEGEND = "🐾 needs creature parts · 🌿 needs wild plants that can't be farmed; unmarked foods can be made from farmed or gathered ingredients.";
 
-const chipList = (ctx: Ctx, ids: string[]) => `<div class="chips">${ids.map((id) => foodChip(ctx, id)).join('')}</div>`;
-
 /** "‹ Previous  11–20 of 385  Next ›"; `key` names the list in state.cookPage */
 function pager(key: string, p: { page: number; pages: number; start: number; total: number }, shown: number, noun: string): string {
   if (p.pages < 2) return '';
@@ -65,7 +63,7 @@ function ingestorSection(ctx: Ctx): string {
     return `<tr><td class="num">≈ ${pct(t.value)}</td><td class="num">${clock(t.seconds)}</td><td>${chips}</td></tr>`;
   });
   return `<section class="card k-cook" id="ck-ing"><h3>Nutrient Ingestor <span class="ct">best foods per bonus</span></h3>${picker}
-    <div class="note" style="margin:14px 0 6px"><b>${esc(fstat[stat][0])}</b></div>${table(['Bonus', 'Time', 'Foods'], rows)}${pager(
+    <div class="note" style="margin:14px 0 6px"><b>${esc(fstat[stat][0])}</b></div>${table(['Bonus', 'Time', 'Foods'], rows, 'tiers')}${pager(
       key,
       p,
       p.items.length,
@@ -99,7 +97,14 @@ function eatenSection(ctx: Ctx): string {
   return `<section class="card k-cook" id="ck-eat"><h3>Eaten directly <span class="ct">best foods per effect</span></h3>${picker}${table(
     ['Amount', 'Foods'],
     rows,
+    'tiers',
   )}${pager(key, p, p.items.length, 'tiers')}<p class="note">Biggest effect first; foods with the same effect are listed cheapest first, so you give up the least sale value.</p><p class="note">${LEGEND}</p></section>`;
+}
+
+/** the food's Nutrient Processor recipe with the fewest inputs, as small chips */
+function simplest(ctx: Ctx, id: string): string {
+  const r = (ctx.db.makes[id]?.cook ?? []).slice().sort((a, b) => a[0].length - b[0].length)[0];
+  return r ? `<div class="chips mini">${r[0].map(([i, q]) => chip(ctx, i, q)).join('<span class="plus">+</span>')}</div>` : '';
 }
 
 export function renderCooking(ctx: Ctx): string {
@@ -115,11 +120,15 @@ export function renderCooking(ctx: Ctx): string {
 
   const sale = page(topBySale(db, Infinity), state.cookPage.sale ?? 0);
   h += `<section class="card k-buy" id="ck-sale"><h3>By sale price <span class="ct">base value</span></h3>${table(
-    ['#', 'Food', 'Base value'],
+    ['#', 'Food', 'Base value', 'Simplest recipe'],
     sale.items.map(
-      (id, i) => `<tr><td class="num">${sale.start + i + 1}</td><td>${foodChip(ctx, id)}</td><td class="num">${fmt(db.items[id].v)}</td></tr>`,
+      (id, i) =>
+        `<tr><td class="num">${sale.start + i + 1}</td><td>${foodChip(ctx, id)}</td><td class="num">${fmt(db.items[id].v)}</td><td>${simplest(
+          ctx,
+          id,
+        )}</td></tr>`,
     ),
-    'fit',
+    'sale',
   )}${pager('sale', sale, sale.items.length, 'foods')}<p class="note">Terminal prices swing with each system's economy; base value is the reference price.</p><p class="note">${LEGEND}</p></section>`;
 
   h += ingestorSection(ctx);

@@ -68,6 +68,7 @@ export function renderMultitool(ctx: Ctx): string {
     `${table(
       ['Type', 'Damage %', 'Mining %', 'Scanning %', 'Slots found', 'Where'],
       types.map(([t, ...r]) => `<tr><th scope="row">${t}</th>${r.map((v, i) => `<td${i < 4 ? ' class="num"' : ''}>${esc(v)}</td>`).join('')}</tr>`),
+      'types',
     )}
     <p class="note">Lower classes follow the same pattern with smaller numbers. These bonuses are fixed per tool. To get better ones, find another tool of the same type (reload, or re-warp to the same cabinet or Pillar) rather than upgrading.</p>
     <p class="note">Sentinel and Atlantid tools come with their own mining lasers; see Special upgrades in ${toPage('mtupgrades', 'Multi-Tool upgrades')}.</p>`,
@@ -125,7 +126,7 @@ export function renderMultitool(ctx: Ctx): string {
     </ul>`,
   );
 
-  h += `<p class="note">Sources: the No Man's Sky Wiki and player testing (supercharge sizes, class odds).</p>`;
+  h += `<p class="note src">Sources: the No Man's Sky Wiki and player testing (supercharge sizes, class odds).</p>`;
   return h;
 }
 
@@ -146,7 +147,7 @@ function rangesSection(ctx: Ctx): string {
     'k-craft',
     'Roll ranges',
     'per module class',
-    `${picker}${table(['Class', 'Stats', ...t.stats.map(esc)], rows)}<p class="note"><b>Judge a roll on:</b> ${esc(t.judge)}</p>
+    `${picker}${table(['Class', 'Stats', ...t.stats.map(esc)], rows, 'ranges')}<p class="note"><b>Judge a roll on:</b> ${esc(t.judge)}</p>
     <p class="note">"Stats" is how many of the listed stats a module rolls; which ones it gets is random when there are more stats than rolls. Damage on the guns is the game's own flat number, not a percent. Negative times are faster. Ranges come from the game files (Forsaken 7.1).</p>`,
   );
 }
@@ -253,6 +254,6 @@ export function renderMtUpgrades(ctx: Ctx): string {
 
   h += specialSection(ctx);
   h += shopSection(ctx);
-  h += `<p class="note">Sources: datamined module tables (nomansskyrecipes.com, Forsaken 7.1) and the No Man's Sky Wiki. The Sentinel Weapons Shard cap comes from player testing, not game files.</p>`;
+  h += `<p class="note src">Sources: datamined module tables (nomansskyrecipes.com, Forsaken 7.1) and the No Man's Sky Wiki. The Sentinel Weapons Shard cap comes from player testing, not game files.</p>`;
   return h;
 }

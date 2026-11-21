@@ -27,10 +27,10 @@ export function renderConsumables(ctx: Ctx): string {
       h += `<div class="note" style="margin:0"><b>Craft</b> · about ${fmt(Math.round(cc!))} units each</div><div class="rlist"><div class="row">${chips(
         ctx,
         it.rq,
-      )}<span class="arrow">→</span>${chip(ctx, id, it.q || 1, true)}</div></div>`;
+      )}<span class="out"><span class="arrow">→</span>${chip(ctx, id, it.q || 1, true)}</span></div></div>`;
     else h += `<p class="note" style="margin:0">No crafting recipe; refining is the only way to make it.</p>`;
 
-    h += `<div class="note"><b>Refine</b> · ${plural(rs.length, 'recipe')}</div><div class="rlist">`;
+    h += `<div class="note"><b>Refine</b> · ${plural(rs.length, 'recipe')}</div><div class="rlist stack">`;
     rs.forEach(({ r, cost: c }, k) => {
       const cheapest = k === 0 && rs.length > 1 && c < rs[1].cost * 0.995 ? '<span class="tag t-cook">Cheapest</span>' : '';
       const vsCraft =

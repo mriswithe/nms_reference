@@ -7,7 +7,7 @@ import { pageHead, swatch } from '../html';
 const CLASS_LABEL: Record<ModClass, string> = { C: 'C', B: 'B', A: 'A', S: 'S', X: 'X (Suspicious)' };
 
 const table = (head: string[], rows: string[]) =>
-  `<div class="tscroll"><table class="tbl"><thead><tr>${head.map((h) => `<th scope="col">${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+  `<div class="tscroll"><table class="tbl ranges"><thead><tr>${head.map((h) => `<th scope="col"${h === 'Module' ? ' class="mod"' : ''}>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
 
 const modChip = (ctx: Ctx, id: string, c: ModClass) => {
   const it = ctx.db.items[id];
@@ -16,7 +16,7 @@ const modChip = (ctx: Ctx, id: string, c: ModClass) => {
 
 const RULES = `The same rules as Multi-Tool modules apply: three modules per technology, stats roll on install, and the <a href="#reroll" class="jl" data-go="reroll">save-and-reload reroll</a> works on every module.`;
 
-const SOURCES = `<p class="note">Sources: datamined module tables (nomansskyrecipes.com, Forsaken 7.1). Some of that site's percentages are stored as "value − 100%" and are shown here as the game displays them.</p>`;
+const SOURCES = `<p class="note src">Sources: datamined module tables (nomansskyrecipes.com, Forsaken 7.1). Some of that site's percentages are stored as "value − 100%" and are shown here as the game displays them.</p>`;
 
 /** roll-range card (technology picker + table) and where-to-get card for one platform */
 function platformCards(ctx: Ctx, plat: Platform): string {
