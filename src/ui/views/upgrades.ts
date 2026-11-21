@@ -7,7 +7,7 @@ import { pageHead, swatch } from '../html';
 const CLASS_LABEL: Record<ModClass, string> = { C: 'C', B: 'B', A: 'A', S: 'S', X: 'X (Suspicious)' };
 
 const table = (head: string[], rows: string[]) =>
-  `<div class="tscroll"><table class="tbl ranges"><thead><tr>${head.map((h) => `<th scope="col"${h === 'Module' ? ' class="mod"' : ''}>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+  `<div class="tscroll"><table class="tbl ranges"><thead><tr>${head.map((h) => `<th scope="col"${h === 'Module' ? ' class="mod" data-nosort' : ''}>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
 
 const modChip = (ctx: Ctx, id: string, c: ModClass) => {
   const it = ctx.db.items[id];
@@ -29,7 +29,7 @@ function platformCards(ctx: Ctx, plat: Platform): string {
   const rows = MOD_CLASSES.filter((c) => tech.rows[c]).map((c) => {
     const [n, ...vals] = tech.rows[c]!;
     const item = hasItems ? `<td>${row[c] ? row[c]!.map((id) => modChip(ctx, id, c)).join('') : '—'}</td>` : '';
-    return `<tr><th scope="row">${CLASS_LABEL[c]}</th>${item}<td class="num">${n}</td>${vals.map((v) => `<td class="num">${esc(v)}</td>`).join('')}</tr>`;
+    return `<tr><th scope="row" data-sort="${MOD_CLASSES.indexOf(c)}">${CLASS_LABEL[c]}</th>${item}<td class="num">${n}</td>${vals.map((v) => `<td class="num">${esc(v)}</td>`).join('')}</tr>`;
   });
   return `<section class="card k-craft" id="up-ranges"><h3>${esc(plat.name)} roll ranges <span class="ct">per module class</span></h3>
     ${picker}${table(['Class', ...(hasItems ? ['Module'] : []), 'Stats', ...tech.stats.map(esc)], rows)}
