@@ -1,0 +1,777 @@
+id,name,platform,upgrades,class,statsMin,statsMax,stat,label,min,max,kind,always,products,price,source
+UP_LASER1,Mining Beam Module,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,C,1,2,Weapon_Laser_Mining_Speed,Mining Speed,0.9,0.95,multiplier,false,U_LASER1,60,proc
+UP_LASER1,Mining Beam Module,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,C,1,2,Weapon_Laser_HeatTime,Heat Dispersion,1.05,1.15,multiplier,false,U_LASER1,60,proc
+UP_LASER1,Mining Beam Module,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,C,1,2,Weapon_Laser_Drain,Fuel Efficiency,1.01,1.1,multiplier,false,U_LASER1,60,proc
+UP_LASER1,Mining Beam Module,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,C,1,2,Weapon_Laser_ReloadTime,Overheat Downtime,0.9,0.95,multiplier,false,U_LASER1,60,proc
+UP_LASER2,Mining Beam Module,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,B,2,3,Weapon_Laser_Mining_Speed,Mining Speed,0.85,0.95,multiplier,false,U_LASER2,140,proc
+UP_LASER2,Mining Beam Module,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,B,2,3,Weapon_Laser_HeatTime,Heat Dispersion,1.15,1.2,multiplier,false,U_LASER2,140,proc
+UP_LASER2,Mining Beam Module,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,B,2,3,Weapon_Laser_Drain,Fuel Efficiency,1.1,1.15,multiplier,false,U_LASER2,140,proc
+UP_LASER2,Mining Beam Module,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,B,2,3,Weapon_Laser_ReloadTime,Overheat Downtime,0.85,0.9,multiplier,false,U_LASER2,140,proc
+UP_LASER3,Mining Beam Module,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,A,3,4,Weapon_Laser_Mining_Speed,Mining Speed,0.8,0.9,multiplier,false,U_LASER3,300,proc
+UP_LASER3,Mining Beam Module,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,A,3,4,Weapon_Laser_HeatTime,Heat Dispersion,1.2,1.4,multiplier,false,U_LASER3,300,proc
+UP_LASER3,Mining Beam Module,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,A,3,4,Weapon_Laser_Drain,Fuel Efficiency,1.15,1.2,multiplier,false,U_LASER3,300,proc
+UP_LASER3,Mining Beam Module,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,A,3,4,Weapon_Laser_ReloadTime,Overheat Downtime,0.85,0.9,multiplier,false,U_LASER3,300,proc
+UP_LASER4,Mining Beam Module,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,S,4,4,Weapon_Laser_Mining_Speed,Mining Speed,0.8,0.85,multiplier,false,U_LASER4,480,proc
+UP_LASER4,Mining Beam Module,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,S,4,4,Weapon_Laser_HeatTime,Heat Dispersion,1.4,1.5,multiplier,false,U_LASER4,480,proc
+UP_LASER4,Mining Beam Module,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,S,4,4,Weapon_Laser_Drain,Fuel Efficiency,1.2,1.2,multiplier,false,U_LASER4,480,proc
+UP_LASER4,Mining Beam Module,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,S,4,4,Weapon_Laser_ReloadTime,Overheat Downtime,0.8,0.85,multiplier,false,U_LASER4,480,proc
+UP_LASERX,Suspicious Mining Beam Module,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,X,1,4,Weapon_Laser_Mining_Speed,Mining Speed,0.8,0.95,multiplier,false,U_LASERX,280,proc
+UP_LASERX,Suspicious Mining Beam Module,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,X,1,4,Weapon_Laser_HeatTime,Heat Dispersion,1.05,1.55,multiplier,false,U_LASERX,280,proc
+UP_LASERX,Suspicious Mining Beam Module,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,X,1,4,Weapon_Laser_Drain,Fuel Efficiency,1.01,1.25,multiplier,false,U_LASERX,280,proc
+UP_LASERX,Suspicious Mining Beam Module,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,X,1,4,Weapon_Laser_ReloadTime,Overheat Downtime,0.75,0.95,multiplier,false,U_LASERX,280,proc
+UP_LASER0,Rusted Mining Beam Upgrade,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,rusted,1,4,Weapon_Laser_Mining_Speed,Mining Speed,0.95,0.99,multiplier,false,,,proc
+UP_LASER0,Rusted Mining Beam Upgrade,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,rusted,1,4,Weapon_Laser_HeatTime,Heat Dispersion,1.01,1.02,multiplier,false,,,proc
+UP_LASER0,Rusted Mining Beam Upgrade,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,rusted,1,4,Weapon_Laser_Drain,Fuel Efficiency,1.01,1.02,multiplier,false,,,proc
+UP_LASER0,Rusted Mining Beam Upgrade,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,rusted,1,4,Weapon_Laser_ReloadTime,Overheat Downtime,0.95,0.99,multiplier,false,,,proc
+UP_SCAN1,Scanner Module,Multi-Tool,Scanner,C,1,2,Weapon_Scan_Radius,Scan Radius,1.05,1.1,multiplier,false,U_SCANNER1,60,proc
+UP_SCAN1,Scanner Module,Multi-Tool,Scanner,C,1,2,Weapon_Scan_Discovery_Creature,Fauna Analysis Rewards,10,20,fraction,false,U_SCANNER1,60,proc
+UP_SCAN1,Scanner Module,Multi-Tool,Scanner,C,1,2,Weapon_Scan_Discovery_Flora,Flora Analysis Rewards,10,20,fraction,false,U_SCANNER1,60,proc
+UP_SCAN1,Scanner Module,Multi-Tool,Scanner,C,1,2,Weapon_Scan_Discovery_Mineral,Mineral Analysis Rewards,10,20,fraction,false,U_SCANNER1,60,proc
+UP_SCAN2,Scanner Module,Multi-Tool,Scanner,B,2,3,Weapon_Scan_Radius,Scan Radius,1.1,1.2,multiplier,false,U_SCANNER2,140,proc
+UP_SCAN2,Scanner Module,Multi-Tool,Scanner,B,2,3,Weapon_Scan_Discovery_Creature,Fauna Analysis Rewards,25,50,fraction,false,U_SCANNER2,140,proc
+UP_SCAN2,Scanner Module,Multi-Tool,Scanner,B,2,3,Weapon_Scan_Discovery_Flora,Flora Analysis Rewards,25,50,fraction,false,U_SCANNER2,140,proc
+UP_SCAN2,Scanner Module,Multi-Tool,Scanner,B,2,3,Weapon_Scan_Discovery_Mineral,Mineral Analysis Rewards,25,50,fraction,false,U_SCANNER2,140,proc
+UP_SCAN3,Scanner Module,Multi-Tool,Scanner,A,2,4,Weapon_Scan_Radius,Scan Radius,1.2,1.3,multiplier,false,U_SCANNER3,300,proc
+UP_SCAN3,Scanner Module,Multi-Tool,Scanner,A,2,4,Weapon_Scan_Discovery_Creature,Fauna Analysis Rewards,50,100,fraction,false,U_SCANNER3,300,proc
+UP_SCAN3,Scanner Module,Multi-Tool,Scanner,A,2,4,Weapon_Scan_Discovery_Flora,Flora Analysis Rewards,50,100,fraction,false,U_SCANNER3,300,proc
+UP_SCAN3,Scanner Module,Multi-Tool,Scanner,A,2,4,Weapon_Scan_Discovery_Mineral,Mineral Analysis Rewards,50,100,fraction,false,U_SCANNER3,300,proc
+UP_SCAN4,Scanner Module,Multi-Tool,Scanner,S,3,4,Weapon_Scan_Radius,Scan Radius,1.3,1.4,multiplier,false,U_SCANNER4,480,proc
+UP_SCAN4,Scanner Module,Multi-Tool,Scanner,S,3,4,Weapon_Scan_Discovery_Creature,Fauna Analysis Rewards,65,100,fraction,false,U_SCANNER4,480,proc
+UP_SCAN4,Scanner Module,Multi-Tool,Scanner,S,3,4,Weapon_Scan_Discovery_Flora,Flora Analysis Rewards,65,100,fraction,false,U_SCANNER4,480,proc
+UP_SCAN4,Scanner Module,Multi-Tool,Scanner,S,3,4,Weapon_Scan_Discovery_Mineral,Mineral Analysis Rewards,65,100,fraction,false,U_SCANNER4,480,proc
+UP_SCANX,Suspicious Scanner Module,Multi-Tool,Scanner,X,2,4,Weapon_Scan_Radius,Scan Radius,1.05,1.5,multiplier,false,U_SCANNERX,280,proc
+UP_SCANX,Suspicious Scanner Module,Multi-Tool,Scanner,X,2,4,Weapon_Scan_Discovery_Creature,Fauna Analysis Rewards,10,110,fraction,false,U_SCANNERX,280,proc
+UP_SCANX,Suspicious Scanner Module,Multi-Tool,Scanner,X,2,4,Weapon_Scan_Discovery_Flora,Flora Analysis Rewards,10,110,fraction,false,U_SCANNERX,280,proc
+UP_SCANX,Suspicious Scanner Module,Multi-Tool,Scanner,X,2,4,Weapon_Scan_Discovery_Mineral,Mineral Analysis Rewards,10,110,fraction,false,U_SCANNERX,280,proc
+UP_SCAN0,Rusted Analysis Visor Upgrade,Multi-Tool,Scanner,rusted,2,4,Weapon_Scan_Radius,Scan Radius,1.01,1.04,multiplier,false,,,proc
+UP_SCAN0,Rusted Analysis Visor Upgrade,Multi-Tool,Scanner,rusted,2,4,Weapon_Scan_Discovery_Creature,Fauna Analysis Rewards,2,3,fraction,false,,,proc
+UP_SCAN0,Rusted Analysis Visor Upgrade,Multi-Tool,Scanner,rusted,2,4,Weapon_Scan_Discovery_Flora,Flora Analysis Rewards,2,3,fraction,false,,,proc
+UP_SCAN0,Rusted Analysis Visor Upgrade,Multi-Tool,Scanner,rusted,2,4,Weapon_Scan_Discovery_Mineral,Mineral Analysis Rewards,2,3,fraction,false,,,proc
+UP_BOLT1,Boltcaster Module,Multi-Tool,Boltcaster,C,1,2,Weapon_Projectile_Damage,Damage,1,1,flat,true,U_BOLT1,60,proc
+UP_BOLT1,Boltcaster Module,Multi-Tool,Boltcaster,C,1,2,Weapon_Projectile_ReloadTime,Reload Time,0.9,0.95,multiplier,false,U_BOLT1,60,proc
+UP_BOLT1,Boltcaster Module,Multi-Tool,Boltcaster,C,1,2,Weapon_Projectile_ClipSize,Clip Size,2,2,flat,false,U_BOLT1,60,proc
+UP_BOLT1,Boltcaster Module,Multi-Tool,Boltcaster,C,1,2,Weapon_Projectile_Rate,Fire Rate,1.01,1.1,multiplier,false,U_BOLT1,60,proc
+UP_BOLT1,Boltcaster Module,Multi-Tool,Boltcaster,C,1,2,Weapon_Projectile_BurstCap,Shots Per Burst,1,1,flat,false,U_BOLT1,60,proc
+UP_BOLT1,Boltcaster Module,Multi-Tool,Boltcaster,C,1,2,Weapon_Projectile_BurstCooldown,Burst Cooldown,0.99,0.95,multiplier,false,U_BOLT1,60,proc
+UP_BOLT2,Boltcaster Module,Multi-Tool,Boltcaster,B,2,3,Weapon_Projectile_Damage,Damage,1,2,flat,true,U_BOLT2,140,proc
+UP_BOLT2,Boltcaster Module,Multi-Tool,Boltcaster,B,2,3,Weapon_Projectile_ReloadTime,Reload Time,0.85,0.9,multiplier,false,U_BOLT2,140,proc
+UP_BOLT2,Boltcaster Module,Multi-Tool,Boltcaster,B,2,3,Weapon_Projectile_ClipSize,Clip Size,4,4,flat,false,U_BOLT2,140,proc
+UP_BOLT2,Boltcaster Module,Multi-Tool,Boltcaster,B,2,3,Weapon_Projectile_Rate,Fire Rate,1.05,1.1,multiplier,false,U_BOLT2,140,proc
+UP_BOLT2,Boltcaster Module,Multi-Tool,Boltcaster,B,2,3,Weapon_Projectile_BurstCap,Shots Per Burst,1,1,flat,false,U_BOLT2,140,proc
+UP_BOLT2,Boltcaster Module,Multi-Tool,Boltcaster,B,2,3,Weapon_Projectile_BurstCooldown,Burst Cooldown,0.95,0.9,multiplier,false,U_BOLT2,140,proc
+UP_BOLT3,Boltcaster Module,Multi-Tool,Boltcaster,A,3,4,Weapon_Projectile_Damage,Damage,2,3,flat,true,U_BOLT3,300,proc
+UP_BOLT3,Boltcaster Module,Multi-Tool,Boltcaster,A,3,4,Weapon_Projectile_ReloadTime,Reload Time,0.8,0.9,multiplier,false,U_BOLT3,300,proc
+UP_BOLT3,Boltcaster Module,Multi-Tool,Boltcaster,A,3,4,Weapon_Projectile_ClipSize,Clip Size,6,6,flat,false,U_BOLT3,300,proc
+UP_BOLT3,Boltcaster Module,Multi-Tool,Boltcaster,A,3,4,Weapon_Projectile_Rate,Fire Rate,1.1,1.15,multiplier,false,U_BOLT3,300,proc
+UP_BOLT3,Boltcaster Module,Multi-Tool,Boltcaster,A,3,4,Weapon_Projectile_BurstCap,Shots Per Burst,1,2,flat,false,U_BOLT3,300,proc
+UP_BOLT3,Boltcaster Module,Multi-Tool,Boltcaster,A,3,4,Weapon_Projectile_BurstCooldown,Burst Cooldown,0.9,0.85,multiplier,false,U_BOLT3,300,proc
+UP_BOLT4,Boltcaster Module,Multi-Tool,Boltcaster,S,4,4,Weapon_Projectile_Damage,Damage,3,4,flat,true,U_BOLT4,480,proc
+UP_BOLT4,Boltcaster Module,Multi-Tool,Boltcaster,S,4,4,Weapon_Projectile_ReloadTime,Reload Time,0.8,0.9,multiplier,false,U_BOLT4,480,proc
+UP_BOLT4,Boltcaster Module,Multi-Tool,Boltcaster,S,4,4,Weapon_Projectile_ClipSize,Clip Size,8,8,flat,false,U_BOLT4,480,proc
+UP_BOLT4,Boltcaster Module,Multi-Tool,Boltcaster,S,4,4,Weapon_Projectile_Rate,Fire Rate,1.1,1.15,multiplier,false,U_BOLT4,480,proc
+UP_BOLT4,Boltcaster Module,Multi-Tool,Boltcaster,S,4,4,Weapon_Projectile_BurstCap,Shots Per Burst,1,2,flat,false,U_BOLT4,480,proc
+UP_BOLT4,Boltcaster Module,Multi-Tool,Boltcaster,S,4,4,Weapon_Projectile_BurstCooldown,Burst Cooldown,0.85,0.85,multiplier,false,U_BOLT4,480,proc
+UP_BOLTX,Suspicious Boltcaster Module,Multi-Tool,Boltcaster,X,2,4,Weapon_Projectile_Damage,Damage,1,5,flat,true,U_BOLTX,320,proc
+UP_BOLTX,Suspicious Boltcaster Module,Multi-Tool,Boltcaster,X,2,4,Weapon_Projectile_ReloadTime,Reload Time,0.75,0.95,multiplier,false,U_BOLTX,320,proc
+UP_BOLTX,Suspicious Boltcaster Module,Multi-Tool,Boltcaster,X,2,4,Weapon_Projectile_ClipSize,Clip Size,2,10,flat,false,U_BOLTX,320,proc
+UP_BOLTX,Suspicious Boltcaster Module,Multi-Tool,Boltcaster,X,2,4,Weapon_Projectile_Rate,Fire Rate,1.01,1.2,multiplier,false,U_BOLTX,320,proc
+UP_BOLTX,Suspicious Boltcaster Module,Multi-Tool,Boltcaster,X,2,4,Weapon_Projectile_BurstCap,Shots Per Burst,1,2,flat,false,U_BOLTX,320,proc
+UP_BOLTX,Suspicious Boltcaster Module,Multi-Tool,Boltcaster,X,2,4,Weapon_Projectile_BurstCooldown,Burst Cooldown,0.99,0.8,multiplier,false,U_BOLTX,320,proc
+UP_BOLT0,Rusted Boltcaster Upgrade,Multi-Tool,Boltcaster,rusted,2,4,Weapon_Projectile_Damage,Damage,1,1,flat,true,,,proc
+UP_BOLT0,Rusted Boltcaster Upgrade,Multi-Tool,Boltcaster,rusted,2,4,Weapon_Projectile_ReloadTime,Reload Time,0.96,0.99,multiplier,false,,,proc
+UP_BOLT0,Rusted Boltcaster Upgrade,Multi-Tool,Boltcaster,rusted,2,4,Weapon_Projectile_ClipSize,Clip Size,1,1,flat,false,,,proc
+UP_BOLT0,Rusted Boltcaster Upgrade,Multi-Tool,Boltcaster,rusted,2,4,Weapon_Projectile_Rate,Fire Rate,1.01,1.02,multiplier,false,,,proc
+UP_BOLT0,Rusted Boltcaster Upgrade,Multi-Tool,Boltcaster,rusted,2,4,Weapon_Projectile_BurstCap,Shots Per Burst,1,1,flat,false,,,proc
+UP_BOLT0,Rusted Boltcaster Upgrade,Multi-Tool,Boltcaster,rusted,2,4,Weapon_Projectile_BurstCooldown,Burst Cooldown,0.99,0.98,multiplier,false,,,proc
+UP_GREN1,Plasma Launcher Module,Multi-Tool,Plasma Launcher,C,1,2,Weapon_Grenade_Damage,Damage,100,200,flat,false,U_GRENADE1,60,proc
+UP_GREN1,Plasma Launcher Module,Multi-Tool,Plasma Launcher,C,1,2,Weapon_Grenade_Bounce,Bounce Potential,1,1,flat,false,U_GRENADE1,60,proc
+UP_GREN1,Plasma Launcher Module,Multi-Tool,Plasma Launcher,C,1,2,Weapon_Grenade_Radius,Explosion Radius,1.01,1.05,multiplier,false,U_GRENADE1,60,proc
+UP_GREN1,Plasma Launcher Module,Multi-Tool,Plasma Launcher,C,1,2,Weapon_Grenade_Speed,Projectile Velocity,1,2,flat,false,U_GRENADE1,60,proc
+UP_GREN2,Plasma Launcher Module,Multi-Tool,Plasma Launcher,B,1,3,Weapon_Grenade_Damage,Damage,200,300,flat,false,U_GRENADE2,140,proc
+UP_GREN2,Plasma Launcher Module,Multi-Tool,Plasma Launcher,B,1,3,Weapon_Grenade_Bounce,Bounce Potential,1,2,flat,false,U_GRENADE2,140,proc
+UP_GREN2,Plasma Launcher Module,Multi-Tool,Plasma Launcher,B,1,3,Weapon_Grenade_Radius,Explosion Radius,1.05,1.1,multiplier,false,U_GRENADE2,140,proc
+UP_GREN2,Plasma Launcher Module,Multi-Tool,Plasma Launcher,B,1,3,Weapon_Grenade_Speed,Projectile Velocity,1,3,flat,false,U_GRENADE2,140,proc
+UP_GREN3,Plasma Launcher Module,Multi-Tool,Plasma Launcher,A,2,3,Weapon_Grenade_Damage,Damage,300,400,flat,false,U_GRENADE3,300,proc
+UP_GREN3,Plasma Launcher Module,Multi-Tool,Plasma Launcher,A,2,3,Weapon_Grenade_Bounce,Bounce Potential,2,3,flat,false,U_GRENADE3,300,proc
+UP_GREN3,Plasma Launcher Module,Multi-Tool,Plasma Launcher,A,2,3,Weapon_Grenade_Radius,Explosion Radius,1.05,1.1,multiplier,false,U_GRENADE3,300,proc
+UP_GREN3,Plasma Launcher Module,Multi-Tool,Plasma Launcher,A,2,3,Weapon_Grenade_Speed,Projectile Velocity,1,3,flat,false,U_GRENADE3,300,proc
+UP_GREN4,Plasma Launcher Module,Multi-Tool,Plasma Launcher,S,3,3,Weapon_Grenade_Damage,Damage,350,400,flat,false,U_GRENADE4,480,proc
+UP_GREN4,Plasma Launcher Module,Multi-Tool,Plasma Launcher,S,3,3,Weapon_Grenade_Bounce,Bounce Potential,3,3,flat,false,U_GRENADE4,480,proc
+UP_GREN4,Plasma Launcher Module,Multi-Tool,Plasma Launcher,S,3,3,Weapon_Grenade_Radius,Explosion Radius,1.1,1.15,multiplier,false,U_GRENADE4,480,proc
+UP_GREN4,Plasma Launcher Module,Multi-Tool,Plasma Launcher,S,3,3,Weapon_Grenade_Speed,Projectile Velocity,2,3,flat,false,U_GRENADE4,480,proc
+UP_GRENX,Suspicious Plasma Launcher Module,Multi-Tool,Plasma Launcher,X,2,3,Weapon_Grenade_Damage,Damage,100,450,flat,false,U_GRENADEX,280,proc
+UP_GRENX,Suspicious Plasma Launcher Module,Multi-Tool,Plasma Launcher,X,2,3,Weapon_Grenade_Bounce,Bounce Potential,1,4,flat,false,U_GRENADEX,280,proc
+UP_GRENX,Suspicious Plasma Launcher Module,Multi-Tool,Plasma Launcher,X,2,3,Weapon_Grenade_Radius,Explosion Radius,1.01,1.2,multiplier,false,U_GRENADEX,280,proc
+UP_GRENX,Suspicious Plasma Launcher Module,Multi-Tool,Plasma Launcher,X,2,3,Weapon_Grenade_Speed,Projectile Velocity,1,4,flat,false,U_GRENADEX,280,proc
+UP_TGREN1,Geology Cannon Module,Multi-Tool,Geology Cannon,C,1,1,Weapon_Grenade_Damage,Damage,100,200,flat,false,U_TGRENADE1,60,proc
+UP_TGREN1,Geology Cannon Module,Multi-Tool,Geology Cannon,C,1,1,Weapon_Grenade_Radius,Explosion Radius,1.1,1.2,multiplier,false,U_TGRENADE1,60,proc
+UP_TGREN1,Geology Cannon Module,Multi-Tool,Geology Cannon,C,1,1,Weapon_Grenade_Speed,Projectile Velocity,1,2,flat,false,U_TGRENADE1,60,proc
+UP_TGREN2,Geology Cannon Module,Multi-Tool,Geology Cannon,B,1,2,Weapon_Grenade_Damage,Damage,200,300,flat,false,U_TGRENADE2,140,proc
+UP_TGREN2,Geology Cannon Module,Multi-Tool,Geology Cannon,B,1,2,Weapon_Grenade_Radius,Explosion Radius,1.2,1.3,multiplier,false,U_TGRENADE2,140,proc
+UP_TGREN2,Geology Cannon Module,Multi-Tool,Geology Cannon,B,1,2,Weapon_Grenade_Speed,Projectile Velocity,1,3,flat,false,U_TGRENADE2,140,proc
+UP_TGREN3,Geology Cannon Module,Multi-Tool,Geology Cannon,A,1,2,Weapon_Grenade_Damage,Damage,300,400,flat,false,U_TGRENADE3,300,proc
+UP_TGREN3,Geology Cannon Module,Multi-Tool,Geology Cannon,A,1,2,Weapon_Grenade_Radius,Explosion Radius,1.3,1.5,multiplier,false,U_TGRENADE3,300,proc
+UP_TGREN3,Geology Cannon Module,Multi-Tool,Geology Cannon,A,1,2,Weapon_Grenade_Speed,Projectile Velocity,1,3,flat,false,U_TGRENADE3,300,proc
+UP_TGREN4,Geology Cannon Module,Multi-Tool,Geology Cannon,S,2,2,Weapon_Grenade_Damage,Damage,350,400,flat,false,U_TGRENADE4,480,proc
+UP_TGREN4,Geology Cannon Module,Multi-Tool,Geology Cannon,S,2,2,Weapon_Grenade_Radius,Explosion Radius,1.4,1.5,multiplier,false,U_TGRENADE4,480,proc
+UP_TGREN4,Geology Cannon Module,Multi-Tool,Geology Cannon,S,2,2,Weapon_Grenade_Speed,Projectile Velocity,2,3,flat,false,U_TGRENADE4,480,proc
+UP_TGRENX,Suspicious Geology Cannon Module,Multi-Tool,Geology Cannon,X,1,2,Weapon_Grenade_Damage,Damage,100,450,flat,false,U_TGRENADEX,280,proc
+UP_TGRENX,Suspicious Geology Cannon Module,Multi-Tool,Geology Cannon,X,1,2,Weapon_Grenade_Radius,Explosion Radius,1.1,1.6,multiplier,false,U_TGRENADEX,280,proc
+UP_TGRENX,Suspicious Geology Cannon Module,Multi-Tool,Geology Cannon,X,1,2,Weapon_Grenade_Speed,Projectile Velocity,1,4,flat,false,U_TGRENADEX,280,proc
+UP_RAIL1,Blaze Javelin Module,Multi-Tool,Blaze Javelin,C,1,1,Weapon_Laser_Damage,Damage,30,40,flat,false,U_RAIL1,60,proc
+UP_RAIL1,Blaze Javelin Module,Multi-Tool,Blaze Javelin,C,1,1,Weapon_Laser_ChargeTime,Time to Full Power,0.9,0.95,multiplier,false,U_RAIL1,60,proc
+UP_RAIL2,Blaze Javelin Module,Multi-Tool,Blaze Javelin,B,1,2,Weapon_Laser_Damage,Damage,40,50,flat,false,U_RAIL2,140,proc
+UP_RAIL2,Blaze Javelin Module,Multi-Tool,Blaze Javelin,B,1,2,Weapon_Laser_ChargeTime,Time to Full Power,0.85,0.9,multiplier,false,U_RAIL2,140,proc
+UP_RAIL3,Blaze Javelin Module,Multi-Tool,Blaze Javelin,A,2,2,Weapon_Laser_Damage,Damage,50,60,flat,false,U_RAIL3,300,proc
+UP_RAIL3,Blaze Javelin Module,Multi-Tool,Blaze Javelin,A,2,2,Weapon_Laser_ChargeTime,Time to Full Power,0.8,0.9,multiplier,false,U_RAIL3,300,proc
+UP_RAIL4,Blaze Javelin Module,Multi-Tool,Blaze Javelin,S,2,2,Weapon_Laser_Damage,Damage,60,75,flat,false,U_RAIL4,480,proc
+UP_RAIL4,Blaze Javelin Module,Multi-Tool,Blaze Javelin,S,2,2,Weapon_Laser_ChargeTime,Time to Full Power,0.8,0.9,multiplier,false,U_RAIL4,480,proc
+UP_RAILX,Suspicious Blaze Javelin Module,Multi-Tool,Blaze Javelin,X,1,2,Weapon_Laser_Damage,Damage,30,85,flat,false,U_RAILX,320,proc
+UP_RAILX,Suspicious Blaze Javelin Module,Multi-Tool,Blaze Javelin,X,1,2,Weapon_Laser_ChargeTime,Time to Full Power,0.75,0.95,multiplier,false,U_RAILX,320,proc
+UP_SHOT1,Scatter Blaster Module,Multi-Tool,Scatter Blaster,C,1,2,Weapon_Projectile_Damage,Damage,1,1,flat,true,U_SHOTGUN1,60,proc
+UP_SHOT1,Scatter Blaster Module,Multi-Tool,Scatter Blaster,C,1,2,Weapon_Projectile_ReloadTime,Reload Time,0.9,0.95,multiplier,false,U_SHOTGUN1,60,proc
+UP_SHOT1,Scatter Blaster Module,Multi-Tool,Scatter Blaster,C,1,2,Weapon_Projectile_BurstCap,Shots Per Burst,1,1,flat,false,U_SHOTGUN1,60,proc
+UP_SHOT2,Scatter Blaster Module,Multi-Tool,Scatter Blaster,B,2,3,Weapon_Projectile_Damage,Damage,1,2,flat,true,U_SHOTGUN2,140,proc
+UP_SHOT2,Scatter Blaster Module,Multi-Tool,Scatter Blaster,B,2,3,Weapon_Projectile_ReloadTime,Reload Time,0.85,0.9,multiplier,false,U_SHOTGUN2,140,proc
+UP_SHOT2,Scatter Blaster Module,Multi-Tool,Scatter Blaster,B,2,3,Weapon_Projectile_ClipSize,Clip Size,8,8,flat,false,U_SHOTGUN2,140,proc
+UP_SHOT2,Scatter Blaster Module,Multi-Tool,Scatter Blaster,B,2,3,Weapon_Projectile_Rate,Fire Rate,1.01,1.05,multiplier,false,U_SHOTGUN2,140,proc
+UP_SHOT2,Scatter Blaster Module,Multi-Tool,Scatter Blaster,B,2,3,Weapon_Projectile_BurstCap,Shots Per Burst,1,1,flat,false,U_SHOTGUN2,140,proc
+UP_SHOT2,Scatter Blaster Module,Multi-Tool,Scatter Blaster,B,2,3,Weapon_Projectile_BurstCooldown,Burst Cooldown,0.9,0.95,multiplier,false,U_SHOTGUN2,140,proc
+UP_SHOT3,Scatter Blaster Module,Multi-Tool,Scatter Blaster,A,3,4,Weapon_Projectile_Damage,Damage,2,4,flat,true,U_SHOTGUN3,300,proc
+UP_SHOT3,Scatter Blaster Module,Multi-Tool,Scatter Blaster,A,3,4,Weapon_Projectile_ReloadTime,Reload Time,0.8,0.85,multiplier,false,U_SHOTGUN3,300,proc
+UP_SHOT3,Scatter Blaster Module,Multi-Tool,Scatter Blaster,A,3,4,Weapon_Projectile_ClipSize,Clip Size,8,8,flat,false,U_SHOTGUN3,300,proc
+UP_SHOT3,Scatter Blaster Module,Multi-Tool,Scatter Blaster,A,3,4,Weapon_Projectile_Rate,Fire Rate,1.05,1.1,multiplier,false,U_SHOTGUN3,300,proc
+UP_SHOT3,Scatter Blaster Module,Multi-Tool,Scatter Blaster,A,3,4,Weapon_Projectile_BurstCap,Shots Per Burst,1,1,flat,false,U_SHOTGUN3,300,proc
+UP_SHOT3,Scatter Blaster Module,Multi-Tool,Scatter Blaster,A,3,4,Weapon_Projectile_BurstCooldown,Burst Cooldown,0.85,0.9,multiplier,false,U_SHOTGUN3,300,proc
+UP_SHOT4,Scatter Blaster Module,Multi-Tool,Scatter Blaster,S,4,4,Weapon_Projectile_Damage,Damage,3,5,flat,true,U_SHOTGUN4,480,proc
+UP_SHOT4,Scatter Blaster Module,Multi-Tool,Scatter Blaster,S,4,4,Weapon_Projectile_ReloadTime,Reload Time,0.75,0.8,multiplier,false,U_SHOTGUN4,480,proc
+UP_SHOT4,Scatter Blaster Module,Multi-Tool,Scatter Blaster,S,4,4,Weapon_Projectile_ClipSize,Clip Size,8,8,flat,false,U_SHOTGUN4,480,proc
+UP_SHOT4,Scatter Blaster Module,Multi-Tool,Scatter Blaster,S,4,4,Weapon_Projectile_Rate,Fire Rate,1.1,1.15,multiplier,false,U_SHOTGUN4,480,proc
+UP_SHOT4,Scatter Blaster Module,Multi-Tool,Scatter Blaster,S,4,4,Weapon_Projectile_BurstCap,Shots Per Burst,1,1,flat,false,U_SHOTGUN4,480,proc
+UP_SHOT4,Scatter Blaster Module,Multi-Tool,Scatter Blaster,S,4,4,Weapon_Projectile_BurstCooldown,Burst Cooldown,0.8,0.85,multiplier,false,U_SHOTGUN4,480,proc
+UP_SHOTX,Suspicious Scatter Blaster Module,Multi-Tool,Scatter Blaster,X,2,4,Weapon_Projectile_Damage,Damage,1,6,flat,true,U_SHOTGUNX,320,proc
+UP_SHOTX,Suspicious Scatter Blaster Module,Multi-Tool,Scatter Blaster,X,2,4,Weapon_Projectile_ReloadTime,Reload Time,0.7,0.95,multiplier,false,U_SHOTGUNX,320,proc
+UP_SHOTX,Suspicious Scatter Blaster Module,Multi-Tool,Scatter Blaster,X,2,4,Weapon_Projectile_ClipSize,Clip Size,8,8,flat,false,U_SHOTGUNX,320,proc
+UP_SHOTX,Suspicious Scatter Blaster Module,Multi-Tool,Scatter Blaster,X,2,4,Weapon_Projectile_Rate,Fire Rate,1.01,1.2,multiplier,false,U_SHOTGUNX,320,proc
+UP_SHOTX,Suspicious Scatter Blaster Module,Multi-Tool,Scatter Blaster,X,2,4,Weapon_Projectile_BurstCap,Shots Per Burst,1,1,flat,false,U_SHOTGUNX,320,proc
+UP_SHOTX,Suspicious Scatter Blaster Module,Multi-Tool,Scatter Blaster,X,2,4,Weapon_Projectile_BurstCooldown,Burst Cooldown,0.75,0.95,multiplier,false,U_SHOTGUNX,320,proc
+UP_SMG1,Pulse Spitter Module,Multi-Tool,Pulse Spitter,C,1,2,Weapon_Projectile_Damage,Damage,1,1,flat,false,U_SMG1,60,proc
+UP_SMG1,Pulse Spitter Module,Multi-Tool,Pulse Spitter,C,1,2,Weapon_Projectile_Rate,Fire Rate,1.01,1.1,multiplier,false,U_SMG1,60,proc
+UP_SMG1,Pulse Spitter Module,Multi-Tool,Pulse Spitter,C,1,2,Weapon_Projectile_ClipSize,Clip Size,12,12,flat,false,U_SMG1,60,proc
+UP_SMG2,Pulse Spitter Module,Multi-Tool,Pulse Spitter,B,2,3,Weapon_Projectile_Damage,Damage,1,2,flat,false,U_SMG2,140,proc
+UP_SMG2,Pulse Spitter Module,Multi-Tool,Pulse Spitter,B,2,3,Weapon_Projectile_Rate,Fire Rate,1.01,1.1,multiplier,false,U_SMG2,140,proc
+UP_SMG2,Pulse Spitter Module,Multi-Tool,Pulse Spitter,B,2,3,Weapon_Projectile_ReloadTime,Reload Time,0.9,0.99,multiplier,false,U_SMG2,140,proc
+UP_SMG2,Pulse Spitter Module,Multi-Tool,Pulse Spitter,B,2,3,Weapon_Projectile_ClipSize,Clip Size,12,12,flat,false,U_SMG2,140,proc
+UP_SMG3,Pulse Spitter Module,Multi-Tool,Pulse Spitter,A,3,4,Weapon_Projectile_Damage,Damage,1,3,flat,false,U_SMG3,300,proc
+UP_SMG3,Pulse Spitter Module,Multi-Tool,Pulse Spitter,A,3,4,Weapon_Projectile_Rate,Fire Rate,1.05,1.1,multiplier,false,U_SMG3,300,proc
+UP_SMG3,Pulse Spitter Module,Multi-Tool,Pulse Spitter,A,3,4,Weapon_Projectile_ReloadTime,Reload Time,0.9,0.99,multiplier,false,U_SMG3,300,proc
+UP_SMG3,Pulse Spitter Module,Multi-Tool,Pulse Spitter,A,3,4,Weapon_Projectile_ClipSize,Clip Size,12,12,flat,false,U_SMG3,300,proc
+UP_SMG4,Pulse Spitter Module,Multi-Tool,Pulse Spitter,S,4,4,Weapon_Projectile_Damage,Damage,2,3,flat,false,U_SMG4,480,proc
+UP_SMG4,Pulse Spitter Module,Multi-Tool,Pulse Spitter,S,4,4,Weapon_Projectile_Rate,Fire Rate,1.1,1.15,multiplier,false,U_SMG4,480,proc
+UP_SMG4,Pulse Spitter Module,Multi-Tool,Pulse Spitter,S,4,4,Weapon_Projectile_ReloadTime,Reload Time,0.9,0.95,multiplier,false,U_SMG4,480,proc
+UP_SMG4,Pulse Spitter Module,Multi-Tool,Pulse Spitter,S,4,4,Weapon_Projectile_ClipSize,Clip Size,12,12,flat,false,U_SMG4,480,proc
+UP_SMGX,Suspicious Pulse Spitter Module,Multi-Tool,Pulse Spitter,X,2,4,Weapon_Projectile_Damage,Damage,1,4,flat,false,U_SMGX,320,proc
+UP_SMGX,Suspicious Pulse Spitter Module,Multi-Tool,Pulse Spitter,X,2,4,Weapon_Projectile_Rate,Fire Rate,1.01,1.2,multiplier,false,U_SMGX,320,proc
+UP_SMGX,Suspicious Pulse Spitter Module,Multi-Tool,Pulse Spitter,X,2,4,Weapon_Projectile_ReloadTime,Reload Time,0.85,0.99,multiplier,false,U_SMGX,320,proc
+UP_SMGX,Suspicious Pulse Spitter Module,Multi-Tool,Pulse Spitter,X,2,4,Weapon_Projectile_ClipSize,Clip Size,12,12,flat,false,U_SMGX,320,proc
+UP_CANN1,Neutron Cannon Module,Multi-Tool,Neutron Cannon,C,1,2,Weapon_Projectile_Damage,Damage,2,5,flat,false,U_CANNON1,60,proc
+UP_CANN1,Neutron Cannon Module,Multi-Tool,Neutron Cannon,C,1,2,Weapon_Projectile_MaximumCharge,Ion Spheres Created,1,1,flat,false,U_CANNON1,60,proc
+UP_CANN1,Neutron Cannon Module,Multi-Tool,Neutron Cannon,C,1,2,Weapon_ChargedProjectile_ExtraSpeed,Ion Sphere Speed,5,10,flat,false,U_CANNON1,60,proc
+UP_CANN1,Neutron Cannon Module,Multi-Tool,Neutron Cannon,C,1,2,Weapon_ChargedProjectile_ChargeTime,Charging Speed,0.9,0.95,multiplier,true,U_CANNON1,60,proc
+UP_CANN2,Neutron Cannon Module,Multi-Tool,Neutron Cannon,B,2,3,Weapon_Projectile_Damage,Damage,5,7,flat,false,U_CANNON2,140,proc
+UP_CANN2,Neutron Cannon Module,Multi-Tool,Neutron Cannon,B,2,3,Weapon_Projectile_MaximumCharge,Ion Spheres Created,1,1,flat,false,U_CANNON2,140,proc
+UP_CANN2,Neutron Cannon Module,Multi-Tool,Neutron Cannon,B,2,3,Weapon_ChargedProjectile_ExtraSpeed,Ion Sphere Speed,10,15,flat,false,U_CANNON2,140,proc
+UP_CANN2,Neutron Cannon Module,Multi-Tool,Neutron Cannon,B,2,3,Weapon_ChargedProjectile_ChargeTime,Charging Speed,0.85,0.9,multiplier,true,U_CANNON2,140,proc
+UP_CANN3,Neutron Cannon Module,Multi-Tool,Neutron Cannon,A,3,4,Weapon_Projectile_Damage,Damage,7,12,flat,false,U_CANNON3,300,proc
+UP_CANN3,Neutron Cannon Module,Multi-Tool,Neutron Cannon,A,3,4,Weapon_Projectile_MaximumCharge,Ion Spheres Created,1,1,flat,false,U_CANNON3,300,proc
+UP_CANN3,Neutron Cannon Module,Multi-Tool,Neutron Cannon,A,3,4,Weapon_ChargedProjectile_ExtraSpeed,Ion Sphere Speed,15,20,flat,false,U_CANNON3,300,proc
+UP_CANN3,Neutron Cannon Module,Multi-Tool,Neutron Cannon,A,3,4,Weapon_ChargedProjectile_ChargeTime,Charging Speed,0.7,0.8,multiplier,true,U_CANNON3,300,proc
+UP_CANN4,Neutron Cannon Module,Multi-Tool,Neutron Cannon,S,4,4,Weapon_Projectile_Damage,Damage,12,18,flat,false,U_CANNON4,480,proc
+UP_CANN4,Neutron Cannon Module,Multi-Tool,Neutron Cannon,S,4,4,Weapon_Projectile_MaximumCharge,Ion Spheres Created,1,1,flat,false,U_CANNON4,480,proc
+UP_CANN4,Neutron Cannon Module,Multi-Tool,Neutron Cannon,S,4,4,Weapon_ChargedProjectile_ExtraSpeed,Ion Sphere Speed,20,25,flat,false,U_CANNON4,480,proc
+UP_CANN4,Neutron Cannon Module,Multi-Tool,Neutron Cannon,S,4,4,Weapon_ChargedProjectile_ChargeTime,Charging Speed,0.5,0.7,multiplier,true,U_CANNON4,480,proc
+UP_CANNX,Suspicious Neutron Cannon Module,Multi-Tool,Neutron Cannon,X,2,4,Weapon_Projectile_Damage,Damage,5,18,flat,false,U_CANNONX,320,proc
+UP_CANNX,Suspicious Neutron Cannon Module,Multi-Tool,Neutron Cannon,X,2,4,Weapon_Projectile_MaximumCharge,Ion Spheres Created,1,1,flat,false,U_CANNONX,320,proc
+UP_CANNX,Suspicious Neutron Cannon Module,Multi-Tool,Neutron Cannon,X,2,4,Weapon_ChargedProjectile_ExtraSpeed,Ion Sphere Speed,5,25,flat,false,U_CANNONX,320,proc
+UP_CANNX,Suspicious Neutron Cannon Module,Multi-Tool,Neutron Cannon,X,2,4,Weapon_ChargedProjectile_ChargeTime,Charging Speed,0.5,0.95,multiplier,true,U_CANNONX,320,proc
+UP_SENGUN,Sentinel Weapons Shard,Multi-Tool,Boltcaster,special,2,4,Weapon_Projectile_Damage,Damage,1,4,flat,false,U_SENTGUN,480,proc
+UP_SENGUN,Sentinel Weapons Shard,Multi-Tool,Boltcaster,special,2,4,Weapon_Projectile_ReloadTime,Reload Time,0.85,0.99,multiplier,false,U_SENTGUN,480,proc
+UP_SENGUN,Sentinel Weapons Shard,Multi-Tool,Boltcaster,special,2,4,Weapon_Projectile_Rate,Fire Rate,1.01,1.2,multiplier,false,U_SENTGUN,480,proc
+UP_ENGY1,Life Support Module,Exosuit,Life Support,B,1,2,Suit_Energy,Life Support Tanks,0.05,0.2,fraction,false,U_ENERGY1,140,proc
+UP_ENGY1,Life Support Module,Exosuit,Life Support,B,1,2,Suit_Energy_Regen,Solar Panel Power,1.01,1.1,multiplier,false,U_ENERGY1,140,proc
+UP_ENGY2,Life Support Module,Exosuit,Life Support,A,2,2,Suit_Energy,Life Support Tanks,0.2,0.5,fraction,false,U_ENERGY2,300,proc
+UP_ENGY2,Life Support Module,Exosuit,Life Support,A,2,2,Suit_Energy_Regen,Solar Panel Power,1.01,1.25,multiplier,false,U_ENERGY2,300,proc
+UP_ENGY3,Life Support Module,Exosuit,Life Support,S,2,2,Suit_Energy,Life Support Tanks,0.5,1,fraction,false,U_ENERGY3,480,proc
+UP_ENGY3,Life Support Module,Exosuit,Life Support,S,2,2,Suit_Energy_Regen,Solar Panel Power,1.25,1.5,multiplier,false,U_ENERGY3,480,proc
+UP_ENGYX,Suspicious Life Support Module,Exosuit,Life Support,X,2,2,Suit_Energy,Life Support Tanks,0.05,1.1,fraction,false,U_ENERGYX,280,proc
+UP_ENGYX,Suspicious Life Support Module,Exosuit,Life Support,X,2,2,Suit_Energy_Regen,Solar Panel Power,1.01,1.75,multiplier,false,U_ENERGYX,280,proc
+UP_ENGY0,Rusted Life Support Upgrade,Exosuit,Life Support,rusted,2,2,Suit_Energy,Life Support Tanks,0.01,0.05,fraction,false,,,proc
+UP_ENGY0,Rusted Life Support Upgrade,Exosuit,Life Support,rusted,2,2,Suit_Energy_Regen,Solar Panel Power,1.01,1.05,multiplier,false,,,proc
+UP_HAZX,Suspicious Hazard Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,X,4,4,Suit_Protection_HeatDrain,Heat Resistance,1.01,1.1,multiplier,false,U_HAZARDX,600,proc
+UP_HAZX,Suspicious Hazard Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,X,4,4,Suit_Protection_ColdDrain,Cold Resistance,1.01,1.1,multiplier,false,U_HAZARDX,600,proc
+UP_HAZX,Suspicious Hazard Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,X,4,4,Suit_Protection_RadDrain,Radiation Resistance,1.01,1.1,multiplier,false,U_HAZARDX,600,proc
+UP_HAZX,Suspicious Hazard Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,X,4,4,Suit_Protection_ToxDrain,Toxic Resistance,1.01,1.1,multiplier,false,U_HAZARDX,600,proc
+UP_HAZ0,Rusted Hazard Protection Upgrade,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,rusted,4,4,Suit_Protection_HeatDrain,Heat Resistance,1.01,1.03,multiplier,false,,,proc
+UP_HAZ0,Rusted Hazard Protection Upgrade,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,rusted,4,4,Suit_Protection_ColdDrain,Cold Resistance,1.01,1.03,multiplier,false,,,proc
+UP_HAZ0,Rusted Hazard Protection Upgrade,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,rusted,4,4,Suit_Protection_RadDrain,Radiation Resistance,1.01,1.03,multiplier,false,,,proc
+UP_HAZ0,Rusted Hazard Protection Upgrade,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,rusted,4,4,Suit_Protection_ToxDrain,Toxic Resistance,1.01,1.03,multiplier,false,,,proc
+UP_JET1,Movement Module,Exosuit,Jetpack,C,2,3,Suit_Jetpack_Tank,Jetpack Tanks,1,1.5,multiplier,true,U_JETBOOST1,60,proc
+UP_JET1,Movement Module,Exosuit,Jetpack,C,2,3,Suit_Stamina_Strength,Sprint Distance,0.1,0.2,fraction,false,U_JETBOOST1,60,proc
+UP_JET1,Movement Module,Exosuit,Jetpack,C,2,3,Suit_Stamina_Recovery,Sprint Recovery Time,1.01,1.1,multiplier,false,U_JETBOOST1,60,proc
+UP_JET1,Movement Module,Exosuit,Jetpack,C,2,3,Suit_Jetpack_Drain,Fuel Efficiency,0.9,0.95,multiplier,false,U_JETBOOST1,60,proc
+UP_JET1,Movement Module,Exosuit,Jetpack,C,2,3,Suit_Jetpack_Refill,Recharge Rate,1.01,1.05,multiplier,false,U_JETBOOST1,60,proc
+UP_JET2,Movement Module,Exosuit,Jetpack,B,2,4,Suit_Jetpack_Tank,Jetpack Tanks,1,1.65,multiplier,true,U_JETBOOST2,140,proc
+UP_JET2,Movement Module,Exosuit,Jetpack,B,2,4,Suit_Stamina_Strength,Sprint Distance,0.1,0.3,fraction,false,U_JETBOOST2,140,proc
+UP_JET2,Movement Module,Exosuit,Jetpack,B,2,4,Suit_Stamina_Recovery,Sprint Recovery Time,1.1,1.2,multiplier,false,U_JETBOOST2,140,proc
+UP_JET2,Movement Module,Exosuit,Jetpack,B,2,4,Suit_Jetpack_Drain,Fuel Efficiency,0.85,0.9,multiplier,false,U_JETBOOST2,140,proc
+UP_JET2,Movement Module,Exosuit,Jetpack,B,2,4,Suit_Jetpack_Ignition,Initial Boost Power,1.01,1.05,multiplier,false,U_JETBOOST2,140,proc
+UP_JET2,Movement Module,Exosuit,Jetpack,B,2,4,Suit_Jetpack_Refill,Recharge Rate,1.05,1.15,multiplier,false,U_JETBOOST2,140,proc
+UP_JET3,Movement Module,Exosuit,Jetpack,A,3,4,Suit_Jetpack_Tank,Jetpack Tanks,1.5,2.2,multiplier,true,U_JETBOOST3,300,proc
+UP_JET3,Movement Module,Exosuit,Jetpack,A,3,4,Suit_Stamina_Strength,Sprint Distance,0.2,0.5,fraction,false,U_JETBOOST3,300,proc
+UP_JET3,Movement Module,Exosuit,Jetpack,A,3,4,Suit_Stamina_Recovery,Sprint Recovery Time,1.2,1.3,multiplier,false,U_JETBOOST3,300,proc
+UP_JET3,Movement Module,Exosuit,Jetpack,A,3,4,Suit_Jetpack_Drain,Fuel Efficiency,0.8,0.85,multiplier,false,U_JETBOOST3,300,proc
+UP_JET3,Movement Module,Exosuit,Jetpack,A,3,4,Suit_Jetpack_Ignition,Initial Boost Power,1.01,1.1,multiplier,false,U_JETBOOST3,300,proc
+UP_JET3,Movement Module,Exosuit,Jetpack,A,3,4,Suit_Jetpack_Refill,Recharge Rate,1.1,1.3,multiplier,false,U_JETBOOST3,300,proc
+UP_JET4,Movement Module,Exosuit,Jetpack,S,4,4,Suit_Jetpack_Tank,Jetpack Tanks,2,2.35,multiplier,true,U_JETBOOST4,480,proc
+UP_JET4,Movement Module,Exosuit,Jetpack,S,4,4,Suit_Stamina_Strength,Sprint Distance,0.4,0.5,fraction,false,U_JETBOOST4,480,proc
+UP_JET4,Movement Module,Exosuit,Jetpack,S,4,4,Suit_Stamina_Recovery,Sprint Recovery Time,1.3,1.5,multiplier,false,U_JETBOOST4,480,proc
+UP_JET4,Movement Module,Exosuit,Jetpack,S,4,4,Suit_Jetpack_Drain,Fuel Efficiency,0.75,0.85,multiplier,false,U_JETBOOST4,480,proc
+UP_JET4,Movement Module,Exosuit,Jetpack,S,4,4,Suit_Jetpack_Ignition,Initial Boost Power,1.05,1.15,multiplier,true,U_JETBOOST4,480,proc
+UP_JET4,Movement Module,Exosuit,Jetpack,S,4,4,Suit_Jetpack_Refill,Recharge Rate,1.15,1.35,multiplier,false,U_JETBOOST4,480,proc
+UP_JETX,Suspicious Movement Module,Exosuit,Jetpack,X,2,4,Suit_Jetpack_Tank,Jetpack Tanks,1,2.4,multiplier,true,U_JETBOOSTX,280,proc
+UP_JETX,Suspicious Movement Module,Exosuit,Jetpack,X,2,4,Suit_Stamina_Strength,Sprint Distance,0.1,0.6,fraction,false,U_JETBOOSTX,280,proc
+UP_JETX,Suspicious Movement Module,Exosuit,Jetpack,X,2,4,Suit_Stamina_Recovery,Sprint Recovery Time,1.01,1.6,multiplier,false,U_JETBOOSTX,280,proc
+UP_JETX,Suspicious Movement Module,Exosuit,Jetpack,X,2,4,Suit_Jetpack_Drain,Fuel Efficiency,0.7,0.9,multiplier,false,U_JETBOOSTX,280,proc
+UP_JETX,Suspicious Movement Module,Exosuit,Jetpack,X,2,4,Suit_Jetpack_Ignition,Initial Boost Power,1.01,1.2,multiplier,true,U_JETBOOSTX,280,proc
+UP_JETX,Suspicious Movement Module,Exosuit,Jetpack,X,2,4,Suit_Jetpack_Refill,Recharge Rate,1.05,1.4,multiplier,false,U_JETBOOSTX,280,proc
+UP_JET0,Rusted Movement System Upgrade,Exosuit,Jetpack,rusted,2,4,Suit_Jetpack_Tank,Jetpack Tanks,1,1.1,multiplier,true,,,proc
+UP_JET0,Rusted Movement System Upgrade,Exosuit,Jetpack,rusted,2,4,Suit_Stamina_Strength,Sprint Distance,0.1,0.15,fraction,false,,,proc
+UP_JET0,Rusted Movement System Upgrade,Exosuit,Jetpack,rusted,2,4,Suit_Stamina_Recovery,Sprint Recovery Time,1.01,1.05,multiplier,false,,,proc
+UP_JET0,Rusted Movement System Upgrade,Exosuit,Jetpack,rusted,2,4,Suit_Jetpack_Drain,Fuel Efficiency,0.95,0.99,multiplier,false,,,proc
+UP_JET0,Rusted Movement System Upgrade,Exosuit,Jetpack,rusted,2,4,Suit_Jetpack_Ignition,Initial Boost Power,1.01,1.05,multiplier,true,,,proc
+UP_JET0,Rusted Movement System Upgrade,Exosuit,Jetpack,rusted,2,4,Suit_Jetpack_Refill,Recharge Rate,1.01,1.05,multiplier,false,,,proc
+UP_SHLD1,Shield Module,Exosuit,Defence Systems,C,1,2,Suit_Armour_Shield_Strength,Shield Strength,0.1,0.15,fraction,false,U_SHIELDBOOST1,60,proc
+UP_SHLD1,Shield Module,Exosuit,Defence Systems,C,1,2,Suit_Armour_Health,Core Health,20,20,flat,false,U_SHIELDBOOST1,60,proc
+UP_SHLD2,Shield Module,Exosuit,Defence Systems,B,1,2,Suit_Armour_Shield_Strength,Shield Strength,0.15,0.2,fraction,false,U_SHIELDBOOST2,140,proc
+UP_SHLD2,Shield Module,Exosuit,Defence Systems,B,1,2,Suit_Armour_Health,Core Health,20,20,flat,false,U_SHIELDBOOST2,140,proc
+UP_SHLD3,Shield Module,Exosuit,Defence Systems,A,2,2,Suit_Armour_Shield_Strength,Shield Strength,0.2,0.3,fraction,false,U_SHIELDBOOST3,300,proc
+UP_SHLD3,Shield Module,Exosuit,Defence Systems,A,2,2,Suit_Armour_Health,Core Health,20,20,flat,false,U_SHIELDBOOST3,300,proc
+UP_SHLD4,Shield Module,Exosuit,Defence Systems,S,2,2,Suit_Armour_Shield_Strength,Shield Strength,0.3,0.35,fraction,false,U_SHIELDBOOST4,480,proc
+UP_SHLD4,Shield Module,Exosuit,Defence Systems,S,2,2,Suit_Armour_Health,Core Health,20,20,flat,false,U_SHIELDBOOST4,480,proc
+UP_SHLDX,Suspicious Shield Module,Exosuit,Defence Systems,X,2,2,Suit_Armour_Shield_Strength,Shield Strength,0.1,0.35,fraction,false,U_SHIELDBOOSTX,280,proc
+UP_SHLDX,Suspicious Shield Module,Exosuit,Defence Systems,X,2,2,Suit_Armour_Health,Core Health,20,20,flat,false,U_SHIELDBOOSTX,280,proc
+UP_SHLD0,Rusted Defence Systems Upgrade,Exosuit,Defence Systems,rusted,2,2,Suit_Armour_Shield_Strength,Shield Strength,0.05,0.1,fraction,false,,,proc
+UP_SHLD0,Rusted Defence Systems Upgrade,Exosuit,Defence Systems,rusted,2,2,Suit_Armour_Health,Core Health,5,5,flat,false,,,proc
+UP_SNSUIT,Sentinel Exosuit Fragment,Exosuit,Exosuit,special,2,4,Suit_Armour_Shield_Strength,Shield Strength,0.1,0.35,fraction,false,U_SENTSUIT,480,proc
+UP_SNSUIT,Sentinel Exosuit Fragment,Exosuit,Exosuit,special,2,4,Suit_Armour_Health,Core Health,20,20,flat,false,U_SENTSUIT,480,proc
+UP_SNSUIT,Sentinel Exosuit Fragment,Exosuit,Exosuit,special,2,4,Suit_Energy,Life Support Tanks,0.05,1.1,fraction,false,U_SENTSUIT,480,proc
+UP_SNSUIT,Sentinel Exosuit Fragment,Exosuit,Exosuit,special,2,4,Suit_Energy_Regen,Solar Panel Power,1.01,1.75,multiplier,false,U_SENTSUIT,480,proc
+UP_SNSUIT,Sentinel Exosuit Fragment,Exosuit,Exosuit,special,2,4,Suit_Jetpack_Drain,Fuel Efficiency,0.7,0.95,multiplier,false,U_SENTSUIT,480,proc
+UP_SNSUIT,Sentinel Exosuit Fragment,Exosuit,Exosuit,special,2,4,Suit_Stamina_Strength,Sprint Distance,0.1,0.6,fraction,false,U_SENTSUIT,480,proc
+UP_RBSUIT,Rebuilt Exosuit Module,Exosuit,Exosuit,special,2,4,Suit_Armour_Shield_Strength,Shield Strength,0.1,0.35,fraction,false,U_ROBOSUIT,313,proc
+UP_RBSUIT,Rebuilt Exosuit Module,Exosuit,Exosuit,special,2,4,Suit_Armour_Health,Core Health,20,20,flat,false,U_ROBOSUIT,313,proc
+UP_RBSUIT,Rebuilt Exosuit Module,Exosuit,Exosuit,special,2,4,Suit_Energy,Life Support Tanks,0.05,1.1,fraction,false,U_ROBOSUIT,313,proc
+UP_RBSUIT,Rebuilt Exosuit Module,Exosuit,Exosuit,special,2,4,Suit_Energy_Regen,Solar Panel Power,1.01,1.75,multiplier,false,U_ROBOSUIT,313,proc
+UP_RBSUIT,Rebuilt Exosuit Module,Exosuit,Exosuit,special,2,4,Suit_Jetpack_Drain,Fuel Efficiency,0.7,0.95,multiplier,false,U_ROBOSUIT,313,proc
+UP_RBSUIT,Rebuilt Exosuit Module,Exosuit,Exosuit,special,2,4,Suit_Stamina_Strength,Sprint Distance,0.1,0.6,fraction,false,U_ROBOSUIT,313,proc
+UP_UNW1,Underwater Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,B,1,1,Suit_Underwater,Oxygen Tank,90,120,flat,false,U_UNW1,140,proc
+UP_UNW2,Underwater Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,A,1,1,Suit_Underwater,Oxygen Tank,120,180,flat,false,U_UNW2,300,proc
+UP_UNW3,Underwater Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,S,1,1,Suit_Underwater,Oxygen Tank,180,240,flat,false,U_UNW3,480,proc
+UP_RAD1,Radiation Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,B,2,2,Suit_Protection_Radiation,Radiation Protection,200,300,flat,false,U_RAD1,140,proc
+UP_RAD1,Radiation Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,B,2,2,Suit_DamageReduce_Radiation,Radiation Damage Shielding,0.95,0.99,multiplier,false,U_RAD1,140,proc
+UP_RAD2,Radiation Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,A,2,2,Suit_Protection_Radiation,Radiation Protection,240,320,flat,false,U_RAD2,300,proc
+UP_RAD2,Radiation Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,A,2,2,Suit_DamageReduce_Radiation,Radiation Damage Shielding,0.85,0.95,multiplier,false,U_RAD2,300,proc
+UP_RAD3,Radiation Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,S,2,2,Suit_Protection_Radiation,Radiation Protection,280,360,flat,false,U_RAD3,480,proc
+UP_RAD3,Radiation Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,S,2,2,Suit_DamageReduce_Radiation,Radiation Damage Shielding,0.8,0.9,multiplier,false,U_RAD3,480,proc
+UP_TOX1,Toxic Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,B,2,2,Suit_Protection_Toxic,Toxic Protection,200,300,flat,false,U_TOX1,140,proc
+UP_TOX1,Toxic Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,B,2,2,Suit_DamageReduce_Toxic,Toxic Damage Shielding,0.95,0.99,multiplier,false,U_TOX1,140,proc
+UP_TOX2,Toxic Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,A,2,2,Suit_Protection_Toxic,Toxic Protection,240,320,flat,false,U_TOX2,300,proc
+UP_TOX2,Toxic Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,A,2,2,Suit_DamageReduce_Toxic,Toxic Damage Shielding,0.85,0.95,multiplier,false,U_TOX2,300,proc
+UP_TOX3,Toxic Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,S,2,2,Suit_Protection_Toxic,Toxic Protection,280,360,flat,false,U_TOX3,480,proc
+UP_TOX3,Toxic Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,S,2,2,Suit_DamageReduce_Toxic,Toxic Damage Shielding,0.8,0.9,multiplier,false,U_TOX3,480,proc
+UP_COLD1,Thermal Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,B,2,2,Suit_Protection_Cold,Cold Protection,200,300,flat,false,U_COLDPROT1,140,proc
+UP_COLD1,Thermal Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,B,2,2,Suit_DamageReduce_Cold,Cold Damage Shielding,0.95,0.99,multiplier,false,U_COLDPROT1,140,proc
+UP_COLD2,Thermal Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,A,2,2,Suit_Protection_Cold,Cold Protection,240,320,flat,false,U_COLDPROT2,300,proc
+UP_COLD2,Thermal Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,A,2,2,Suit_DamageReduce_Cold,Cold Damage Shielding,0.85,0.95,multiplier,false,U_COLDPROT2,300,proc
+UP_COLD3,Thermal Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,S,2,2,Suit_Protection_Cold,Cold Protection,280,360,flat,false,U_COLDPROT3,480,proc
+UP_COLD3,Thermal Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,S,2,2,Suit_DamageReduce_Cold,Cold Damage Shielding,0.8,0.9,multiplier,false,U_COLDPROT3,480,proc
+UP_HOT1,Thermal Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,B,2,2,Suit_Protection_Heat,Heat Protection,200,300,flat,false,U_HOTPROT1,140,proc
+UP_HOT1,Thermal Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,B,2,2,Suit_DamageReduce_Heat,Heat Damage Shielding,0.95,0.99,multiplier,false,U_HOTPROT1,140,proc
+UP_HOT2,Thermal Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,A,2,2,Suit_Protection_Heat,Heat Protection,240,320,flat,false,U_HOTPROT2,300,proc
+UP_HOT2,Thermal Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,A,2,2,Suit_DamageReduce_Heat,Heat Damage Shielding,0.85,0.95,multiplier,false,U_HOTPROT2,300,proc
+UP_HOT3,Thermal Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,S,2,2,Suit_Protection_Heat,Heat Protection,280,360,flat,false,U_HOTPROT3,480,proc
+UP_HOT3,Thermal Protection Module,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,S,2,2,Suit_DamageReduce_Heat,Heat Damage Shielding,0.8,0.9,multiplier,false,U_HOTPROT3,480,proc
+UP_PULSE1,Pulse Engine Module,Starship,Pulse Engine / Waveform Engine,C,1,2,Ship_PulseDrive_MiniJumpFuelSpending,Pulse Drive Fuel Efficiency,0.9,0.95,multiplier,false,U_PULSE1,60,proc
+UP_PULSE1,Pulse Engine Module,Starship,Pulse Engine / Waveform Engine,C,1,2,Ship_Boost,Boost,1.01,1.1,multiplier,false,U_PULSE1,60,proc
+UP_PULSE1,Pulse Engine Module,Starship,Pulse Engine / Waveform Engine,C,1,2,Ship_BoostManeuverability,Manoeuvrability,1.01,1.075,multiplier,false,U_PULSE1,60,proc
+UP_PULSE1,Pulse Engine Module,Starship,Pulse Engine / Waveform Engine,C,1,2,Ship_Maneuverability,Manoeuvrability,1.005,1.005,multiplier,true,U_PULSE1,60,proc
+UP_PULSE2,Pulse Engine Module,Starship,Pulse Engine / Waveform Engine,B,2,2,Ship_PulseDrive_MiniJumpFuelSpending,Pulse Drive Fuel Efficiency,0.85,0.9,multiplier,false,U_PULSE2,140,proc
+UP_PULSE2,Pulse Engine Module,Starship,Pulse Engine / Waveform Engine,B,2,2,Ship_Boost,Boost,1.1,1.15,multiplier,false,U_PULSE2,140,proc
+UP_PULSE2,Pulse Engine Module,Starship,Pulse Engine / Waveform Engine,B,2,2,Ship_BoostManeuverability,Manoeuvrability,1.01,1.12,multiplier,false,U_PULSE2,140,proc
+UP_PULSE2,Pulse Engine Module,Starship,Pulse Engine / Waveform Engine,B,2,2,Ship_Maneuverability,Manoeuvrability,1.005,1.005,multiplier,true,U_PULSE2,140,proc
+UP_PULSE3,Pulse Engine Module,Starship,Pulse Engine / Waveform Engine,A,2,3,Ship_PulseDrive_MiniJumpFuelSpending,Pulse Drive Fuel Efficiency,0.8,0.85,multiplier,false,U_PULSE3,300,proc
+UP_PULSE3,Pulse Engine Module,Starship,Pulse Engine / Waveform Engine,A,2,3,Ship_Boost,Boost,1.1,1.2,multiplier,false,U_PULSE3,300,proc
+UP_PULSE3,Pulse Engine Module,Starship,Pulse Engine / Waveform Engine,A,2,3,Ship_BoostManeuverability,Manoeuvrability,1.05,1.16,multiplier,false,U_PULSE3,300,proc
+UP_PULSE3,Pulse Engine Module,Starship,Pulse Engine / Waveform Engine,A,2,3,Ship_Maneuverability,Manoeuvrability,1.005,1.005,multiplier,true,U_PULSE3,300,proc
+UP_PULSE4,Pulse Engine Module,Starship,Pulse Engine / Waveform Engine,S,3,3,Ship_PulseDrive_MiniJumpFuelSpending,Pulse Drive Fuel Efficiency,0.8,0.8,multiplier,false,U_PULSE4,480,proc
+UP_PULSE4,Pulse Engine Module,Starship,Pulse Engine / Waveform Engine,S,3,3,Ship_Boost,Boost,1.1,1.25,multiplier,false,U_PULSE4,480,proc
+UP_PULSE4,Pulse Engine Module,Starship,Pulse Engine / Waveform Engine,S,3,3,Ship_BoostManeuverability,Manoeuvrability,1.05,1.18,multiplier,false,U_PULSE4,480,proc
+UP_PULSE4,Pulse Engine Module,Starship,Pulse Engine / Waveform Engine,S,3,3,Ship_Maneuverability,Manoeuvrability,1.0065,1.0065,multiplier,true,U_PULSE4,480,proc
+UP_PULSEX,Suspicious Pulse Engine Module,Starship,Pulse Engine / Waveform Engine,X,2,3,Ship_PulseDrive_MiniJumpFuelSpending,Pulse Drive Fuel Efficiency,0.75,0.95,multiplier,false,U_PULSEX,280,proc
+UP_PULSEX,Suspicious Pulse Engine Module,Starship,Pulse Engine / Waveform Engine,X,2,3,Ship_Boost,Boost,1.01,1.3,multiplier,false,U_PULSEX,280,proc
+UP_PULSEX,Suspicious Pulse Engine Module,Starship,Pulse Engine / Waveform Engine,X,2,3,Ship_BoostManeuverability,Manoeuvrability,1.01,1.2,multiplier,false,U_PULSEX,280,proc
+UP_PULSEX,Suspicious Pulse Engine Module,Starship,Pulse Engine / Waveform Engine,X,2,3,Ship_Maneuverability,Manoeuvrability,1.0065,1.0065,multiplier,true,U_PULSEX,280,proc
+UP_PULSE0,Rusted Pulse Engine Upgrade,Starship,Pulse Engine / Waveform Engine,rusted,2,3,Ship_PulseDrive_MiniJumpFuelSpending,Pulse Drive Fuel Efficiency,0.95,0.99,multiplier,false,,,proc
+UP_PULSE0,Rusted Pulse Engine Upgrade,Starship,Pulse Engine / Waveform Engine,rusted,2,3,Ship_Boost,Boost,1.01,1.05,multiplier,false,,,proc
+UP_PULSE0,Rusted Pulse Engine Upgrade,Starship,Pulse Engine / Waveform Engine,rusted,2,3,Ship_BoostManeuverability,Manoeuvrability,1.01,1.05,multiplier,false,,,proc
+UP_PULSE0,Rusted Pulse Engine Upgrade,Starship,Pulse Engine / Waveform Engine,rusted,2,3,Ship_Maneuverability,Manoeuvrability,1.0005,1.0005,multiplier,true,,,proc
+CV_PULSE2,B-Class Pulse Engine Upgrade,Corvette,Pulse Engine / Waveform Engine,B,4,4,Ship_PulseDrive_MiniJumpFuelSpending,Pulse Drive Fuel Efficiency,0.85,0.9,multiplier,false,,,proc
+CV_PULSE2,B-Class Pulse Engine Upgrade,Corvette,Pulse Engine / Waveform Engine,B,4,4,Ship_Boost,Boost,1.1,1.15,multiplier,false,,,proc
+CV_PULSE2,B-Class Pulse Engine Upgrade,Corvette,Pulse Engine / Waveform Engine,B,4,4,Ship_BoostManeuverability,Manoeuvrability,1.01,1.12,multiplier,false,,,proc
+CV_PULSE2,B-Class Pulse Engine Upgrade,Corvette,Pulse Engine / Waveform Engine,B,4,4,Ship_Maneuverability,Manoeuvrability,1.005,1.005,multiplier,true,,,proc
+CV_PULSE3,A-Class Pulse Engine Upgrade,Corvette,Pulse Engine / Waveform Engine,A,4,4,Ship_PulseDrive_MiniJumpFuelSpending,Pulse Drive Fuel Efficiency,0.8,0.85,multiplier,false,,,proc
+CV_PULSE3,A-Class Pulse Engine Upgrade,Corvette,Pulse Engine / Waveform Engine,A,4,4,Ship_Boost,Boost,1.1,1.2,multiplier,false,,,proc
+CV_PULSE3,A-Class Pulse Engine Upgrade,Corvette,Pulse Engine / Waveform Engine,A,4,4,Ship_BoostManeuverability,Manoeuvrability,1.05,1.16,multiplier,false,,,proc
+CV_PULSE3,A-Class Pulse Engine Upgrade,Corvette,Pulse Engine / Waveform Engine,A,4,4,Ship_Maneuverability,Manoeuvrability,1.005,1.005,multiplier,true,,,proc
+UP_LAUN1,Launch Thrusters Module,Starship,Launch Thruster / Advanced Launch System,C,1,1,Ship_Launcher_TakeOffCost,Launch Cost,0.9,0.95,multiplier,true,U_LAUNCH1,60,proc
+UP_LAUN1,Launch Thrusters Module,Starship,Launch Thruster / Advanced Launch System,C,1,1,Ship_Boost,Boost,1.01,1.01,multiplier,false,U_LAUNCH1,60,proc
+UP_LAUN2,Launch Thrusters Module,Starship,Launch Thruster / Advanced Launch System,B,1,2,Ship_Launcher_TakeOffCost,Launch Cost,0.85,0.9,multiplier,true,U_LAUNCH2,140,proc
+UP_LAUN2,Launch Thrusters Module,Starship,Launch Thruster / Advanced Launch System,B,1,2,Ship_Boost,Boost,1.02,1.05,multiplier,false,U_LAUNCH2,140,proc
+UP_LAUN3,Launch Thrusters Module,Starship,Launch Thruster / Advanced Launch System,A,1,2,Ship_Launcher_TakeOffCost,Launch Cost,0.8,0.85,multiplier,true,U_LAUNCH3,300,proc
+UP_LAUN3,Launch Thrusters Module,Starship,Launch Thruster / Advanced Launch System,A,1,2,Ship_Boost,Boost,1.05,1.08,multiplier,false,U_LAUNCH3,300,proc
+UP_LAUN4,Launch Thrusters Module,Starship,Launch Thruster / Advanced Launch System,S,2,2,Ship_Launcher_TakeOffCost,Launch Cost,0.8,0.8,multiplier,true,U_LAUNCH4,480,proc
+UP_LAUN4,Launch Thrusters Module,Starship,Launch Thruster / Advanced Launch System,S,2,2,Ship_Boost,Boost,1.08,1.1,multiplier,false,U_LAUNCH4,480,proc
+UP_LAUNX,Suspicious Launch Thrusters Module,Starship,Launch Thruster / Advanced Launch System,X,2,2,Ship_Launcher_TakeOffCost,Launch Cost,0.75,0.95,multiplier,true,U_LAUNCHX,280,proc
+UP_LAUNX,Suspicious Launch Thrusters Module,Starship,Launch Thruster / Advanced Launch System,X,2,2,Ship_Boost,Boost,1.01,1.1,multiplier,false,U_LAUNCHX,280,proc
+UP_LAUN0,Rusted Launch Thruster Upgrade,Starship,Launch Thruster / Advanced Launch System,rusted,2,2,Ship_Launcher_TakeOffCost,Launch Cost,0.95,0.99,multiplier,true,,,proc
+UP_LAUN0,Rusted Launch Thruster Upgrade,Starship,Launch Thruster / Advanced Launch System,rusted,2,2,Ship_Boost,Boost,1.01,1.05,multiplier,false,,,proc
+CV_LAUN2,B-Class Launch Thruster Upgrade,Corvette,Launch Thruster / Advanced Launch System,B,2,2,Ship_Launcher_TakeOffCost,Launch Cost,0.85,0.9,multiplier,true,,,proc
+CV_LAUN2,B-Class Launch Thruster Upgrade,Corvette,Launch Thruster / Advanced Launch System,B,2,2,Ship_Boost,Boost,1.02,1.05,multiplier,false,,,proc
+CV_LAUN3,A-Class Launch Thruster Upgrade,Corvette,Launch Thruster / Advanced Launch System,A,2,2,Ship_Launcher_TakeOffCost,Launch Cost,0.8,0.85,multiplier,true,,,proc
+CV_LAUN3,A-Class Launch Thruster Upgrade,Corvette,Launch Thruster / Advanced Launch System,A,2,2,Ship_Boost,Boost,1.05,1.08,multiplier,false,,,proc
+UP_HYP1,Hyperdrive Module,Starship,Hyperdrive / Frameshift Catapult,C,1,2,Ship_Hyperdrive_JumpDistance,Hyperdrive Range,50,100,flat,false,U_HYPER1,60,proc
+UP_HYP2,Hyperdrive Module,Starship,Hyperdrive / Frameshift Catapult,B,1,2,Ship_Hyperdrive_JumpDistance,Hyperdrive Range,115,165,flat,false,U_HYPER2,140,proc
+UP_HYP3,Hyperdrive Module,Starship,Hyperdrive / Frameshift Catapult,A,2,2,Ship_Hyperdrive_JumpDistance,Hyperdrive Range,165,220,flat,false,U_HYPER3,300,proc
+UP_HYP3,Hyperdrive Module,Starship,Hyperdrive / Frameshift Catapult,A,2,2,Ship_Hyperdrive_JumpsPerCell,Warp Cell Efficiency,1,1,flat,false,U_HYPER3,300,proc
+UP_HYP4,Hyperdrive Module,Starship,Hyperdrive / Frameshift Catapult,S,2,2,Ship_Hyperdrive_JumpDistance,Hyperdrive Range,220,265,flat,false,U_HYPER4,480,proc
+UP_HYP4,Hyperdrive Module,Starship,Hyperdrive / Frameshift Catapult,S,2,2,Ship_Hyperdrive_JumpsPerCell,Warp Cell Efficiency,1,1,flat,false,U_HYPER4,480,proc
+UP_HYPX,Suspicious Hyperdrive Module,Starship,Hyperdrive / Frameshift Catapult,X,1,2,Ship_Hyperdrive_JumpDistance,Hyperdrive Range,50,320,flat,false,U_HYPERX,280,proc
+UP_HYPX,Suspicious Hyperdrive Module,Starship,Hyperdrive / Frameshift Catapult,X,1,2,Ship_Hyperdrive_JumpsPerCell,Warp Cell Efficiency,1,1,flat,false,U_HYPERX,280,proc
+UP_HYP0,Rusted Hyperdrive Upgrade,Starship,Hyperdrive / Frameshift Catapult,rusted,1,1,Ship_Hyperdrive_JumpDistance,Hyperdrive Range,10,25,flat,false,,,proc
+CV_HYP2,B-Class Hyperdrive Upgrade,Corvette,Hyperdrive / Frameshift Catapult,B,1,1,Ship_Hyperdrive_JumpDistance,Hyperdrive Range,115,165,flat,false,,,proc
+CV_HYP3,A-Class Hyperdrive Upgrade,Corvette,Hyperdrive / Frameshift Catapult,A,2,2,Ship_Hyperdrive_JumpDistance,Hyperdrive Range,165,220,flat,false,,,proc
+CV_HYP3,A-Class Hyperdrive Upgrade,Corvette,Hyperdrive / Frameshift Catapult,A,2,2,Ship_Hyperdrive_JumpsPerCell,Warp Cell Efficiency,1,1,flat,false,,,proc
+UP_S_SHL1,Starship Shield Module,Starship,Deflector Shield,C,1,1,Ship_Armour_Shield_Strength,Shield Strength,0.05,0.1,fraction,false,U_SHIPSHIELD1,60,proc
+UP_S_SHL2,Starship Shield Module,Starship,Deflector Shield,B,1,1,Ship_Armour_Shield_Strength,Shield Strength,0.05,0.1,fraction,false,U_SHIPSHIELD2,140,proc
+UP_S_SHL3,Starship Shield Module,Starship,Deflector Shield,A,1,1,Ship_Armour_Shield_Strength,Shield Strength,0.1,0.2,fraction,false,U_SHIPSHIELD3,300,proc
+UP_S_SHL4,Starship Shield Module,Starship,Deflector Shield,S,1,1,Ship_Armour_Shield_Strength,Shield Strength,0.2,0.2,fraction,false,U_SHIPSHIELD4,480,proc
+UP_S_SHLX,Suspicious Starship Shield Module,Starship,Deflector Shield,X,1,1,Ship_Armour_Shield_Strength,Shield Strength,0.05,0.25,fraction,false,U_SHIPSHIELDX,280,proc
+UP_S_SHL0,Rusted Deflector Shield Upgrade,Starship,Deflector Shield,rusted,1,1,Ship_Armour_Shield_Strength,Shield Strength,0.01,0.05,fraction,false,,,proc
+CV_S_SHL2,B-Class Deflector Shield Upgrade,Corvette,Deflector Shield,B,1,1,Ship_Armour_Shield_Strength,Shield Strength,0.05,0.1,fraction,false,,,proc
+CV_S_SHL3,A-Class Deflector Shield Upgrade,Corvette,Deflector Shield,A,1,1,Ship_Armour_Shield_Strength,Shield Strength,0.1,0.2,fraction,false,,,proc
+UP_SGUN1,Photon Cannon Module,Starship,Photon Cannon,C,1,2,Ship_Weapons_Guns_Damage,Damage,8,16,flat,false,U_SHIPGUN1,60,proc
+UP_SGUN1,Photon Cannon Module,Starship,Photon Cannon,C,1,2,Ship_Weapons_Guns_Rate,Fire Rate,1.001,1.011,multiplier,false,U_SHIPGUN1,60,proc
+UP_SGUN1,Photon Cannon Module,Starship,Photon Cannon,C,1,2,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.001,1.01,multiplier,false,U_SHIPGUN1,60,proc
+UP_SGUN2,Photon Cannon Module,Starship,Photon Cannon,B,1,2,Ship_Weapons_Guns_Damage,Damage,12,20,flat,false,U_SHIPGUN2,140,proc
+UP_SGUN2,Photon Cannon Module,Starship,Photon Cannon,B,1,2,Ship_Weapons_Guns_Rate,Fire Rate,1.006,1.016,multiplier,false,U_SHIPGUN2,140,proc
+UP_SGUN2,Photon Cannon Module,Starship,Photon Cannon,B,1,2,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.01,1.02,multiplier,false,U_SHIPGUN2,140,proc
+UP_SGUN3,Photon Cannon Module,Starship,Photon Cannon,A,2,3,Ship_Weapons_Guns_Damage,Damage,16,24,flat,false,U_SHIPGUN3,300,proc
+UP_SGUN3,Photon Cannon Module,Starship,Photon Cannon,A,2,3,Ship_Weapons_Guns_Rate,Fire Rate,1.016,1.021,multiplier,false,U_SHIPGUN3,300,proc
+UP_SGUN3,Photon Cannon Module,Starship,Photon Cannon,A,2,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.02,1.03,multiplier,false,U_SHIPGUN3,300,proc
+UP_SGUN4,Photon Cannon Module,Starship,Photon Cannon,S,3,3,Ship_Weapons_Guns_Damage,Damage,20,28,flat,false,U_SHIPGUN4,480,proc
+UP_SGUN4,Photon Cannon Module,Starship,Photon Cannon,S,3,3,Ship_Weapons_Guns_Rate,Fire Rate,1.021,1.021,multiplier,false,U_SHIPGUN4,480,proc
+UP_SGUN4,Photon Cannon Module,Starship,Photon Cannon,S,3,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.03,1.03,multiplier,false,U_SHIPGUN4,480,proc
+UP_SGUNX,Suspicious Photon Cannon Module,Starship,Photon Cannon,X,1,3,Ship_Weapons_Guns_Damage,Damage,8,32,flat,false,U_SHIPGUNX,320,proc
+UP_SGUNX,Suspicious Photon Cannon Module,Starship,Photon Cannon,X,1,3,Ship_Weapons_Guns_Rate,Fire Rate,1.001,1.026,multiplier,false,U_SHIPGUNX,320,proc
+UP_SGUNX,Suspicious Photon Cannon Module,Starship,Photon Cannon,X,1,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.001,1.035,multiplier,false,U_SHIPGUNX,320,proc
+UP_SGUN0,Rusted Photon Cannon Upgrade,Starship,Photon Cannon,rusted,1,3,Ship_Weapons_Guns_Damage,Damage,2,4,flat,false,,,proc
+UP_SGUN0,Rusted Photon Cannon Upgrade,Starship,Photon Cannon,rusted,1,3,Ship_Weapons_Guns_Rate,Fire Rate,1.001,1.003,multiplier,false,,,proc
+UP_SGUN0,Rusted Photon Cannon Upgrade,Starship,Photon Cannon,rusted,1,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.001,1.005,multiplier,false,,,proc
+CV_SGUN3,A-Class Photon Cannon Upgrade,Corvette,Photon Cannon,A,3,3,Ship_Weapons_Guns_Damage,Damage,16,24,flat,false,,,proc
+CV_SGUN3,A-Class Photon Cannon Upgrade,Corvette,Photon Cannon,A,3,3,Ship_Weapons_Guns_Rate,Fire Rate,1.016,1.021,multiplier,false,,,proc
+CV_SGUN3,A-Class Photon Cannon Upgrade,Corvette,Photon Cannon,A,3,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.02,1.03,multiplier,false,,,proc
+CV_SROC3,A-Class Rocket Launcher Upgrade,Corvette,Rocket Launcher,A,3,3,Ship_Weapons_Guns_Damage,Damage,400,500,flat,false,,,proc
+CV_SROC3,A-Class Rocket Launcher Upgrade,Corvette,Rocket Launcher,A,3,3,Ship_Weapons_Guns_CoolTime,Heat Recovery,0.75,0.8,multiplier,false,,,proc
+CV_SROC3,A-Class Rocket Launcher Upgrade,Corvette,Rocket Launcher,A,3,3,Ship_Weapons_Guns_Range,Range,1.05,1.1,multiplier,false,,,proc
+UP_SLASR1,Phase Beam Module,Starship,Phase Beam,C,1,2,Ship_Weapons_Lasers_HeatTime,Heat Dispersion,1.1,1.35,multiplier,false,U_SHIPLAS1,60,proc
+UP_SLASR1,Phase Beam Module,Starship,Phase Beam,C,1,2,Ship_Weapons_Lasers_Damage,Damage,30,40,flat,false,U_SHIPLAS1,60,proc
+UP_SLASR2,Phase Beam Module,Starship,Phase Beam,B,1,2,Ship_Weapons_Lasers_HeatTime,Heat Dispersion,1.35,1.55,multiplier,false,U_SHIPLAS2,140,proc
+UP_SLASR2,Phase Beam Module,Starship,Phase Beam,B,1,2,Ship_Weapons_Lasers_Damage,Damage,40,50,flat,false,U_SHIPLAS2,140,proc
+UP_SLASR3,Phase Beam Module,Starship,Phase Beam,A,2,2,Ship_Weapons_Lasers_HeatTime,Heat Dispersion,1.55,1.75,multiplier,false,U_SHIPLAS3,300,proc
+UP_SLASR3,Phase Beam Module,Starship,Phase Beam,A,2,2,Ship_Weapons_Lasers_Damage,Damage,50,60,flat,false,U_SHIPLAS3,300,proc
+UP_SLASR4,Phase Beam Module,Starship,Phase Beam,S,2,2,Ship_Weapons_Lasers_HeatTime,Heat Dispersion,1.75,1.95,multiplier,false,U_SHIPLAS4,480,proc
+UP_SLASR4,Phase Beam Module,Starship,Phase Beam,S,2,2,Ship_Weapons_Lasers_Damage,Damage,60,70,flat,false,U_SHIPLAS4,480,proc
+UP_SLASRX,Suspicious Phase Beam Module,Starship,Phase Beam,X,1,2,Ship_Weapons_Lasers_HeatTime,Heat Dispersion,1.1,2,multiplier,false,U_SHIPLASX,320,proc
+UP_SLASRX,Suspicious Phase Beam Module,Starship,Phase Beam,X,1,2,Ship_Weapons_Lasers_Damage,Damage,30,80,flat,false,U_SHIPLASX,320,proc
+CV_SLASR3,A-Class Phase Beam Upgrade,Corvette,Phase Beam,A,2,2,Ship_Weapons_Lasers_HeatTime,Heat Dispersion,1.55,1.75,multiplier,false,,,proc
+CV_SLASR3,A-Class Phase Beam Upgrade,Corvette,Phase Beam,A,2,2,Ship_Weapons_Lasers_Damage,Damage,50,60,flat,false,,,proc
+UP_SSHOT1,Positron Module,Starship,Positron Ejector,C,1,2,Ship_Weapons_Guns_Damage,Damage,1,3,flat,false,U_SHIPSHOT1,60,proc
+UP_SSHOT1,Positron Module,Starship,Positron Ejector,C,1,2,Ship_Weapons_Guns_Rate,Fire Rate,1.01,1.04,multiplier,false,U_SHIPSHOT1,60,proc
+UP_SSHOT1,Positron Module,Starship,Positron Ejector,C,1,2,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.01,1.04,multiplier,false,U_SHIPSHOT1,60,proc
+UP_SSHOT2,Positron Module,Starship,Positron Ejector,B,2,3,Ship_Weapons_Guns_Damage,Damage,3,5,flat,false,U_SHIPSHOT2,140,proc
+UP_SSHOT2,Positron Module,Starship,Positron Ejector,B,2,3,Ship_Weapons_Guns_Rate,Fire Rate,1.04,1.06,multiplier,false,U_SHIPSHOT2,140,proc
+UP_SSHOT2,Positron Module,Starship,Positron Ejector,B,2,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.04,1.06,multiplier,false,U_SHIPSHOT2,140,proc
+UP_SSHOT3,Positron Module,Starship,Positron Ejector,A,3,3,Ship_Weapons_Guns_Damage,Damage,5,6,flat,false,U_SHIPSHOT3,300,proc
+UP_SSHOT3,Positron Module,Starship,Positron Ejector,A,3,3,Ship_Weapons_Guns_Rate,Fire Rate,1.06,1.1,multiplier,false,U_SHIPSHOT3,300,proc
+UP_SSHOT3,Positron Module,Starship,Positron Ejector,A,3,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.06,1.1,multiplier,false,U_SHIPSHOT3,300,proc
+UP_SSHOT4,Positron Module,Starship,Positron Ejector,S,3,3,Ship_Weapons_Guns_Damage,Damage,6,8,flat,false,U_SHIPSHOT4,480,proc
+UP_SSHOT4,Positron Module,Starship,Positron Ejector,S,3,3,Ship_Weapons_Guns_Rate,Fire Rate,1.06,1.1,multiplier,false,U_SHIPSHOT4,480,proc
+UP_SSHOT4,Positron Module,Starship,Positron Ejector,S,3,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.06,1.1,multiplier,false,U_SHIPSHOT4,480,proc
+UP_SSHOTX,Suspicious Positron Module,Starship,Positron Ejector,X,2,3,Ship_Weapons_Guns_Damage,Damage,2,8,flat,false,U_SHIPSHOTX,320,proc
+UP_SSHOTX,Suspicious Positron Module,Starship,Positron Ejector,X,2,3,Ship_Weapons_Guns_Rate,Fire Rate,1.05,1.1,multiplier,false,U_SHIPSHOTX,320,proc
+UP_SSHOTX,Suspicious Positron Module,Starship,Positron Ejector,X,2,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.01,1.1,multiplier,false,U_SHIPSHOTX,320,proc
+CV_SSHOT3,A-Class Positron Ejector Upgrade,Corvette,Positron Ejector,A,3,3,Ship_Weapons_Guns_Damage,Damage,5,6,flat,false,,,proc
+CV_SSHOT3,A-Class Positron Ejector Upgrade,Corvette,Positron Ejector,A,3,3,Ship_Weapons_Guns_Rate,Fire Rate,1.06,1.1,multiplier,false,,,proc
+CV_SSHOT3,A-Class Positron Ejector Upgrade,Corvette,Positron Ejector,A,3,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.06,1.1,multiplier,false,,,proc
+UP_SMINI1,Infra-Knife Module,Starship,Infra-Knife Accelerator,C,1,2,Ship_Weapons_Guns_Damage,Damage,2,6,flat,false,U_SHIPMINI1,60,proc
+UP_SMINI1,Infra-Knife Module,Starship,Infra-Knife Accelerator,C,1,2,Ship_Weapons_Guns_Rate,Fire Rate,1.01,1.05,multiplier,false,U_SHIPMINI1,60,proc
+UP_SMINI1,Infra-Knife Module,Starship,Infra-Knife Accelerator,C,1,2,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.01,1.03,multiplier,false,U_SHIPMINI1,60,proc
+UP_SMINI2,Infra-Knife Module,Starship,Infra-Knife Accelerator,B,2,3,Ship_Weapons_Guns_Damage,Damage,4,10,flat,false,U_SHIPMINI2,140,proc
+UP_SMINI2,Infra-Knife Module,Starship,Infra-Knife Accelerator,B,2,3,Ship_Weapons_Guns_Rate,Fire Rate,1.01,1.05,multiplier,false,U_SHIPMINI2,140,proc
+UP_SMINI2,Infra-Knife Module,Starship,Infra-Knife Accelerator,B,2,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.03,1.05,multiplier,false,U_SHIPMINI2,140,proc
+UP_SMINI3,Infra-Knife Module,Starship,Infra-Knife Accelerator,A,3,3,Ship_Weapons_Guns_Damage,Damage,8,12,flat,false,U_SHIPMINI3,300,proc
+UP_SMINI3,Infra-Knife Module,Starship,Infra-Knife Accelerator,A,3,3,Ship_Weapons_Guns_Rate,Fire Rate,1.05,1.1,multiplier,false,U_SHIPMINI3,300,proc
+UP_SMINI3,Infra-Knife Module,Starship,Infra-Knife Accelerator,A,3,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.05,1.07,multiplier,false,U_SHIPMINI3,300,proc
+UP_SMINI4,Infra-Knife Module,Starship,Infra-Knife Accelerator,S,3,3,Ship_Weapons_Guns_Damage,Damage,10,12,flat,false,U_SHIPMINI4,480,proc
+UP_SMINI4,Infra-Knife Module,Starship,Infra-Knife Accelerator,S,3,3,Ship_Weapons_Guns_Rate,Fire Rate,1.05,1.1,multiplier,false,U_SHIPMINI4,480,proc
+UP_SMINI4,Infra-Knife Module,Starship,Infra-Knife Accelerator,S,3,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.07,1.09,multiplier,false,U_SHIPMINI4,480,proc
+UP_SMINIX,Suspicious Infra-Knife Module,Starship,Infra-Knife Accelerator,X,2,3,Ship_Weapons_Guns_Damage,Damage,2,14,flat,false,U_SHIPMINIX,320,proc
+UP_SMINIX,Suspicious Infra-Knife Module,Starship,Infra-Knife Accelerator,X,2,3,Ship_Weapons_Guns_Rate,Fire Rate,1.01,1.15,multiplier,false,U_SHIPMINIX,320,proc
+UP_SMINIX,Suspicious Infra-Knife Module,Starship,Infra-Knife Accelerator,X,2,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.01,1.13,multiplier,false,U_SHIPMINIX,320,proc
+CV_SMINI3,A-Class Infra-Knife Accelerator Upgrade,Corvette,Infra-Knife Accelerator,A,3,3,Ship_Weapons_Guns_Damage,Damage,8,12,flat,false,,,proc
+CV_SMINI3,A-Class Infra-Knife Accelerator Upgrade,Corvette,Infra-Knife Accelerator,A,3,3,Ship_Weapons_Guns_Rate,Fire Rate,1.05,1.1,multiplier,false,,,proc
+CV_SMINI3,A-Class Infra-Knife Accelerator Upgrade,Corvette,Infra-Knife Accelerator,A,3,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.05,1.07,multiplier,false,,,proc
+UP_SBLOB1,Cyclotron Module,Starship,Cyclotron Ballista,C,1,2,Ship_Weapons_Guns_Damage,Damage,2,6,flat,false,U_SHIPBLOB1,60,proc
+UP_SBLOB1,Cyclotron Module,Starship,Cyclotron Ballista,C,1,2,Ship_Weapons_Guns_Rate,Fire Rate,1.01,1.05,multiplier,false,U_SHIPBLOB1,60,proc
+UP_SBLOB1,Cyclotron Module,Starship,Cyclotron Ballista,C,1,2,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.1,1.2,multiplier,false,U_SHIPBLOB1,60,proc
+UP_SBLOB2,Cyclotron Module,Starship,Cyclotron Ballista,B,2,3,Ship_Weapons_Guns_Damage,Damage,4,10,flat,false,U_SHIPBLOB2,140,proc
+UP_SBLOB2,Cyclotron Module,Starship,Cyclotron Ballista,B,2,3,Ship_Weapons_Guns_Rate,Fire Rate,1.01,1.05,multiplier,false,U_SHIPBLOB2,140,proc
+UP_SBLOB2,Cyclotron Module,Starship,Cyclotron Ballista,B,2,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.2,1.25,multiplier,false,U_SHIPBLOB2,140,proc
+UP_SBLOB3,Cyclotron Module,Starship,Cyclotron Ballista,A,3,3,Ship_Weapons_Guns_Damage,Damage,8,12,flat,false,U_SHIPBLOB3,300,proc
+UP_SBLOB3,Cyclotron Module,Starship,Cyclotron Ballista,A,3,3,Ship_Weapons_Guns_Rate,Fire Rate,1.05,1.1,multiplier,false,U_SHIPBLOB3,300,proc
+UP_SBLOB3,Cyclotron Module,Starship,Cyclotron Ballista,A,3,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.25,1.3,multiplier,false,U_SHIPBLOB3,300,proc
+UP_SBLOB4,Cyclotron Module,Starship,Cyclotron Ballista,S,3,3,Ship_Weapons_Guns_Damage,Damage,10,12,flat,false,U_SHIPBLOB4,480,proc
+UP_SBLOB4,Cyclotron Module,Starship,Cyclotron Ballista,S,3,3,Ship_Weapons_Guns_Rate,Fire Rate,1.1,1.15,multiplier,false,U_SHIPBLOB4,480,proc
+UP_SBLOB4,Cyclotron Module,Starship,Cyclotron Ballista,S,3,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.3,1.35,multiplier,false,U_SHIPBLOB4,480,proc
+UP_SBLOBX,Suspicious Cyclotron Module,Starship,Cyclotron Ballista,X,2,3,Ship_Weapons_Guns_Damage,Damage,2,14,flat,false,U_SHIPBLOBX,320,proc
+UP_SBLOBX,Suspicious Cyclotron Module,Starship,Cyclotron Ballista,X,2,3,Ship_Weapons_Guns_Rate,Fire Rate,1.01,1.2,multiplier,false,U_SHIPBLOBX,320,proc
+UP_SBLOBX,Suspicious Cyclotron Module,Starship,Cyclotron Ballista,X,2,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.1,1.4,multiplier,false,U_SHIPBLOBX,320,proc
+CV_SBLOB3,A-Class Cyclotron Ballista Upgrade,Corvette,Cyclotron Ballista,A,3,3,Ship_Weapons_Guns_Damage,Damage,8,12,flat,false,,,proc
+CV_SBLOB3,A-Class Cyclotron Ballista Upgrade,Corvette,Cyclotron Ballista,A,3,3,Ship_Weapons_Guns_Rate,Fire Rate,1.05,1.1,multiplier,false,,,proc
+CV_SBLOB3,A-Class Cyclotron Ballista Upgrade,Corvette,Cyclotron Ballista,A,3,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.25,1.3,multiplier,false,,,proc
+UP_EXGUN1,Exocraft Cannon Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Mounted Cannon,C,1,2,Vehicle_GunDamage,Damage,5,10,flat,false,U_EXOGUN1,60,proc
+UP_EXGUN1,Exocraft Cannon Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Mounted Cannon,C,1,2,Vehicle_GunHeatTime,Weapon Power Efficiency,0.95,0.99,multiplier,false,U_EXOGUN1,60,proc
+UP_EXGUN1,Exocraft Cannon Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Mounted Cannon,C,1,2,Vehicle_GunRate,Rate of Fire,0.97,0.99,multiplier,false,U_EXOGUN1,60,proc
+UP_EXGUN2,Exocraft Cannon Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Mounted Cannon,B,2,3,Vehicle_GunDamage,Damage,10,20,flat,false,U_EXOGUN2,140,proc
+UP_EXGUN2,Exocraft Cannon Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Mounted Cannon,B,2,3,Vehicle_GunHeatTime,Weapon Power Efficiency,0.9,0.95,multiplier,false,U_EXOGUN2,140,proc
+UP_EXGUN2,Exocraft Cannon Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Mounted Cannon,B,2,3,Vehicle_GunRate,Rate of Fire,0.95,0.97,multiplier,false,U_EXOGUN2,140,proc
+UP_EXGUN3,Exocraft Cannon Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Mounted Cannon,A,3,3,Vehicle_GunDamage,Damage,20,30,flat,false,U_EXOGUN3,300,proc
+UP_EXGUN3,Exocraft Cannon Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Mounted Cannon,A,3,3,Vehicle_GunHeatTime,Weapon Power Efficiency,0.85,0.9,multiplier,false,U_EXOGUN3,300,proc
+UP_EXGUN3,Exocraft Cannon Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Mounted Cannon,A,3,3,Vehicle_GunRate,Rate of Fire,0.93,0.95,multiplier,false,U_EXOGUN3,300,proc
+UP_EXGUN4,Exocraft Cannon Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Mounted Cannon,S,3,3,Vehicle_GunDamage,Damage,30,40,flat,false,U_EXOGUN4,480,proc
+UP_EXGUN4,Exocraft Cannon Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Mounted Cannon,S,3,3,Vehicle_GunHeatTime,Weapon Power Efficiency,0.8,0.85,multiplier,false,U_EXOGUN4,480,proc
+UP_EXGUN4,Exocraft Cannon Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Mounted Cannon,S,3,3,Vehicle_GunRate,Rate of Fire,0.9,0.93,multiplier,false,U_EXOGUN4,480,proc
+UP_EXLAS1,Exocraft Laser Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Exocraft Mining Laser,C,1,1,Vehicle_LaserDamage,Mining Laser Power,5,10,flat,false,U_EXOLAS1,60,proc
+UP_EXLAS1,Exocraft Laser Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Exocraft Mining Laser,C,1,1,Vehicle_LaserHeatTime,Mining Laser Efficiency,0.95,0.99,multiplier,false,U_EXOLAS1,60,proc
+UP_EXLAS2,Exocraft Laser Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Exocraft Mining Laser,B,1,2,Vehicle_LaserDamage,Mining Laser Power,10,20,flat,false,U_EXOLAS2,140,proc
+UP_EXLAS2,Exocraft Laser Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Exocraft Mining Laser,B,1,2,Vehicle_LaserHeatTime,Mining Laser Efficiency,0.9,0.95,multiplier,false,U_EXOLAS2,140,proc
+UP_EXLAS3,Exocraft Laser Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Exocraft Mining Laser,A,1,2,Vehicle_LaserDamage,Mining Laser Power,20,30,flat,false,U_EXOLAS3,300,proc
+UP_EXLAS3,Exocraft Laser Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Exocraft Mining Laser,A,1,2,Vehicle_LaserHeatTime,Mining Laser Efficiency,0.85,0.9,multiplier,false,U_EXOLAS3,300,proc
+UP_EXLAS4,Exocraft Laser Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Exocraft Mining Laser,S,2,2,Vehicle_LaserDamage,Mining Laser Power,30,40,flat,false,U_EXOLAS4,480,proc
+UP_EXLAS4,Exocraft Laser Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Exocraft Mining Laser,S,2,2,Vehicle_LaserHeatTime,Mining Laser Efficiency,0.8,0.85,multiplier,false,U_EXOLAS4,480,proc
+UP_BOOST1,Exocraft Boost Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Exocraft Boosters,C,1,1,Vehicle_BoostSpeed,Boost Power,0.1,0.2,fraction,false,U_EXOBOOST1,60,proc
+UP_BOOST1,Exocraft Boost Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Exocraft Boosters,C,1,1,Vehicle_BoostTanks,Boost Tank Size,0.1,0.2,fraction,false,U_EXOBOOST1,60,proc
+UP_BOOST2,Exocraft Boost Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Exocraft Boosters,B,1,2,Vehicle_BoostSpeed,Boost Power,0.2,0.35,fraction,false,U_EXOBOOST2,140,proc
+UP_BOOST2,Exocraft Boost Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Exocraft Boosters,B,1,2,Vehicle_BoostTanks,Boost Tank Size,0.15,0.3,fraction,false,U_EXOBOOST2,140,proc
+UP_BOOST3,Exocraft Boost Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Exocraft Boosters,A,1,2,Vehicle_BoostSpeed,Boost Power,0.35,0.55,fraction,false,U_EXOBOOST3,300,proc
+UP_BOOST3,Exocraft Boost Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Exocraft Boosters,A,1,2,Vehicle_BoostTanks,Boost Tank Size,0.3,0.5,fraction,false,U_EXOBOOST3,300,proc
+UP_BOOST4,Exocraft Boost Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Exocraft Boosters,S,2,2,Vehicle_BoostSpeed,Boost Power,0.55,0.7,fraction,false,U_EXOBOOST4,480,proc
+UP_BOOST4,Exocraft Boost Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Exocraft Boosters,S,2,2,Vehicle_BoostTanks,Boost Tank Size,0.5,0.6,fraction,false,U_EXOBOOST4,480,proc
+UP_EXENG1,Exocraft Engine Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Fusion Engine / Icarus Fuel System,C,1,1,Vehicle_EngineFuelUse,Fuel Usage,0.95,0.99,multiplier,false,U_EXO_ENG1,60,proc
+UP_EXENG1,Exocraft Engine Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Fusion Engine / Icarus Fuel System,C,1,1,Vehicle_EngineTopSpeed,Top Speed,1.01,1.03,multiplier,false,U_EXO_ENG1,60,proc
+UP_EXENG2,Exocraft Engine Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Fusion Engine / Icarus Fuel System,B,1,2,Vehicle_EngineFuelUse,Fuel Usage,0.9,0.95,multiplier,false,U_EXO_ENG2,140,proc
+UP_EXENG2,Exocraft Engine Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Fusion Engine / Icarus Fuel System,B,1,2,Vehicle_EngineTopSpeed,Top Speed,1.03,1.08,multiplier,false,U_EXO_ENG2,140,proc
+UP_EXENG3,Exocraft Engine Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Fusion Engine / Icarus Fuel System,A,1,2,Vehicle_EngineFuelUse,Fuel Usage,0.85,0.9,multiplier,false,U_EXO_ENG3,300,proc
+UP_EXENG3,Exocraft Engine Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Fusion Engine / Icarus Fuel System,A,1,2,Vehicle_EngineTopSpeed,Top Speed,1.08,1.15,multiplier,false,U_EXO_ENG3,300,proc
+UP_EXENG4,Exocraft Engine Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Fusion Engine / Icarus Fuel System,S,2,2,Vehicle_EngineFuelUse,Fuel Usage,0.8,0.85,multiplier,false,U_EXO_ENG4,480,proc
+UP_EXENG4,Exocraft Engine Module,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Fusion Engine / Icarus Fuel System,S,2,2,Vehicle_EngineTopSpeed,Top Speed,1.1,1.15,multiplier,false,U_EXO_ENG4,480,proc
+UP_EXSUB1,Humboldt Drive Module,Exocraft (Nautilon),Icarus Fuel System / Humboldt Drive,C,1,1,Vehicle_EngineFuelUse,Fuel Usage,0.9,0.99,multiplier,false,U_EXO_SUB1,60,proc
+UP_EXSUB1,Humboldt Drive Module,Exocraft (Nautilon),Icarus Fuel System / Humboldt Drive,C,1,1,Vehicle_EngineTopSpeed,Top Speed,1.02,1.04,multiplier,false,U_EXO_SUB1,60,proc
+UP_EXSUB1,Humboldt Drive Module,Exocraft (Nautilon),Icarus Fuel System / Humboldt Drive,C,1,1,Vehicle_SubBoostSpeed,Acceleration,0.1,0.15,fraction,false,U_EXO_SUB1,60,proc
+UP_EXSUB2,Humboldt Drive Module,Exocraft (Nautilon),Icarus Fuel System / Humboldt Drive,B,1,2,Vehicle_EngineFuelUse,Fuel Usage,0.85,0.9,multiplier,false,U_EXO_SUB2,140,proc
+UP_EXSUB2,Humboldt Drive Module,Exocraft (Nautilon),Icarus Fuel System / Humboldt Drive,B,1,2,Vehicle_EngineTopSpeed,Top Speed,1.04,1.06,multiplier,false,U_EXO_SUB2,140,proc
+UP_EXSUB2,Humboldt Drive Module,Exocraft (Nautilon),Icarus Fuel System / Humboldt Drive,B,1,2,Vehicle_SubBoostSpeed,Acceleration,0.15,0.2,fraction,false,U_EXO_SUB2,140,proc
+UP_EXSUB3,Humboldt Drive Module,Exocraft (Nautilon),Icarus Fuel System / Humboldt Drive,A,2,3,Vehicle_EngineFuelUse,Fuel Usage,0.75,0.85,multiplier,false,U_EXO_SUB3,300,proc
+UP_EXSUB3,Humboldt Drive Module,Exocraft (Nautilon),Icarus Fuel System / Humboldt Drive,A,2,3,Vehicle_EngineTopSpeed,Top Speed,1.06,1.075,multiplier,false,U_EXO_SUB3,300,proc
+UP_EXSUB3,Humboldt Drive Module,Exocraft (Nautilon),Icarus Fuel System / Humboldt Drive,A,2,3,Vehicle_SubBoostSpeed,Acceleration,0.2,0.25,fraction,false,U_EXO_SUB3,300,proc
+UP_EXSUB4,Humboldt Drive Module,Exocraft (Nautilon),Icarus Fuel System / Humboldt Drive,S,3,3,Vehicle_EngineFuelUse,Fuel Usage,0.7,0.85,multiplier,false,U_EXO_SUB4,480,proc
+UP_EXSUB4,Humboldt Drive Module,Exocraft (Nautilon),Icarus Fuel System / Humboldt Drive,S,3,3,Vehicle_EngineTopSpeed,Top Speed,1.075,1.075,multiplier,false,U_EXO_SUB4,480,proc
+UP_EXSUB4,Humboldt Drive Module,Exocraft (Nautilon),Icarus Fuel System / Humboldt Drive,S,3,3,Vehicle_SubBoostSpeed,Acceleration,0.25,0.3,fraction,false,U_EXO_SUB4,480,proc
+UP_SUGUN1,Nautilon Cannon Module,Exocraft (Nautilon),Nautilon Cannon,C,1,1,Vehicle_GunDamage,Damage,5,10,flat,false,U_EXO_SUBGUN1,60,proc
+UP_SUGUN1,Nautilon Cannon Module,Exocraft (Nautilon),Nautilon Cannon,C,1,1,Vehicle_GunRate,Rate of Fire,0.97,0.99,multiplier,false,U_EXO_SUBGUN1,60,proc
+UP_SUGUN2,Nautilon Cannon Module,Exocraft (Nautilon),Nautilon Cannon,B,1,2,Vehicle_GunDamage,Damage,10,20,flat,false,U_EXO_SUBGUN2,140,proc
+UP_SUGUN2,Nautilon Cannon Module,Exocraft (Nautilon),Nautilon Cannon,B,1,2,Vehicle_GunRate,Rate of Fire,0.95,0.97,multiplier,false,U_EXO_SUBGUN2,140,proc
+UP_SUGUN3,Nautilon Cannon Module,Exocraft (Nautilon),Nautilon Cannon,A,1,2,Vehicle_GunDamage,Damage,20,30,flat,false,U_EXO_SUBGUN3,300,proc
+UP_SUGUN3,Nautilon Cannon Module,Exocraft (Nautilon),Nautilon Cannon,A,1,2,Vehicle_GunRate,Rate of Fire,0.93,0.95,multiplier,false,U_EXO_SUBGUN3,300,proc
+UP_SUGUN4,Nautilon Cannon Module,Exocraft (Nautilon),Nautilon Cannon,S,2,2,Vehicle_GunDamage,Damage,30,40,flat,false,U_EXO_SUBGUN4,480,proc
+UP_SUGUN4,Nautilon Cannon Module,Exocraft (Nautilon),Nautilon Cannon,S,2,2,Vehicle_GunRate,Rate of Fire,0.9,0.93,multiplier,false,U_EXO_SUBGUN4,480,proc
+UP_MCLAS2,Minotaur Laser Module,Exocraft (Minotaur),Minotaur Laser,B,1,2,Vehicle_LaserDamage,Mining Laser Power,10,20,flat,false,U_MECHLAS2,140,proc
+UP_MCLAS2,Minotaur Laser Module,Exocraft (Minotaur),Minotaur Laser,B,1,2,Vehicle_LaserHeatTime,Mining Laser Efficiency,0.9,0.95,multiplier,false,U_MECHLAS2,140,proc
+UP_MCLAS3,Minotaur Laser Module,Exocraft (Minotaur),Minotaur Laser,A,1,2,Vehicle_LaserDamage,Mining Laser Power,20,30,flat,false,U_MECHLAS3,300,proc
+UP_MCLAS3,Minotaur Laser Module,Exocraft (Minotaur),Minotaur Laser,A,1,2,Vehicle_LaserHeatTime,Mining Laser Efficiency,0.85,0.9,multiplier,false,U_MECHLAS3,300,proc
+UP_MCLAS4,Minotaur Laser Module,Exocraft (Minotaur),Minotaur Laser,S,2,2,Vehicle_LaserDamage,Mining Laser Power,30,40,flat,false,U_MECHLAS4,480,proc
+UP_MCLAS4,Minotaur Laser Module,Exocraft (Minotaur),Minotaur Laser,S,2,2,Vehicle_LaserHeatTime,Mining Laser Efficiency,0.8,0.85,multiplier,false,U_MECHLAS4,480,proc
+UP_MFIRE2,Minotaur Flamethrower Module,Exocraft (Minotaur),Liquidator Right Arm,B,1,2,Vehicle_GunDamage,Damage,1,1,flat,false,U_MECHFLAME2,140,proc
+UP_MFIRE2,Minotaur Flamethrower Module,Exocraft (Minotaur),Liquidator Right Arm,B,1,2,Vehicle_GunHeatTime,Weapon Power Efficiency,0.9,0.95,multiplier,false,U_MECHFLAME2,140,proc
+UP_MFIRE2,Minotaur Flamethrower Module,Exocraft (Minotaur),Liquidator Right Arm,B,1,2,Weapon_FireDOT_Duration,Impact Fire Duration,1.05,1.1,multiplier,false,U_MECHFLAME2,140,proc
+UP_MFIRE3,Minotaur Flamethrower Module,Exocraft (Minotaur),Liquidator Right Arm,A,2,3,Vehicle_GunDamage,Damage,1,2,flat,false,U_MECHFLAME3,300,proc
+UP_MFIRE3,Minotaur Flamethrower Module,Exocraft (Minotaur),Liquidator Right Arm,A,2,3,Vehicle_GunHeatTime,Weapon Power Efficiency,0.8,0.9,multiplier,false,U_MECHFLAME3,300,proc
+UP_MFIRE3,Minotaur Flamethrower Module,Exocraft (Minotaur),Liquidator Right Arm,A,2,3,Weapon_FireDOT_Duration,Impact Fire Duration,1.1,1.2,multiplier,false,U_MECHFLAME3,300,proc
+UP_MFIRE4,Minotaur Flamethrower Module,Exocraft (Minotaur),Liquidator Right Arm,S,3,3,Vehicle_GunDamage,Damage,2,2,flat,false,U_MECHFLAME4,480,proc
+UP_MFIRE4,Minotaur Flamethrower Module,Exocraft (Minotaur),Liquidator Right Arm,S,3,3,Vehicle_GunHeatTime,Weapon Power Efficiency,0.7,0.8,multiplier,false,U_MECHFLAME4,480,proc
+UP_MFIRE4,Minotaur Flamethrower Module,Exocraft (Minotaur),Liquidator Right Arm,S,3,3,Weapon_FireDOT_Duration,Impact Fire Duration,1.2,1.35,multiplier,false,U_MECHFLAME4,480,proc
+UP_MCGUN2,Minotaur Cannon Module,Exocraft (Minotaur),Minotaur Cannon,B,2,3,Vehicle_GunDamage,Damage,10,20,flat,false,U_MECHGUN2,140,proc
+UP_MCGUN2,Minotaur Cannon Module,Exocraft (Minotaur),Minotaur Cannon,B,2,3,Vehicle_GunHeatTime,Weapon Power Efficiency,0.9,0.95,multiplier,false,U_MECHGUN2,140,proc
+UP_MCGUN2,Minotaur Cannon Module,Exocraft (Minotaur),Minotaur Cannon,B,2,3,Vehicle_GunRate,Rate of Fire,0.95,0.97,multiplier,false,U_MECHGUN2,140,proc
+UP_MCGUN3,Minotaur Cannon Module,Exocraft (Minotaur),Minotaur Cannon,A,3,3,Vehicle_GunDamage,Damage,20,30,flat,false,U_MECHGUN3,300,proc
+UP_MCGUN3,Minotaur Cannon Module,Exocraft (Minotaur),Minotaur Cannon,A,3,3,Vehicle_GunHeatTime,Weapon Power Efficiency,0.85,0.9,multiplier,false,U_MECHGUN3,300,proc
+UP_MCGUN3,Minotaur Cannon Module,Exocraft (Minotaur),Minotaur Cannon,A,3,3,Vehicle_GunRate,Rate of Fire,0.93,0.95,multiplier,false,U_MECHGUN3,300,proc
+UP_MCGUN4,Minotaur Cannon Module,Exocraft (Minotaur),Minotaur Cannon,S,3,3,Vehicle_GunDamage,Damage,30,40,flat,false,U_MECHGUN4,480,proc
+UP_MCGUN4,Minotaur Cannon Module,Exocraft (Minotaur),Minotaur Cannon,S,3,3,Vehicle_GunHeatTime,Weapon Power Efficiency,0.8,0.85,multiplier,false,U_MECHGUN4,480,proc
+UP_MCGUN4,Minotaur Cannon Module,Exocraft (Minotaur),Minotaur Cannon,S,3,3,Vehicle_GunRate,Rate of Fire,0.9,0.93,multiplier,false,U_MECHGUN4,480,proc
+UP_MCENG2,Minotaur Engine Module,Exocraft (Minotaur),Icarus Fuel System / Daedalus Engine,B,1,1,Vehicle_EngineFuelUse,Fuel Usage,0.9,0.95,multiplier,false,U_MECH_ENG2,140,proc
+UP_MCENG2,Minotaur Engine Module,Exocraft (Minotaur),Icarus Fuel System / Daedalus Engine,B,1,1,Vehicle_BoostTanks,Boost Tank Size,0.1,0.15,fraction,false,U_MECH_ENG2,140,proc
+UP_MCENG3,Minotaur Engine Module,Exocraft (Minotaur),Icarus Fuel System / Daedalus Engine,A,1,2,Vehicle_EngineFuelUse,Fuel Usage,0.85,0.9,multiplier,false,U_MECH_ENG3,300,proc
+UP_MCENG3,Minotaur Engine Module,Exocraft (Minotaur),Icarus Fuel System / Daedalus Engine,A,1,2,Vehicle_BoostTanks,Boost Tank Size,0.15,0.25,fraction,false,U_MECH_ENG3,300,proc
+UP_MCENG4,Minotaur Engine Module,Exocraft (Minotaur),Icarus Fuel System / Daedalus Engine,S,2,2,Vehicle_EngineFuelUse,Fuel Usage,0.8,0.85,multiplier,false,U_MECH_ENG4,480,proc
+UP_MCENG4,Minotaur Engine Module,Exocraft (Minotaur),Icarus Fuel System / Daedalus Engine,S,2,2,Vehicle_BoostTanks,Boost Tank Size,0.25,0.3,fraction,false,U_MECH_ENG4,480,proc
+UA_PULSE1,Pulsing Heart Node,Living Ship,Pulsing Heart,C,1,2,Ship_PulseDrive_MiniJumpFuelSpending,Pulse Drive Fuel Efficiency,0.9,0.95,multiplier,false,AP_PULSE1,60,proc
+UA_PULSE1,Pulsing Heart Node,Living Ship,Pulsing Heart,C,1,2,Ship_Boost,Boost,1.01,1.1,multiplier,false,AP_PULSE1,60,proc
+UA_PULSE1,Pulsing Heart Node,Living Ship,Pulsing Heart,C,1,2,Ship_BoostManeuverability,Manoeuvrability,1.01,1.075,multiplier,false,AP_PULSE1,60,proc
+UA_PULSE1,Pulsing Heart Node,Living Ship,Pulsing Heart,C,1,2,Ship_Maneuverability,Manoeuvrability,1.005,1.005,multiplier,true,AP_PULSE1,60,proc
+UA_PULSE2,Pulsing Heart Node,Living Ship,Pulsing Heart,B,2,2,Ship_PulseDrive_MiniJumpFuelSpending,Pulse Drive Fuel Efficiency,0.85,0.9,multiplier,false,AP_PULSE2,140,proc
+UA_PULSE2,Pulsing Heart Node,Living Ship,Pulsing Heart,B,2,2,Ship_Boost,Boost,1.1,1.15,multiplier,false,AP_PULSE2,140,proc
+UA_PULSE2,Pulsing Heart Node,Living Ship,Pulsing Heart,B,2,2,Ship_BoostManeuverability,Manoeuvrability,1.01,1.12,multiplier,false,AP_PULSE2,140,proc
+UA_PULSE2,Pulsing Heart Node,Living Ship,Pulsing Heart,B,2,2,Ship_Maneuverability,Manoeuvrability,1.005,1.005,multiplier,true,AP_PULSE2,140,proc
+UA_PULSE3,Pulsing Heart Node,Living Ship,Pulsing Heart,A,2,3,Ship_PulseDrive_MiniJumpFuelSpending,Pulse Drive Fuel Efficiency,0.8,0.85,multiplier,false,AP_PULSE3,300,proc
+UA_PULSE3,Pulsing Heart Node,Living Ship,Pulsing Heart,A,2,3,Ship_Boost,Boost,1.1,1.2,multiplier,false,AP_PULSE3,300,proc
+UA_PULSE3,Pulsing Heart Node,Living Ship,Pulsing Heart,A,2,3,Ship_BoostManeuverability,Manoeuvrability,1.05,1.16,multiplier,false,AP_PULSE3,300,proc
+UA_PULSE3,Pulsing Heart Node,Living Ship,Pulsing Heart,A,2,3,Ship_Maneuverability,Manoeuvrability,1.005,1.005,multiplier,true,AP_PULSE3,300,proc
+UA_PULSE4,Pulsing Heart Node,Living Ship,Pulsing Heart,S,3,3,Ship_PulseDrive_MiniJumpFuelSpending,Pulse Drive Fuel Efficiency,0.8,0.8,multiplier,false,AP_PULSE4,480,proc
+UA_PULSE4,Pulsing Heart Node,Living Ship,Pulsing Heart,S,3,3,Ship_Boost,Boost,1.1,1.25,multiplier,false,AP_PULSE4,480,proc
+UA_PULSE4,Pulsing Heart Node,Living Ship,Pulsing Heart,S,3,3,Ship_BoostManeuverability,Manoeuvrability,1.05,1.18,multiplier,false,AP_PULSE4,480,proc
+UA_PULSE4,Pulsing Heart Node,Living Ship,Pulsing Heart,S,3,3,Ship_Maneuverability,Manoeuvrability,1.0065,1.0065,multiplier,true,AP_PULSE4,480,proc
+UA_LAUN1,Neural Assembly Node,Living Ship,Neural Assembly / Chloroplast Membrane,C,1,2,Ship_Launcher_TakeOffCost,Launch Cost,0.95,0.9,multiplier,false,AP_LAUNCH1,60,proc
+UA_LAUN2,Neural Assembly Node,Living Ship,Neural Assembly / Chloroplast Membrane,B,1,2,Ship_Launcher_TakeOffCost,Launch Cost,0.9,0.85,multiplier,false,AP_LAUNCH2,140,proc
+UA_LAUN3,Neural Assembly Node,Living Ship,Neural Assembly / Chloroplast Membrane,A,2,2,Ship_Launcher_TakeOffCost,Launch Cost,0.85,0.8,multiplier,false,AP_LAUNCH3,300,proc
+UA_LAUN4,Neural Assembly Node,Living Ship,Neural Assembly / Chloroplast Membrane,S,2,2,Ship_Launcher_TakeOffCost,Launch Cost,0.8,0.8,multiplier,false,AP_LAUNCH4,480,proc
+UA_LAUN4,Neural Assembly Node,Living Ship,Neural Assembly / Chloroplast Membrane,S,2,2,Ship_Launcher_AutoCharge,Automatic Recharging,1,1,flat,false,AP_LAUNCH4,480,proc
+UA_HYP1,Singularity Cortex Node,Living Ship,Singularity Cortex,C,1,1,Ship_Hyperdrive_JumpDistance,Hyperdrive Range,50,100,flat,false,AP_HYPER1,60,proc
+UA_HYP2,Singularity Cortex Node,Living Ship,Singularity Cortex,B,1,1,Ship_Hyperdrive_JumpDistance,Hyperdrive Range,115,165,flat,false,AP_HYPER2,140,proc
+UA_HYP3,Singularity Cortex Node,Living Ship,Singularity Cortex,A,1,1,Ship_Hyperdrive_JumpDistance,Hyperdrive Range,165,220,flat,false,AP_HYPER3,300,proc
+UA_HYP3,Singularity Cortex Node,Living Ship,Singularity Cortex,A,1,1,Ship_Hyperdrive_JumpsPerCell,Warp Cell Efficiency,1,1,flat,false,AP_HYPER3,300,proc
+UA_HYP4,Singularity Cortex Node,Living Ship,Singularity Cortex,S,2,2,Ship_Hyperdrive_JumpDistance,Hyperdrive Range,220,265,flat,false,AP_HYPER4,480,proc
+UA_HYP4,Singularity Cortex Node,Living Ship,Singularity Cortex,S,2,2,Ship_Hyperdrive_JumpsPerCell,Warp Cell Efficiency,1,1,flat,false,AP_HYPER4,480,proc
+UA_S_SHL1,Scream Suppressor Node,Living Ship,Scream Suppressor,C,1,1,Ship_Armour_Shield_Strength,Shield Strength,0.05,0.1,fraction,false,AP_SHIPSHIELD1,60,proc
+UA_S_SHL2,Scream Suppressor Node,Living Ship,Scream Suppressor,B,1,1,Ship_Armour_Shield_Strength,Shield Strength,0.05,0.1,fraction,false,AP_SHIPSHIELD2,140,proc
+UA_S_SHL3,Scream Suppressor Node,Living Ship,Scream Suppressor,A,1,1,Ship_Armour_Shield_Strength,Shield Strength,0.1,0.2,fraction,false,AP_SHIPSHIELD3,300,proc
+UA_S_SHL4,Scream Suppressor Node,Living Ship,Scream Suppressor,S,1,1,Ship_Armour_Shield_Strength,Shield Strength,0.2,0.2,fraction,false,AP_SHIPSHIELD4,480,proc
+UA_SGUN1,Spewing Vent Node,Living Ship,Spewing Vents,C,1,2,Ship_Weapons_Guns_Damage,Damage,8,16,flat,false,AP_SHIPGUN1,60,proc
+UA_SGUN1,Spewing Vent Node,Living Ship,Spewing Vents,C,1,2,Ship_Weapons_Guns_Rate,Fire Rate,1.001,1.011,multiplier,false,AP_SHIPGUN1,60,proc
+UA_SGUN1,Spewing Vent Node,Living Ship,Spewing Vents,C,1,2,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.001,1.01,multiplier,false,AP_SHIPGUN1,60,proc
+UA_SGUN2,Spewing Vent Node,Living Ship,Spewing Vents,B,1,2,Ship_Weapons_Guns_Damage,Damage,12,20,flat,false,AP_SHIPGUN2,140,proc
+UA_SGUN2,Spewing Vent Node,Living Ship,Spewing Vents,B,1,2,Ship_Weapons_Guns_Rate,Fire Rate,1.006,1.016,multiplier,false,AP_SHIPGUN2,140,proc
+UA_SGUN2,Spewing Vent Node,Living Ship,Spewing Vents,B,1,2,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.01,1.02,multiplier,false,AP_SHIPGUN2,140,proc
+UA_SGUN3,Spewing Vent Node,Living Ship,Spewing Vents,A,2,3,Ship_Weapons_Guns_Damage,Damage,16,24,flat,false,AP_SHIPGUN3,300,proc
+UA_SGUN3,Spewing Vent Node,Living Ship,Spewing Vents,A,2,3,Ship_Weapons_Guns_Rate,Fire Rate,1.016,1.021,multiplier,false,AP_SHIPGUN3,300,proc
+UA_SGUN3,Spewing Vent Node,Living Ship,Spewing Vents,A,2,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.02,1.03,multiplier,false,AP_SHIPGUN3,300,proc
+UA_SGUN4,Spewing Vent Node,Living Ship,Spewing Vents,S,3,3,Ship_Weapons_Guns_Damage,Damage,20,28,flat,false,AP_SHIPGUN4,480,proc
+UA_SGUN4,Spewing Vent Node,Living Ship,Spewing Vents,S,3,3,Ship_Weapons_Guns_Rate,Fire Rate,1.021,1.021,multiplier,false,AP_SHIPGUN4,480,proc
+UA_SGUN4,Spewing Vent Node,Living Ship,Spewing Vents,S,3,3,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.03,1.03,multiplier,false,AP_SHIPGUN4,480,proc
+UA_SLASR1,Grafted Eye Node,Living Ship,Grafted Eyes,C,1,2,Ship_Weapons_Lasers_HeatTime,Heat Dispersion,1.1,1.35,multiplier,false,AP_SHIPLAS1,60,proc
+UA_SLASR1,Grafted Eye Node,Living Ship,Grafted Eyes,C,1,2,Ship_Weapons_Lasers_Damage,Damage,30,40,flat,false,AP_SHIPLAS1,60,proc
+UA_SLASR1,Grafted Eye Node,Living Ship,Grafted Eyes,C,1,2,Ship_Weapons_ShieldLeech,Shield recharge on impact,0.05,0.1,fraction,false,AP_SHIPLAS1,60,proc
+UA_SLASR2,Grafted Eye Node,Living Ship,Grafted Eyes,B,1,2,Ship_Weapons_Lasers_HeatTime,Heat Dispersion,1.35,1.55,multiplier,false,AP_SHIPLAS2,140,proc
+UA_SLASR2,Grafted Eye Node,Living Ship,Grafted Eyes,B,1,2,Ship_Weapons_Lasers_Damage,Damage,40,50,flat,false,AP_SHIPLAS2,140,proc
+UA_SLASR2,Grafted Eye Node,Living Ship,Grafted Eyes,B,1,2,Ship_Weapons_ShieldLeech,Shield recharge on impact,0.1,0.15,fraction,false,AP_SHIPLAS2,140,proc
+UA_SLASR3,Grafted Eye Node,Living Ship,Grafted Eyes,A,2,2,Ship_Weapons_Lasers_HeatTime,Heat Dispersion,1.55,1.75,multiplier,false,AP_SHIPLAS3,300,proc
+UA_SLASR3,Grafted Eye Node,Living Ship,Grafted Eyes,A,2,2,Ship_Weapons_Lasers_Damage,Damage,50,60,flat,false,AP_SHIPLAS3,300,proc
+UA_SLASR3,Grafted Eye Node,Living Ship,Grafted Eyes,A,2,2,Ship_Weapons_ShieldLeech,Shield recharge on impact,0.15,0.2,fraction,false,AP_SHIPLAS3,300,proc
+UA_SLASR4,Grafted Eye Node,Living Ship,Grafted Eyes,S,3,3,Ship_Weapons_Lasers_HeatTime,Heat Dispersion,1.75,1.95,multiplier,false,AP_SHIPLAS4,480,proc
+UA_SLASR4,Grafted Eye Node,Living Ship,Grafted Eyes,S,3,3,Ship_Weapons_Lasers_Damage,Damage,60,70,flat,false,AP_SHIPLAS4,480,proc
+UA_SLASR4,Grafted Eye Node,Living Ship,Grafted Eyes,S,3,3,Ship_Weapons_ShieldLeech,Shield recharge on impact,0.2,0.3,fraction,false,AP_SHIPLAS4,480,proc
+UP_FRHYP1,Salvaged Hyperdrive Upgrade,Freighter,Freighter Hyperdrive,C,1,1,Freighter_Hyperdrive_JumpDistance,Hyperdrive Range,50,100,flat,false,U_FR_HYP1,60,proc
+UP_FRHYP2,Salvaged Hyperdrive Upgrade,Freighter,Freighter Hyperdrive,B,1,2,Freighter_Hyperdrive_JumpDistance,Hyperdrive Range,100,150,flat,false,U_FR_HYP2,140,proc
+UP_FRHYP3,Salvaged Hyperdrive Upgrade,Freighter,Freighter Hyperdrive,A,2,2,Freighter_Hyperdrive_JumpDistance,Hyperdrive Range,150,200,flat,false,U_FR_HYP3,300,proc
+UP_FRHYP3,Salvaged Hyperdrive Upgrade,Freighter,Freighter Hyperdrive,A,2,2,Freighter_Hyperdrive_JumpsPerCell,Warp Cell Efficiency,1,1,flat,false,U_FR_HYP3,300,proc
+UP_FRHYP4,Salvaged Hyperdrive Upgrade,Freighter,Freighter Hyperdrive,S,2,2,Freighter_Hyperdrive_JumpDistance,Hyperdrive Range,200,250,flat,false,U_FR_HYP4,480,proc
+UP_FRHYP4,Salvaged Hyperdrive Upgrade,Freighter,Freighter Hyperdrive,S,2,2,Freighter_Hyperdrive_JumpsPerCell,Warp Cell Efficiency,1,1,flat,false,U_FR_HYP4,480,proc
+UP_FRSPE1,Salvaged Fleet Beacon,Freighter,Atmospheric Control Unit,C,1,1,Freighter_Fleet_Speed,Expedition Speed,1.01,1.05,multiplier,false,U_FR_SPE1,60,proc
+UP_FRSPE2,Salvaged Fleet Beacon,Freighter,Atmospheric Control Unit,B,1,1,Freighter_Fleet_Speed,Expedition Speed,1.05,1.1,multiplier,false,U_FR_SPE2,140,proc
+UP_FRSPE3,Salvaged Fleet Beacon,Freighter,Atmospheric Control Unit,A,1,1,Freighter_Fleet_Speed,Expedition Speed,1.1,1.14,multiplier,false,U_FR_SPE3,300,proc
+UP_FRSPE4,Salvaged Fleet Beacon,Freighter,Atmospheric Control Unit,S,1,1,Freighter_Fleet_Speed,Expedition Speed,1.15,1.15,multiplier,false,U_FR_SPE4,480,proc
+UP_FRFUE1,Salvaged Fleet Fuel Unit,Freighter,Atmospheric Control Unit,C,1,1,Freighter_Fleet_Fuel,Expedition Efficiency,0.95,0.99,multiplier,false,U_FR_FUEL1,60,proc
+UP_FRFUE2,Salvaged Fleet Fuel Unit,Freighter,Atmospheric Control Unit,B,1,1,Freighter_Fleet_Fuel,Expedition Efficiency,0.9,0.95,multiplier,false,U_FR_FUEL2,140,proc
+UP_FRFUE3,Salvaged Fleet Fuel Unit,Freighter,Atmospheric Control Unit,A,1,1,Freighter_Fleet_Fuel,Expedition Efficiency,0.85,0.9,multiplier,false,U_FR_FUEL3,300,proc
+UP_FRFUE4,Salvaged Fleet Fuel Unit,Freighter,Atmospheric Control Unit,S,1,1,Freighter_Fleet_Fuel,Expedition Efficiency,0.8,0.85,multiplier,false,U_FR_FUEL4,480,proc
+UP_FRCOM1,Salvaged Fleet Combat Unit,Freighter,Atmospheric Control Unit,C,1,1,Freighter_Fleet_Combat,Expedition Defences,1.01,1.05,multiplier,false,U_FR_COM1,60,proc
+UP_FRCOM2,Salvaged Fleet Combat Unit,Freighter,Atmospheric Control Unit,B,1,1,Freighter_Fleet_Combat,Expedition Defences,1.05,1.1,multiplier,false,U_FR_COM2,140,proc
+UP_FRCOM3,Salvaged Fleet Combat Unit,Freighter,Atmospheric Control Unit,A,1,1,Freighter_Fleet_Combat,Expedition Defences,1.1,1.14,multiplier,false,U_FR_COM3,300,proc
+UP_FRCOM4,Salvaged Fleet Combat Unit,Freighter,Atmospheric Control Unit,S,1,1,Freighter_Fleet_Combat,Expedition Defences,1.15,1.15,multiplier,false,U_FR_COM4,480,proc
+UP_FRTRA1,Salvaged Fleet Trade Unit,Freighter,Atmospheric Control Unit,C,1,1,Freighter_Fleet_Trade,Expedition Trade Ability,1.01,1.05,multiplier,false,U_FR_TRA1,60,proc
+UP_FRTRA2,Salvaged Fleet Trade Unit,Freighter,Atmospheric Control Unit,B,1,1,Freighter_Fleet_Trade,Expedition Trade Ability,1.05,1.1,multiplier,false,U_FR_TRA2,140,proc
+UP_FRTRA3,Salvaged Fleet Trade Unit,Freighter,Atmospheric Control Unit,A,1,1,Freighter_Fleet_Trade,Expedition Trade Ability,1.1,1.14,multiplier,false,U_FR_TRA3,300,proc
+UP_FRTRA4,Salvaged Fleet Trade Unit,Freighter,Atmospheric Control Unit,S,1,1,Freighter_Fleet_Trade,Expedition Trade Ability,1.15,1.15,multiplier,false,U_FR_TRA4,480,proc
+UP_FREXP1,Salvaged Fleet Exploration Unit,Freighter,Atmospheric Control Unit,C,1,1,Freighter_Fleet_Explore,Expedition Scientific Ability,1.01,1.05,multiplier,false,U_FR_EXP1,60,proc
+UP_FREXP2,Salvaged Fleet Exploration Unit,Freighter,Atmospheric Control Unit,B,1,1,Freighter_Fleet_Explore,Expedition Scientific Ability,1.05,1.1,multiplier,false,U_FR_EXP2,140,proc
+UP_FREXP3,Salvaged Fleet Exploration Unit,Freighter,Atmospheric Control Unit,A,1,1,Freighter_Fleet_Explore,Expedition Scientific Ability,1.1,1.14,multiplier,false,U_FR_EXP3,300,proc
+UP_FREXP4,Salvaged Fleet Exploration Unit,Freighter,Atmospheric Control Unit,S,1,1,Freighter_Fleet_Explore,Expedition Scientific Ability,1.15,1.15,multiplier,false,U_FR_EXP4,480,proc
+UP_FRMIN1,Salvaged Fleet Mining Unit,Freighter,Atmospheric Control Unit,C,1,1,Freighter_Fleet_Mine,Expedition Mining Ability,1.01,1.05,multiplier,false,U_FR_MINE1,60,proc
+UP_FRMIN2,Salvaged Fleet Mining Unit,Freighter,Atmospheric Control Unit,B,1,1,Freighter_Fleet_Mine,Expedition Mining Ability,1.05,1.1,multiplier,false,U_FR_MINE2,140,proc
+UP_FRMIN3,Salvaged Fleet Mining Unit,Freighter,Atmospheric Control Unit,A,1,1,Freighter_Fleet_Mine,Expedition Mining Ability,1.1,1.14,multiplier,false,U_FR_MINE3,300,proc
+UP_FRMIN4,Salvaged Fleet Mining Unit,Freighter,Atmospheric Control Unit,S,1,1,Freighter_Fleet_Mine,Expedition Mining Ability,1.15,1.15,multiplier,false,U_FR_MINE4,480,proc
+CV_FIT1,flight control systems,Corvette,flight control systems,C,3,3,Ship_BoostManeuverability,Manoeuvrability,1.01,1.075,multiplier,false,,,proc
+CV_FIT1,flight control systems,Corvette,flight control systems,C,3,3,Ship_Boost,Boost,1.01,1.1,multiplier,false,,,proc
+CV_FIT1,flight control systems,Corvette,flight control systems,C,3,3,Ship_Maneuverability,Manoeuvrability,1.005,1.005,multiplier,true,,,proc
+CV_FIT2,flight control systems,Corvette,flight control systems,B,3,3,Ship_BoostManeuverability,Manoeuvrability,1.01,1.12,multiplier,false,,,proc
+CV_FIT2,flight control systems,Corvette,flight control systems,B,3,3,Ship_Boost,Boost,1.1,1.15,multiplier,false,,,proc
+CV_FIT2,flight control systems,Corvette,flight control systems,B,3,3,Ship_Maneuverability,Manoeuvrability,1.005,1.005,multiplier,true,,,proc
+CV_FIT3,flight control systems,Corvette,flight control systems,A,3,3,Ship_BoostManeuverability,Manoeuvrability,1.05,1.16,multiplier,false,,,proc
+CV_FIT3,flight control systems,Corvette,flight control systems,A,3,3,Ship_Boost,Boost,1.1,1.2,multiplier,false,,,proc
+CV_FIT3,flight control systems,Corvette,flight control systems,A,3,3,Ship_Maneuverability,Manoeuvrability,1.005,1.005,multiplier,true,,,proc
+CV_FIT4,flight control systems,Corvette,flight control systems,S,3,3,Ship_BoostManeuverability,Manoeuvrability,1.05,1.18,multiplier,false,,,proc
+CV_FIT4,flight control systems,Corvette,flight control systems,S,3,3,Ship_Boost,Boost,1.1,1.25,multiplier,false,,,proc
+CV_FIT4,flight control systems,Corvette,flight control systems,S,3,3,Ship_Maneuverability,Manoeuvrability,1.0065,1.0065,multiplier,true,,,proc
+CV_SCI1,navigation systems,Corvette,navigation systems,C,3,3,Ship_Launcher_TakeOffCost,Launch Cost,0.9,0.95,multiplier,false,,,proc
+CV_SCI1,navigation systems,Corvette,navigation systems,C,3,3,Ship_Launcher_AutoCharge,Automatic Recharging,1,1,flat,false,,,proc
+CV_SCI1,navigation systems,Corvette,navigation systems,C,3,3,Ship_PulseDrive_MiniJumpFuelSpending,Pulse Drive Fuel Efficiency,0.9,0.95,multiplier,false,,,proc
+CV_SCI2,navigation systems,Corvette,navigation systems,B,3,3,Ship_Launcher_TakeOffCost,Launch Cost,0.85,0.9,multiplier,false,,,proc
+CV_SCI2,navigation systems,Corvette,navigation systems,B,3,3,Ship_Launcher_AutoCharge,Automatic Recharging,1,1,flat,false,,,proc
+CV_SCI2,navigation systems,Corvette,navigation systems,B,3,3,Ship_PulseDrive_MiniJumpFuelSpending,Pulse Drive Fuel Efficiency,0.85,0.9,multiplier,false,,,proc
+CV_SCI3,navigation systems,Corvette,navigation systems,A,3,3,Ship_Launcher_TakeOffCost,Launch Cost,0.8,0.85,multiplier,false,,,proc
+CV_SCI3,navigation systems,Corvette,navigation systems,A,3,3,Ship_Launcher_AutoCharge,Automatic Recharging,1,1,flat,false,,,proc
+CV_SCI3,navigation systems,Corvette,navigation systems,A,3,3,Ship_PulseDrive_MiniJumpFuelSpending,Pulse Drive Fuel Efficiency,0.8,0.85,multiplier,false,,,proc
+CV_SCI4,navigation systems,Corvette,navigation systems,S,3,3,Ship_Launcher_TakeOffCost,Launch Cost,0.8,0.8,multiplier,false,,,proc
+CV_SCI4,navigation systems,Corvette,navigation systems,S,3,3,Ship_Launcher_AutoCharge,Automatic Recharging,1,1,flat,false,,,proc
+CV_SCI4,navigation systems,Corvette,navigation systems,S,3,3,Ship_PulseDrive_MiniJumpFuelSpending,Pulse Drive Fuel Efficiency,0.8,0.8,multiplier,false,,,proc
+CV_TRA1,defensive systems,Corvette,defensive systems,C,1,1,Ship_Armour_Shield_Strength,Shield Strength,0.05,0.1,fraction,false,,,proc
+CV_TRA2,defensive systems,Corvette,defensive systems,B,1,1,Ship_Armour_Shield_Strength,Shield Strength,0.05,0.1,fraction,false,,,proc
+CV_TRA3,defensive systems,Corvette,defensive systems,A,1,1,Ship_Armour_Shield_Strength,Shield Strength,0.1,0.2,fraction,false,,,proc
+CV_TRA4,defensive systems,Corvette,defensive systems,S,1,1,Ship_Armour_Shield_Strength,Shield Strength,0.2,0.2,fraction,false,,,proc
+CV_INV1,cargo systems,Corvette,cargo systems,C,2,2,Ship_Cargo_Slots,Cargo Slots,1,1,flat,false,,,proc
+CV_INV2,cargo systems,Corvette,cargo systems,B,2,2,Ship_Cargo_Slots,Cargo Slots,3,3,flat,false,,,proc
+CV_INV3,cargo systems,Corvette,cargo systems,A,2,2,Ship_Cargo_Slots,Cargo Slots,6,6,flat,false,,,proc
+CV_INV4,cargo systems,Corvette,cargo systems,S,2,2,Ship_Cargo_Slots,Cargo Slots,8,8,flat,false,,,proc
+CV_TRACT1,Tractor Beam,Corvette,Tractor Beam,A,1,1,Ship_TractorBeam,Tractor Beam,1,1,flat,false,,,proc
+UT_PROTECT,Shield Lattice,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,special,1,1,Suit_Protection,Hazard Protection Battery,0.2,0.2,fraction,true,,,tech
+UT_ENERGY,Oxygen Recycler,Exosuit,Life Support,special,1,1,Suit_Energy,Life Support Tanks,0.1,0.1,fraction,true,,,tech
+UT_JET,Neural Stimulator,Exosuit,Jetpack,special,4,4,Suit_Jetpack_Tank,Jetpack Tanks,0.25,0.25,multiplier,true,,,tech
+UT_JET,Neural Stimulator,Exosuit,Jetpack,special,4,4,Suit_Jetpack_Refill,Recharge Rate,1.1,1.1,multiplier,true,,,tech
+UT_JET,Neural Stimulator,Exosuit,Jetpack,special,4,4,Suit_Stamina_Strength,Sprint Distance,0.1,0.1,fraction,true,,,tech
+UT_JET,Neural Stimulator,Exosuit,Jetpack,special,4,4,Suit_Stamina_Recovery,Sprint Recovery Time,1.4,1.4,multiplier,true,,,tech
+UT_JUMP,Rocket Boots,Exosuit,Jetpack,special,1,1,Suit_Jetpack_DoubleJump,Advanced Jump System,1,1,flat,true,,,tech
+UT_MIDAIR,Airburst Engine,Exosuit,Jetpack,special,1,1,Suit_Jetpack_MidairRefill,Airborne Recharging,1,1,flat,true,,,tech
+UT_HOT,Coolant Network,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,special,1,1,Suit_Protection_HeatDrain,Heat Resistance,1.2,1.2,multiplier,true,,,tech
+UT_COLD,Thermic Layer,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,special,1,1,Suit_Protection_ColdDrain,Cold Resistance,1.2,1.2,multiplier,true,,,tech
+UT_TOX,Toxic Suppressor,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,special,1,1,Suit_Protection_ToxDrain,Toxic Resistance,1.2,1.2,multiplier,true,,,tech
+UT_RAD,Radiation Deflector,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,special,1,1,Suit_Protection_RadDrain,Radiation Resistance,1.2,1.2,multiplier,true,,,tech
+UT_WATER,Aeration Membrane,Exosuit,Hazard Protection / Pressure Membrane / Remembrance / Star Seed / Visceral Synthesiser / Archive Bypass Implant / SPIDERBRAIN / Anomaly Suppressor / Living Lens,special,1,1,Suit_Protection_WaterDrain,Breathing Efficiency,1.33,1.33,multiplier,true,,,tech
+UT_WATERJET,Efficient Water Jets,Exosuit,Jetpack,special,1,1,Suit_Jetpack_WaterEfficiency,Efficient Waterjets,1,1,flat,true,,,tech
+UT_WATERENERGY,Oxygen Rerouter,Exosuit,,special,1,1,Suit_UnderwaterLifeSupport,Oxygen Rerouting,1,1,flat,true,,,tech
+UT_TRANSLATE1,Simple Translator,Exosuit,,special,1,1,Suit_AutoTranslator,Words Translated,1,1,flat,true,,,tech
+UT_TRANSLATE2,Superior Translator,Exosuit,,special,1,1,Suit_AutoTranslator,Words Translated,2,2,flat,true,,,tech
+UT_TRANSLATE3,Advanced Translator,Exosuit,,special,1,1,Suit_AutoTranslator,Words Translated,3,3,flat,true,,,tech
+STORY_TRANSLATE,Artemis' Translator,Exosuit,,special,1,1,Suit_AutoTranslator,Words Translated,1,1,flat,true,,,tech
+UT_PULSEFUEL,Instability Drive,Starship,Pulse Engine,special,1,1,Ship_PulseDrive_MiniJumpFuelSpending,Pulse Drive Fuel Efficiency,0.66,0.66,multiplier,true,,,tech
+UT_PULSESPEED,Sub-Light Amplifier,Starship,Pulse Engine,special,1,1,Ship_PulseDrive_MiniJumpSpeed,Pulse Drive Power,1.3,1.3,multiplier,true,,,tech
+UT_SHIPDRIFT,Flight Assist Override,Starship,Pulse Engine,special,3,3,Ship_Drift,Flight Assist Reduction,0.6,0.6,multiplier,true,,,tech
+UT_SHIPDRIFT,Flight Assist Override,Starship,Pulse Engine,special,3,3,Ship_BoostManeuverability,Manoeuvrability,1.1,1.1,multiplier,true,,,tech
+UT_SHIPDRIFT,Flight Assist Override,Starship,Pulse Engine,special,3,3,Ship_Maneuverability,Manoeuvrability,1.005,1.005,multiplier,true,,,tech
+PHOTONIX_CORE,Photonix Core,Starship,Pulse Engine / Waveform Engine,special,4,4,Ship_PulseDrive_MiniJumpFuelSpending,Pulse Drive Fuel Efficiency,0.85,0.85,multiplier,true,,,tech
+PHOTONIX_CORE,Photonix Core,Starship,Pulse Engine / Waveform Engine,special,4,4,Ship_Boost,Boost,1.15,1.15,multiplier,true,,,tech
+PHOTONIX_CORE,Photonix Core,Starship,Pulse Engine / Waveform Engine,special,4,4,Ship_BoostManeuverability,Manoeuvrability,1.1,1.1,multiplier,true,,,tech
+PHOTONIX_CORE,Photonix Core,Starship,Pulse Engine / Waveform Engine,special,4,4,Ship_Maneuverability,Manoeuvrability,1.005,1.005,multiplier,true,,,tech
+UT_LAUNCHER,Efficient Thrusters,Starship,Launch Thruster,special,1,1,Ship_Launcher_TakeOffCost,Launch Cost,0.8,0.8,multiplier,true,,,tech
+UT_LAUNCHCHARGE,Launch Auto-Charger,Starship,Launch Thruster,special,1,1,Ship_Launcher_AutoCharge,Automatic Recharging,1,1,flat,true,,,tech
+HDRIVEBOOST1,Cadmium Drive,Starship,Hyperdrive,special,1,1,Ship_Hyperdrive,Hyperdrive Range,1,1,flat,true,,,tech
+HDRIVEBOOST2,Emeril Drive,Starship,Hyperdrive,special,1,1,Ship_Hyperdrive,Hyperdrive Range,1,1,flat,true,,,tech
+HDRIVEBOOST3,Indium Drive,Starship,Hyperdrive,special,1,1,Ship_Hyperdrive,Hyperdrive Range,1,1,flat,true,,,tech
+HDRIVEBOOST4,Atlantid Drive,Starship (all ships),Hyperdrive,special,1,1,Ship_Hyperdrive,Hyperdrive Range,1,1,flat,true,,,tech
+UT_QUICKWARP,Emergency Warp Unit,Starship,Hyperdrive,special,1,1,Ship_Hyperdrive_QuickWarp,Instant Hyperdrive Scramble,1,1,flat,true,,,tech
+UT_SHIPSHIELD,Ablative Armour,Starship,Deflector Shield,special,1,1,Ship_Armour_Shield_Strength,Shield Strength,0.05,0.05,fraction,true,,,tech
+UT_ROCKETS,Large Rocket Tubes,Starship,Rocket Launcher,special,1,1,Ship_Weapons_Guns_CoolTime,Heat Recovery,0.8,0.8,multiplier,true,,,tech
+UT_SHIPGUN,Nonlinear Optics,Starship,Photon Cannon,special,1,1,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.2,1.2,multiplier,true,,,tech
+UT_SHIPLAS,Fourier De-Limiter,Starship,Phase Beam,special,2,2,Ship_Weapons_Lasers_HeatTime,Heat Dispersion,1.1,1.1,multiplier,true,,,tech
+UT_SHIPLAS,Fourier De-Limiter,Starship,Phase Beam,special,2,2,Ship_Weapons_ShieldLeech,Shield recharge on impact,0.1,0.1,fraction,true,,,tech
+UT_SHIPSHOT,Fragment Supercharger,Starship,Positron Ejector,special,2,2,Ship_Weapons_Guns_Dispersion,Accuracy,0.8,0.8,multiplier,true,,,tech
+UT_SHIPSHOT,Fragment Supercharger,Starship,Positron Ejector,special,2,2,Ship_Weapons_Guns_Range,Range,1.25,1.25,multiplier,true,,,tech
+UT_SHIPMINI,Q-Resonator,Starship,Infra-Knife Accelerator,special,1,1,Ship_Weapons_Guns_BulletsPerShot,Total Cannon Count:,3,3,flat,true,,,tech
+UT_SHIPBLOB,Dyson Pump,Starship,Cyclotron Ballista,special,1,1,Ship_Weapons_Guns_HeatTime,Heat Dispersion,1.1,1.1,multiplier,true,,,tech
+F_HDRIVEBOOST1,Warp Core Resonator,Freighter,Freighter Hyperdrive,special,1,1,Freighter_Hyperdrive_JumpDistance,Hyperdrive Range,200,200,flat,true,,,tech
+F_HDRIVEBOOST2,Plasmatic Warp Injector,Freighter,Freighter Hyperdrive,special,1,1,Freighter_Hyperdrive_JumpDistance,Hyperdrive Range,300,300,flat,true,,,tech
+F_HDRIVEBOOST3,Reality De-Threader,Freighter,Freighter Hyperdrive,special,1,1,Freighter_Hyperdrive_JumpDistance,Hyperdrive Range,800,800,flat,true,,,tech
+F_HACCESS1,Amplified Warp Shielding,Freighter,Freighter Hyperdrive,special,1,1,Freighter_Hyperdrive_JumpDistance,Hyperdrive Range,50,50,flat,true,,,tech
+F_HACCESS2,Chromatic Warp Shielding,Freighter,Freighter Hyperdrive,special,1,1,Freighter_Hyperdrive_JumpDistance,Hyperdrive Range,50,50,flat,true,,,tech
+F_HACCESS3,Temporal Warp Computer,Freighter,Freighter Hyperdrive,special,1,1,Freighter_Hyperdrive_JumpDistance,Hyperdrive Range,50,50,flat,true,,,tech
+F_HACCESS4,Resonance Matrix,Freighter,Freighter Hyperdrive,special,1,1,Freighter_Hyperdrive_JumpDistance,Hyperdrive Range,50,50,flat,true,,,tech
+SOLAR_SAIL,Vesper Sail,Starship,Pulse Engine / Waveform Engine,special,4,4,Ship_PulseDrive_MiniJumpFuelSpending,Pulse Drive Fuel Efficiency,0.2,0.2,multiplier,true,,,tech
+SOLAR_SAIL,Vesper Sail,Starship,Pulse Engine / Waveform Engine,special,4,4,Ship_Launcher_AutoCharge,Automatic Recharging,1,1,flat,true,,,tech
+SOLAR_SAIL,Vesper Sail,Starship,Pulse Engine / Waveform Engine,special,4,4,Ship_Boost,Boost,1.15,1.15,multiplier,true,,,tech
+SOLAR_SAIL,Vesper Sail,Starship,Pulse Engine / Waveform Engine,special,4,4,Ship_BoostManeuverability,Manoeuvrability,1.1,1.1,multiplier,true,,,tech
+UT_SCAN,Waveform Recycler,Multi-Tool,Scanner,special,2,2,Weapon_Scan_Recharge_Time,Recharge Time,0.8,0.8,multiplier,true,,,tech
+UT_SCAN,Waveform Recycler,Multi-Tool,Scanner,special,2,2,Weapon_Scan_Radius,Scan Radius,1.1,1.1,multiplier,true,,,tech
+UT_SURVEY,Survey Device,Multi-Tool,,special,1,1,Weapon_Scan_Surveying,Surveying Enabled,1,1,flat,true,,,tech
+UT_BUI_SCAN,Scan Harmoniser,Multi-Tool,Scanner,special,2,2,Weapon_Scan_BuilderReveal,Echo Resonator,1,1,flat,true,,,tech
+UT_BUI_SCAN,Scan Harmoniser,Multi-Tool,Scanner,special,2,2,Weapon_Scan_Radius,Scan Radius,1.1,1.1,multiplier,true,,,tech
+UT_BUI_SCAN2,Polyphonic Core,Multi-Tool,Scanner,special,2,2,Weapon_Scan_BuilderReveal,Echo Resonator,1,1,flat,true,,,tech
+UT_BUI_SCAN2,Polyphonic Core,Multi-Tool,Scanner,special,2,2,Weapon_Scan_Radius,Scan Radius,1.1,1.1,multiplier,true,,,tech
+UT_S10_SCAN,Resonance Amplifier,Multi-Tool,Scanner,special,2,2,Weapon_Scan_BuilderReveal,Echo Resonator,1,1,flat,true,,,tech
+UT_S10_SCAN,Resonance Amplifier,Multi-Tool,Scanner,special,2,2,Weapon_Scan_Radius,Scan Radius,1.1,1.1,multiplier,true,,,tech
+STRONGLASER,Advanced Mining Laser,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,special,2,2,Weapon_Laser_StrongLaser,Advanced Mining Laser,1,1,flat,true,,,tech
+STRONGLASER,Advanced Mining Laser,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,special,2,2,Weapon_Laser_Mining_Speed,Mining Speed,0.85,0.85,multiplier,true,,,tech
+UT_MINER,Optical Drill,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,special,1,1,Weapon_Laser_MiningBonus,Resources Mined,1.5,1.5,multiplier,true,,,tech
+UT_BOLT,Barrel Ioniser,Multi-Tool,Boltcaster,special,3,3,Weapon_Projectile_Recoil,Recoil,0.7,0.7,multiplier,true,,,tech
+UT_BOLT,Barrel Ioniser,Multi-Tool,Boltcaster,special,3,3,Weapon_Projectile_BurstCap,Shots Per Burst,1,1,flat,true,,,tech
+UT_BOLT,Barrel Ioniser,Multi-Tool,Boltcaster,special,3,3,Weapon_Projectile_BurstCooldown,Burst Cooldown,0.95,0.95,multiplier,true,,,tech
+UT_BOLTBOUNCE,Boltcaster Ricochet Module,Multi-Tool,Boltcaster,special,1,1,Weapon_Projectile_Bounce,Ricochet Module,2,2,flat,true,,,tech
+BOLT_SM,Boltcaster SM,Multi-Tool,Boltcaster,special,3,3,Weapon_Projectile_Damage,Damage,1,1,flat,true,,,tech
+BOLT_SM,Boltcaster SM,Multi-Tool,Boltcaster,special,3,3,Weapon_Projectile_Rate,Fire Rate,1.2,1.2,multiplier,true,,,tech
+BOLT_SM,Boltcaster SM,Multi-Tool,Boltcaster,special,3,3,Weapon_Projectile_ClipSize,Clip Size,8,8,flat,true,,,tech
+LASER_XO,Plasma Resonator,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,special,2,2,Weapon_Laser_Mining_Speed,Mining Speed,0.95,0.95,multiplier,true,,,tech
+LASER_XO,Plasma Resonator,Multi-Tool,Mining Beam / Hijacked Laser / Runic Lens,special,2,2,Weapon_Laser_HeatTime,Heat Dispersion,1.05,1.05,multiplier,true,,,tech
+UT_RAIL,Mass Accelerator,Multi-Tool,Blaze Javelin,special,1,1,Weapon_Laser_Damage,Damage,200,200,flat,true,,,tech
+UT_RAIL_STUN,Waveform Oscillator,Multi-Tool,Blaze Javelin,special,2,2,Weapon_Stun,Bio-Mechanical Stun,1,1,flat,true,,,tech
+UT_RAIL_STUN,Waveform Oscillator,Multi-Tool,Blaze Javelin,special,2,2,Weapon_Stun_Duration,Stun Duration,5,5,flat,true,,,tech
+UT_SHOT,Shell Greaser,Multi-Tool,Scatter Blaster,special,1,1,Weapon_Projectile_ReloadTime,Reload Time,0.85,0.85,multiplier,true,,,tech
+UT_SMG,Amplified Cartridges,Multi-Tool,Pulse Spitter,special,1,1,Weapon_Projectile_ClipSize,Clip Size,20,20,flat,true,,,tech
+UT_SMGBOUNCE,Pulse Spitter Ricochet Module,Multi-Tool,Pulse Spitter,special,1,1,Weapon_Projectile_Bounce,Ricochet Module,2,2,flat,true,,,tech
+UT_SMG_DOT,Impact Igniter,Multi-Tool,Pulse Spitter,special,3,3,Weapon_FireDOT,Post-Impact Ignition,1,1,flat,true,,,tech
+UT_SMG_DOT,Impact Igniter,Multi-Tool,Pulse Spitter,special,3,3,Weapon_FireDOT_Duration,Impact Fire Duration,3.5,3.5,multiplier,true,,,tech
+UT_SMG_DOT,Impact Igniter,Multi-Tool,Pulse Spitter,special,3,3,Weapon_FireDOT_DPS,Impact Fire Damage,80,80,flat,true,,,tech
+UT_CANNON,P-Field Compressor,Multi-Tool,Neutron Cannon,special,3,3,Weapon_Projectile_MaximumCharge,Ion Spheres Created,2,2,flat,true,,,tech
+UT_CANNON,P-Field Compressor,Multi-Tool,Neutron Cannon,special,3,3,Weapon_ChargedProjectile_ExtraSpeed,Ion Sphere Speed,50,50,flat,true,,,tech
+UT_CANNON,P-Field Compressor,Multi-Tool,Neutron Cannon,special,3,3,Weapon_ChargedProjectile_ChargeTime,Charging Speed,0.9,0.9,multiplier,true,,,tech
+UT_STUNDMG,Voltaic Amplifier,Multi-Tool,,special,1,1,Weapon_Stun_Damage_Multiplier,Damage to stunned entities,1.2,1.2,multiplier,true,,,tech
+VEHICLE_GRIP1,Drift Suspension,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Fusion Engine / Icarus Fuel System,special,2,2,Vehicle_Grip,Forwards Grip,3,3,flat,true,,,tech
+VEHICLE_GRIP1,Drift Suspension,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Fusion Engine / Icarus Fuel System,special,2,2,Vehicle_SkidGrip,Angular Grip,0.66,0.66,multiplier,true,,,tech
+VEHICLE_GRIP2,Grip Boost Suspension,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Fusion Engine / Icarus Fuel System,special,2,2,Vehicle_Grip,Forwards Grip,0.5,0.5,multiplier,true,,,tech
+VEHICLE_GRIP2,Grip Boost Suspension,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Fusion Engine / Icarus Fuel System,special,2,2,Vehicle_SkidGrip,Angular Grip,2.1,2.1,multiplier,true,,,tech
+VEHICLE_GRIP3,Hi-Slide Suspension,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Fusion Engine / Icarus Fuel System,special,2,2,Vehicle_Grip,Forwards Grip,0.5,0.5,multiplier,true,,,tech
+VEHICLE_GRIP3,Hi-Slide Suspension,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Fusion Engine / Icarus Fuel System,special,2,2,Vehicle_SkidGrip,Angular Grip,0.66,0.66,multiplier,true,,,tech
+VEHICLE_SCAN1,Radar Amplifier,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Exocraft Radar,special,1,1,Vehicle_Scan,Scan,1,1,flat,true,,,tech
+VEHICLE_SCAN2,Radar Power Resonator,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Exocraft Radar,special,1,1,Vehicle_Scan,Scan,1,1,flat,true,,,tech
+VEHICLE_LASER1,Advanced Exocraft Laser,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Exocraft Mining Laser,special,2,2,Vehicle_LaserDamage,Mining Laser Power,50,50,flat,true,,,tech
+VEHICLE_LASER1,Advanced Exocraft Laser,"Exocraft (Nomad, Roamer, Pilgrim, Colossus)",Exocraft Mining Laser,special,2,2,Vehicle_LaserStrongLaser,Advanced Exocraft Mining Laser,1,1,flat,true,,,tech
+SUB_RECHARGE,Osmotic Generator,Exocraft (Nautilon),Icarus Fuel System / Humboldt Drive,special,1,1,Vehicle_EngineFuelUse,Fuel Usage,0.8,0.8,multiplier,true,,,tech
+MECH_FUEL,Self-Greasing Servos,Exocraft (Minotaur),Icarus Fuel System / Daedalus Engine,special,1,1,Vehicle_EngineFuelUse,Fuel Usage,0.8,0.8,multiplier,true,,,tech
+MECH_LASER1,Precision Minotaur Laser,Exocraft (Minotaur),Minotaur Laser,special,2,2,Vehicle_LaserDamage,Mining Laser Power,50,50,flat,true,,,tech
+MECH_LASER1,Precision Minotaur Laser,Exocraft (Minotaur),Minotaur Laser,special,2,2,Vehicle_LaserStrongLaser,Advanced Exocraft Mining Laser,1,1,flat,true,,,tech
+MECH_SENT_L_ARM,Hardframe Left Arm,Exocraft (Minotaur),Minotaur Laser,special,5,5,Weapon_Stun_Damage_Multiplier,Damage to stunned entities,5,5,flat,true,,,tech
+MECH_SENT_L_ARM,Hardframe Left Arm,Exocraft (Minotaur),Minotaur Laser,special,5,5,Vehicle_LaserDamage,Mining Laser Power,50,50,flat,true,,,tech
+MECH_SENT_L_ARM,Hardframe Left Arm,Exocraft (Minotaur),Minotaur Laser,special,5,5,Weapon_FireDOT,Post-Impact Ignition,1,1,flat,true,,,tech
+MECH_SENT_L_ARM,Hardframe Left Arm,Exocraft (Minotaur),Minotaur Laser,special,5,5,Weapon_FireDOT_Duration,Impact Fire Duration,3.5,3.5,multiplier,true,,,tech
+MECH_SENT_L_ARM,Hardframe Left Arm,Exocraft (Minotaur),Minotaur Laser,special,5,5,Weapon_FireDOT_DPS,Impact Fire Damage,80,80,flat,true,,,tech
+MECH_SENT_LEGS,Hardframe Legs,Exocraft (Minotaur),Icarus Fuel System / Daedalus Engine,special,2,2,Vehicle_EngineFuelUse,Fuel Usage,0.9,0.9,multiplier,true,,,tech
+MECH_SENT_LEGS,Hardframe Legs,Exocraft (Minotaur),Icarus Fuel System / Daedalus Engine,special,2,2,Vehicle_BoostTanks,Boost Tank Size,0.25,0.25,fraction,true,,,tech
+MECH_ARMY_LEGS,Liquidator Legs,Exocraft (Minotaur),Icarus Fuel System / Daedalus Engine,special,2,2,Vehicle_EngineFuelUse,Fuel Usage,0.9,0.9,multiplier,true,,,tech
+MECH_ARMY_LEGS,Liquidator Legs,Exocraft (Minotaur),Icarus Fuel System / Daedalus Engine,special,2,2,Vehicle_BoostTanks,Boost Tank Size,0.25,0.25,fraction,true,,,tech

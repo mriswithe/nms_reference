@@ -186,6 +186,8 @@ main>.callout{margin:0}
 .tbl.ranges th.mod{width:4.5em}
 .tbl.ranges thead th.num{white-space:normal}
 .tbl.ranges .num{padding-right:12px}
+.tbl.ranges tr.extra th{font-weight:500;font-style:italic}
+.tbl.ranges tbody tr:not(.extra)+tr.extra>*{border-top:2px solid var(--line)}
 /* tool types: scroll sideways rather than squeeze the "Where" column into tall rows */
 .tbl.types{min-width:640px}
 /* cooking: sale list with its simplest recipe; tier tables keep the numbers narrow */

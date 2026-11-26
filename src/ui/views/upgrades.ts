@@ -1,5 +1,5 @@
 import { MOD_CLASSES, type ModClass } from '../../lib/multitool';
-import { EXOSUIT, SHIP_PLATFORMS, upgradeCatalog, type Platform } from '../../lib/upgrades';
+import { EXOSUIT, salvageCatalog, SHIP_PLATFORMS, upgradeCatalog, type Platform } from '../../lib/upgrades';
 import { esc } from '../../lib/format';
 import type { Ctx } from '../context';
 import { pageHead, swatch } from '../html';
@@ -7,34 +7,46 @@ import { pageHead, swatch } from '../html';
 const CLASS_LABEL: Record<ModClass, string> = { C: 'C', B: 'B', A: 'A', S: 'S', X: 'X (Suspicious)' };
 
 const table = (head: string[], rows: string[]) =>
-  `<div class="tscroll"><table class="tbl ranges"><thead><tr>${head.map((h) => `<th scope="col"${h === 'Module' ? ' class="mod" data-nosort' : ''}>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+  `<div class="tscroll"><table class="tbl ranges"><thead><tr>${head.map((h) => `<th scope="col"${h === 'Module' || h === 'Salvaged' ? ' class="mod" data-nosort' : ''}>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
 
-const modChip = (ctx: Ctx, id: string, c: ModClass) => {
+const modChip = (ctx: Ctx, id: string, label: string) => {
   const it = ctx.db.items[id];
-  return `<button class="chip" data-go="${id}" aria-label="${c}-class: ${esc(it.n)}" title="${esc(it.n)} (${esc(it.g)})">${swatch(ctx, id, 'sm')}</button>`;
+  return `<button class="chip" data-go="${id}" aria-label="${esc(label)}: ${esc(it.n)}" title="${esc(it.n)} (${esc(it.g)})">${swatch(ctx, id, 'sm')}</button>`;
 };
 
 const RULES = `The same rules as Multi-Tool modules apply: three modules per technology, stats roll on install, and the <a href="#reroll" class="jl" data-go="reroll">save-and-reload reroll</a> works on every module.`;
 
-const SOURCES = `<p class="note src">Sources: datamined module tables (nomansskyrecipes.com, Forsaken 7.1). Some of that site's percentages are stored as "value − 100%" and are shown here as the game displays them.</p>`;
+export const SALVAGE_NOTE = `<b>Salvaged</b> modules are the unpackaged form of the same upgrade, the kind scrapping a ship or Multi-Tool gives back. They install into a slot the same way and roll the same ranges as the shop module of their class.`;
+
+const SOURCES = `<p class="note src">Sources: datamined module tables (nomansskyrecipes.com, Forsaken 7.1), checked against the game's own files. Some of that site's percentages are stored as "value − 100%" and are shown here as the game displays them.</p>`;
 
 /** roll-range card (technology picker + table) and where-to-get card for one platform */
 function platformCards(ctx: Ctx, plat: Platform): string {
   const tech = plat.techs.find((t) => t.key === ctx.state.upTech[plat.key]) ?? plat.techs[0];
   const row = upgradeCatalog(ctx.db, plat)[tech.key];
+  const sal = salvageCatalog(ctx.db, plat)[tech.key];
   const picker = `<div class="ctrl" role="group" aria-label="Technology">${plat.techs
     .map((t) => `<button data-uptech="${t.key}" data-plat="${plat.key}" aria-pressed="${t === tech}">${esc(t.name)}</button>`)
     .join('')}</div>`;
   const hasItems = Object.keys(row).length > 0;
+  const hasSal = Object.keys(sal).length > 0;
+  const chips = (ids: string[] | undefined, label: string) => `<td>${ids?.length ? ids.map((id) => modChip(ctx, id, label)).join('') : '—'}</td>`;
   const rows = MOD_CLASSES.filter((c) => tech.rows[c]).map((c) => {
     const [n, ...vals] = tech.rows[c]!;
-    const item = hasItems ? `<td>${row[c] ? row[c]!.map((id) => modChip(ctx, id, c)).join('') : '—'}</td>` : '';
+    const item = (hasItems ? chips(row[c], `${c}-class`) : '') + (hasSal ? chips(sal[c], `${c}-class`) : '');
     return `<tr><th scope="row" data-sort="${MOD_CLASSES.indexOf(c)}">${CLASS_LABEL[c]}</th>${item}<td class="num">${n}</td>${vals.map((v) => `<td class="num">${esc(v)}</td>`).join('')}</tr>`;
   });
+  // upgrades outside the C–X ladder (Sentinel fragments) that roll this technology's stats
+  const extra = (tech.extra ?? []).map((x, i) => {
+    const [n, ...vals] = x.row;
+    const item = (hasItems ? chips(x.ids, x.label) : '') + (hasSal ? chips(x.salvage, x.label) : '');
+    return `<tr class="extra"><th scope="row" data-sort="${MOD_CLASSES.length + i}">${esc(x.label)}</th>${item}<td class="num">${n}</td>${vals.map((v) => `<td class="num">${esc(v)}</td>`).join('')}</tr>`;
+  });
   return `<section class="card k-craft" id="up-ranges"><h3>${esc(plat.name)} roll ranges <span class="ct">per module class</span></h3>
-    ${picker}${table(['Class', ...(hasItems ? ['Module'] : []), 'Stats', ...tech.stats.map(esc)], rows)}
+    ${picker}${table(['Class', ...(hasItems ? ['Module'] : []), ...(hasSal ? ['Salvaged'] : []), 'Stats', ...tech.stats.map(esc)], [...rows, ...extra])}
     <p class="note"><b>Judge a roll on:</b> ${esc(tech.judge)}</p>
     ${tech.note ? `<p class="note">${esc(tech.note)}</p>` : ''}
+    ${hasSal ? `<p class="note">${SALVAGE_NOTE}</p>` : ''}
     <p class="note">"Stats" is how many of the listed stats a module rolls; which ones it gets is random when there are more stats than rolls. Negative times and costs are better. Ranges come from the game files (Forsaken 7.1).</p>
   </section>
   <section class="card k-buy" id="up-where"><h3>Where to get ${esc(plat.name.toLowerCase())} modules</h3><ul class="plain note">${plat.where

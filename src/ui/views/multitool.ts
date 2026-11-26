@@ -1,4 +1,5 @@
-import { MOD_CLASSES, moduleCatalog, MT_TECH, RANGES, SPECIAL, type ModClass } from '../../lib/multitool';
+import { MOD_CLASSES, moduleCatalog, MT_TECH, RANGES, salvageCatalog, SPECIAL, type ModClass } from '../../lib/multitool';
+import { SALVAGE_NOTE } from './upgrades';
 import { esc, fmt } from '../../lib/format';
 import type { Ctx } from '../context';
 import { chip, pageHead, swatch } from '../html';
@@ -142,17 +143,29 @@ function rangesSection(ctx: Ctx): string {
     (m) => `<button data-mttech="${m.key}" aria-pressed="${m.key === tech}">${esc(m.name)}</button>`,
   ).join('')}</div>`;
   const head = t.stats.map((st) => (t.always?.includes(st) ? `${esc(st)}*` : esc(st)));
+  const shop = moduleCatalog(ctx.db)[tech];
+  const sal = salvageCatalog(ctx.db)[tech];
+  const hasSal = Object.keys(sal).length > 0;
+  const btn = (id: string, label: string) =>
+    `<button class="chip" data-go="${id}" aria-label="${esc(label)}: ${esc(ctx.db.items[id].n)}" title="${esc(ctx.db.items[id].n)} (${esc(ctx.db.items[id].g)})">${swatch(ctx, id, 'sm')}</button>`;
+  const cell = (id: string | undefined, c: ModClass) => `<td>${id ? btn(id, `${c}-class`) : '—'}</td>`;
+  const extra = (t.extra ?? []).map((x, i) => {
+    const [n, ...vals] = x.row;
+    const ids = (l?: string[]) => `<td>${l?.length ? l.map((id) => btn(id, x.label)).join('') : '—'}</td>`;
+    return `<tr class="extra"><th scope="row" data-sort="${MOD_CLASSES.length + i}">${esc(x.label)}</th>${ids(x.ids)}${hasSal ? ids(x.salvage) : ''}<td class="num">${n}</td>${vals.map((v) => `<td class="num">${esc(v)}</td>`).join('')}</tr>`;
+  });
   const rows = MOD_CLASSES.filter((c) => t.rows[c]).map((c) => {
     const [n, ...vals] = t.rows[c]!;
-    return `<tr><th scope="row" data-sort="${MOD_CLASSES.indexOf(c)}">${CLASS_LABEL[c]}</th><td class="num">${n}</td>${vals.map((v) => `<td class="num">${v}</td>`).join('')}</tr>`;
+    return `<tr><th scope="row" data-sort="${MOD_CLASSES.indexOf(c)}">${CLASS_LABEL[c]}</th>${cell(shop[c], c)}${hasSal ? cell(sal[c], c) : ''}<td class="num">${n}</td>${vals.map((v) => `<td class="num">${v}</td>`).join('')}</tr>`;
   });
   return card(
     'mt-ranges',
     'k-craft',
     'Roll ranges',
     'per module class',
-    `${picker}${table(['Class', 'Stats', ...head], rows, 'ranges')}<p class="note"><b>Judge a roll on:</b> ${esc(t.judge)}</p>
+    `${picker}${table(['Class', 'Module', ...(hasSal ? ['Salvaged'] : []), 'Stats', ...head], [...rows, ...extra], 'ranges', hasSal ? [1, 2] : [1])}<p class="note"><b>Judge a roll on:</b> ${esc(t.judge)}</p>
     ${t.always ? `<p class="note">* Every module rolls this stat; it counts toward the "Stats" number.</p>` : ''}
+    ${hasSal ? `<p class="note">${SALVAGE_NOTE}</p>` : ''}
     <p class="note">"Stats" is how many of the listed stats a module rolls; which ones it gets is random when there are more stats than rolls. Damage on the guns is the game's own flat number, not a percent. Negative times are faster. Ranges come from the game files (Forsaken).</p>`,
   );
 }
@@ -160,7 +173,6 @@ function rangesSection(ctx: Ctx): string {
 function specialSection(ctx: Ctx): string {
   const s = SPECIAL;
   const shard = s.shard;
-  const shardRows = shard.stats.map(([stat, range]) => `<tr><th scope="row">${esc(stat)}</th><td class="num">${esc(range)}</td></tr>`);
   const bp = MT_TECH.filter((m) => s.blueprints.some((b) => b.tech === m.key)).map((m) => {
     const list = s.blueprints.filter((b) => b.tech === m.key);
     return `<li><b>${esc(m.name)}</b>: ${list.map((b) => `${chip(ctx, b.id)} ${esc(b.what)}`).join('; ')}</li>`;
@@ -173,7 +185,7 @@ function specialSection(ctx: Ctx): string {
     'Sentinel, blueprint and tool-type tech',
     `<h4 class="sub">${chip(ctx, shard.id)} <span class="q">from</span> ${chip(ctx, shard.glass)}</h4>
     <ul class="plain note">${shard.notes.map((n) => `<li>${n}</li>`).join('')}</ul>
-    ${shardRows.length ? table(['Stat', 'Range'], shardRows, 'fit') : ''}
+    <p class="note">Its roll ranges are in the Boltcaster tab of <a href="#" class="jl" data-jump="mt-ranges">Roll ranges</a>, under the class rows.</p>
     <h4 class="sub">Blueprint upgrades</h4>
     <p class="note">Fixed-stat technologies, not random modules: they don't roll, don't count toward the cap of three, and get adjacency from the technology they boost, so slot them next to its group.</p>
     <ul class="plain">${bp.join('')}${general.map((b) => `<li>${chip(ctx, b.id)} ${esc(b.what)}</li>`).join('')}</ul>

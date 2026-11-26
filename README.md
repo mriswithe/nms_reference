@@ -66,6 +66,8 @@ Recipe data comes from the open-source [Assistant for No Man's Sky](https://gith
 
 Food effects come from the game's own files instead: what eating an item does (`eat`), its Nutrient Ingestor stat and cooking value (`ing`), and each stat's ingestor range (`fstat`). `scripts/food-effects.mjs` writes them into `src/data/nms.json` from a local install; its header lists the files to unpack with [HGPAKtool](https://pypi.org/project/HGPAKtool/) and convert with [MBINCompiler](https://github.com/monkeyman192/MBINCompiler). The game doesn't store ingestor percentages, so the site estimates them with a fit to in-game readings (`src/lib/food.ts`).
 
+`exports/modules.json` (and a one-row-per-stat `exports/modules.csv`) lists every upgrade module the game defines, on every platform, with its class, stats rolled and raw stat ranges as stored (no display conversion). `scripts/modules-export.mjs` rebuilds them from the same kind of unpacked folder; its header lists the files. The upgrade pages' roll ranges are checked against it.
+
 Item icons come from our fork of that app, [mriswithe/AssistantNMS-App](https://github.com/mriswithe/AssistantNMS-App), pinned to a commit in `scripts/icons.mjs`. The script does a sparse, shallow checkout into `.cache/`, shrinks each icon to a 96 px WebP in `public/icons/<itemId>.webp` (both gitignored), and skips all work when the pin, size and dataset are unchanged. CI caches `public/icons`. If the fetch fails, items fall back to their colour swatch. To update icons, sync the fork with upstream and bump `SOURCE.sha`.
 
 The original single-file version lives at https://github.com/mriswithe/nms_refining_reference.

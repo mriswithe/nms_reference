@@ -3,6 +3,7 @@
  * The guide text itself lives in src/ui/views/multitool.ts.
  */
 import type { Db } from './db';
+import type { Item } from './types';
 
 export type ModClass = 'C' | 'B' | 'A' | 'S' | 'X';
 
@@ -11,18 +12,55 @@ export const MOD_CLASSES: ModClass[] = ['C', 'B', 'A', 'S', 'X'];
 /** module group name prefix per class: "Supreme Mining Beam Upgrade" is S, "Banned …" is the black-market X class */
 const PREFIX: Record<ModClass, string> = { C: '', B: 'Significant ', A: 'Powerful ', S: 'Supreme ', X: 'Banned ' };
 
-/** Multi-Tool technologies that take upgrade modules, in the order the guide lists them; `g` is the name inside the module group */
-export const MT_TECH: { key: string; name: string; g: string; role: 'utility' | 'weapon' }[] = [
-  { key: 'mining', name: 'Mining Beam', g: 'Mining Beam', role: 'utility' },
-  { key: 'scanner', name: 'Scanner', g: 'Scanning System', role: 'utility' },
-  { key: 'bolt', name: 'Boltcaster', g: 'Boltcaster', role: 'weapon' },
-  { key: 'pulse', name: 'Pulse Spitter', g: 'Pulse Spitter', role: 'weapon' },
-  { key: 'scatter', name: 'Scatter Blaster', g: 'Scatter Blaster', role: 'weapon' },
-  { key: 'blaze', name: 'Blaze Javelin', g: 'Blaze Javelin', role: 'weapon' },
+/**
+ * Multi-Tool technologies that take upgrade modules, in the order the guide lists them; `g` is the name inside the
+ * module group, `sg` the name inside the salvaged module's group (absent when there is no salvaged form)
+ */
+export const MT_TECH: { key: string; name: string; g: string; sg?: string; role: 'utility' | 'weapon' }[] = [
+  { key: 'mining', name: 'Mining Beam', g: 'Mining Beam', sg: 'Mining Beam', role: 'utility' },
+  { key: 'scanner', name: 'Scanner', g: 'Scanning System', sg: 'Analysis Visor', role: 'utility' },
+  { key: 'bolt', name: 'Boltcaster', g: 'Boltcaster', sg: 'Boltcaster', role: 'weapon' },
+  { key: 'pulse', name: 'Pulse Spitter', g: 'Pulse Spitter', sg: 'Pulse Spitter', role: 'weapon' },
+  { key: 'scatter', name: 'Scatter Blaster', g: 'Scatter Blaster', sg: 'Scatter Blaster', role: 'weapon' },
+  { key: 'blaze', name: 'Blaze Javelin', g: 'Blaze Javelin', sg: 'Blaze Javelin', role: 'weapon' },
   { key: 'neutron', name: 'Neutron Cannon', g: 'Neutron Cannon', role: 'weapon' },
-  { key: 'plasma', name: 'Plasma Launcher', g: 'Plasma Launcher', role: 'weapon' },
-  { key: 'geology', name: 'Geology Cannon', g: 'Geology Cannon', role: 'weapon' },
+  { key: 'plasma', name: 'Plasma Launcher', g: 'Plasma Launcher', sg: 'Plasma Launcher', role: 'weapon' },
+  { key: 'geology', name: 'Geology Cannon', g: 'Geology Cannon', sg: 'Geology Cannon', role: 'weapon' },
 ];
+
+/**
+ * Salvaged modules: the unpackaged "Tech module" form of an upgrade ("A-Class Hyperdrive Upgrade",
+ * "Illegal Mining Beam Upgrade"), which is what scrapping a starship or Multi-Tool gives back. The class is in
+ * the group prefix; the technology names don't always match the shop's ("Defence Systems", "Analysis Visor").
+ */
+export function salvageClass(it: Item): ModClass | undefined {
+  if (it.c !== 'Tech module') return undefined;
+  const m = /^(?:([CBAS])-Class|(Illegal)) /.exec(it.g);
+  if (m) return (m[1] as ModClass | undefined) ?? 'X';
+  // Aeration Membrane keeps the shop's word prefixes, one class lower than usual (no C exists)
+  const w = /^(Significant |Powerful )?Underwater Oxygen Upgrade$/.exec(it.g);
+  if (w) return w[1] === 'Significant ' ? 'A' : w[1] === 'Powerful ' ? 'S' : 'B';
+  return undefined;
+}
+
+/** salvaged module whose group, minus the class prefix, is `g` (e.g. "Hyperdrive Upgrade") */
+export const salvageOf = (g: string) => (it: Item) =>
+  salvageClass(it) !== undefined && it.g.replace(/^(?:[CBAS]-Class|Illegal|Significant|Powerful) /, '') === g;
+
+/** tech key -> class -> salvaged module item id */
+export function salvageCatalog(db: Db): Record<string, Partial<Record<ModClass, string>>> {
+  const out: Record<string, Partial<Record<ModClass, string>>> = {};
+  for (const t of MT_TECH) {
+    const row: Partial<Record<ModClass, string>> = {};
+    if (t.sg)
+      for (const id of db.ids) {
+        const it = db.items[id];
+        if (salvageOf(`${t.sg} Upgrade`)(it)) row[salvageClass(it)!] = id;
+      }
+    out[t.key] = row;
+  }
+  return out;
+}
 
 /** tech key -> class -> module item id (only classes the dataset has) */
 export function moduleCatalog(db: Db): Record<string, Partial<Record<ModClass, string>>> {
@@ -57,6 +95,17 @@ export interface StatTable {
   judge: string;
   /** stats every module of this technology rolls (they count toward "Stats"); the rest are random picks */
   always?: string[];
+  /** upgrades outside the C–X ladder that roll this technology's stats (Sentinel shards), shown below the class rows */
+  extra?: ExtraRow[];
+}
+
+export interface ExtraRow {
+  label: string;
+  /** item ids: the carried item, and its installed "Tech module" form */
+  ids: string[];
+  salvage?: string[];
+  /** same shape as a class row: [number of stats rolled, ...one range per stat] */
+  row: string[];
 }
 
 export const RANGES: Record<string, StatTable> = {
@@ -93,6 +142,7 @@ export const RANGES: Record<string, StatTable> = {
       X: ['2–4', '1–5', '−5 to −25%', '+2 to +10', '1–20%', '+1 to +2', '−1 to −20%'],
     },
     judge: 'Damage is always rolled, so an S module picks 3 of the other 5 stats. Judge on damage, then fire rate; a module whose picks went to clip size or shots per burst is the one to reroll.',
+    extra: [{ label: 'Sentinel Weapons Shard', ids: ['prod166'], salvage: ['tMod176'], row: ['2–3', '1–4', '−1 to −15%', '—', '1–20%', '—', '—'] }],
   },
   pulse: {
     stats: ['Damage', 'Fire rate', 'Reload time', 'Clip size'],
@@ -180,13 +230,8 @@ export const SPECIAL = {
   shard: {
     id: 'prod166',
     glass: 'cur80',
-    stats: [
-      ['Damage', '1–4'],
-      ['Reload time', '−1 to −15%'],
-      ['Fire rate', '1–20%'],
-    ] as [string, string][],
     notes: [
-      'A "Forbidden Multi-Tool Module". It rolls 2–4 of the stats below when installed (so 2–3, as it only has three), like any other module, and players report the same save-and-reload reroll works.',
+      'A "Forbidden Multi-Tool Module". It rolls 2–3 of its three stats when installed, like any other module, and players report the same save-and-reload reroll works.',
       'It boosts the <b>Boltcaster</b> only. Players run three shards beside three normal Boltcaster modules without overloading, so the shards appear to have their own cap of three. That comes from player builds, not the game files.',
       'Get it by shattering Salvaged Glass (from Sentinel drops, 0–1 per wreck) in your inventory. The game\'s loot table gives a Weapons Shard and a Sentinel Exosuit Fragment about 20% each; the rest is nanites, Vy\'keen Effigies, Sentinel Boundary Maps and other salvage.',
       'Another source gives a much lower damage ceiling (+2). The 1–4 here is the game-file number.',

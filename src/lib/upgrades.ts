@@ -6,16 +6,24 @@
  * percentages as "value − 100%" (e.g. Life Support S "−50% → 0%"); those are converted here to what the game
  * shows (+50 to +100%). The Life Support conversion is confirmed against the wiki; sprint distance and
  * shield strength are converted the same way.
+ *
+ * Checked against the game's own procedural technology table (exports/modules.json, Steam build 26540391), which
+ * fixed Positron Ejector C damage and the Freighter Hyperdrive's warp cell efficiency, and supplied the Sentinel
+ * and Autophage Exosuit rows.
  */
 import type { Db } from './db';
 import type { Item } from './types';
-import { MOD_CLASSES, type ModClass, type StatTable } from './multitool';
+import { MOD_CLASSES, salvageClass, salvageOf, type ExtraRow, type ModClass, type StatTable } from './multitool';
 
 export interface UpTech extends StatTable {
   key: string;
   name: string;
   /** picks this technology's module items out of the dataset; omitted when the dataset has none */
   match?: (it: Item) => boolean;
+  /** group of its salvaged modules, minus the class prefix (see salvageClass); omitted when there are none */
+  salvage?: string;
+  /** narrows `salvage` when one group covers two technologies (heat and cold share "Thermal Protection") */
+  salvageDesc?: RegExp;
   /** extra line under the table */
   note?: string;
 }
@@ -44,16 +52,18 @@ const grp = (g: string) => (it: Item) => isModule(it) && it.g.replace(/^(Signifi
 /** module whose name, minus "Suspicious ", is `n` (for groups shared by several technologies) */
 const named = (n: string) => (it: Item) => isModule(it) && it.n.replace(/^Suspicious /, '') === n;
 
-/** tech key -> class -> item ids (several when one tab covers modules that roll the same, like the fleet bonuses) */
-export function upgradeCatalog(db: Db, p: Platform): Record<string, Partial<Record<ModClass, string[]>>> {
-  const out: Record<string, Partial<Record<ModClass, string[]>>> = {};
+type Catalog = Record<string, Partial<Record<ModClass, string[]>>>;
+
+function catalog(db: Db, p: Platform, pick: (t: UpTech) => ((it: Item) => boolean) | undefined, cls: (it: Item) => ModClass | undefined): Catalog {
+  const out: Catalog = {};
   for (const t of p.techs) {
     const row: Partial<Record<ModClass, string[]>> = {};
-    if (t.match)
+    const m = pick(t);
+    if (m)
       for (const id of db.ids) {
         const it = db.items[id];
-        if (!t.match(it)) continue;
-        const c = classOf(it);
+        if (!m(it)) continue;
+        const c = cls(it);
         if (c) (row[c] ??= []).push(id);
       }
     out[t.key] = row;
@@ -61,7 +71,34 @@ export function upgradeCatalog(db: Db, p: Platform): Record<string, Partial<Reco
   return out;
 }
 
+/** tech key -> class -> item ids (several when one tab covers modules that roll the same, like the fleet bonuses) */
+export const upgradeCatalog = (db: Db, p: Platform): Catalog => catalog(db, p, (t) => t.match, classOf);
+
+/** tech key -> class -> salvaged module item ids (the "Tech module" form scrapping gives back) */
+export const salvageCatalog = (db: Db, p: Platform): Catalog =>
+  catalog(
+    db,
+    p,
+    (t) => {
+      if (!t.salvage) return undefined;
+      const g = salvageOf(t.salvage);
+      return (it) => g(it) && (!t.salvageDesc || t.salvageDesc.test(it.d));
+    },
+    salvageClass,
+  );
+
 const NA = '—';
+
+/**
+ * The Sentinel Exosuit Fragment (UP_SNSUIT) and the Autophage Rebuilt Exosuit Module (UP_RBSUIT) roll 2–4 of the
+ * same six stats, which span three Exosuit tabs; each tab shows its share (`cols` maps tab stats to ranges).
+ */
+const SUIT_SPECIAL = (cols: string[]): ExtraRow[] => [
+  { label: 'Sentinel Exosuit Fragment', ids: ['prod167'], salvage: ['tMod177'], row: ['2–4', ...cols] },
+  { label: 'Rebuilt Exosuit Module', ids: ['other404'], salvage: ['tMod178'], row: ['2–4', ...cols] },
+];
+const SUIT_SPECIAL_NOTE =
+  'The Sentinel Exosuit Fragment (from shattering Salvaged Glass) and the Autophage Rebuilt Exosuit Module roll the same 2–4 stats out of six: shield strength, health, life support tanks, energy regen, sprint distance and jetpack drain. Those span the Defensive Systems, Life Support and Movement System tabs, and each tab shows its share. The ranges match X-class, except jetpack drain, which starts at −5% instead of −10%.';
 
 const EXOSUIT: Platform = {
   key: 'exosuit',
@@ -77,6 +114,7 @@ const EXOSUIT: Platform = {
       key: 'life',
       name: 'Life Support',
       match: grp('Life Support Upgrade'),
+      salvage: 'Life Support Upgrade',
       stats: ['Life support tanks', 'Energy regen'],
       rows: {
         B: ['1–2', '+5 to +20%', '1–10%'],
@@ -85,12 +123,14 @@ const EXOSUIT: Platform = {
         X: ['2', '+5 to +110%', '1–75%'],
       },
       judge: 'Tank size. S tops out at +100%; X can reach +110% but usually rolls lower.',
-      note: 'No C-class Life Support module exists.',
+      extra: SUIT_SPECIAL(['+5 to +110%', '1–75%']),
+      note: 'No C-class Life Support module exists. ' + SUIT_SPECIAL_NOTE,
     },
     {
       key: 'jet',
       name: 'Movement System',
       match: grp('Movement System Upgrade'),
+      salvage: 'Movement System Upgrade',
       stats: ['Jetpack tank', 'Sprint distance', 'Sprint recovery', 'Jetpack drain', 'Initial boost', 'Jetpack recharge'],
       rows: {
         C: ['2–3', '0–50%', '+10 to +20%', '1–10%', '−5 to −10%', NA, '1–5%'],
@@ -100,11 +140,14 @@ const EXOSUIT: Platform = {
         X: ['2–4', '0–140%', '+10 to +60%', '1–60%', '−10 to −30%', '1–20%', '5–40%'],
       },
       judge: 'Jetpack tank first, then recharge and drain. Six stats share at most four rolls, so a module that missed the tank is the one to reroll.',
+      extra: SUIT_SPECIAL([NA, '+10 to +60%', NA, '−5 to −30%', NA, NA]),
+      note: SUIT_SPECIAL_NOTE,
     },
     {
       key: 'shield',
       name: 'Defensive Systems',
       match: grp('Defensive Systems Upgrade'),
+      salvage: 'Defence Systems Upgrade',
       stats: ['Shield strength', 'Health'],
       rows: {
         C: ['1–2', '+10 to +15%', '20'],
@@ -114,11 +157,14 @@ const EXOSUIT: Platform = {
         X: ['2', '+10 to +35%', '20'],
       },
       judge: 'Shield strength is the only stat that varies; health is a flat 20 when it rolls.',
+      extra: SUIT_SPECIAL(['+10 to +35%', '20']),
+      note: SUIT_SPECIAL_NOTE,
     },
     {
       key: 'hazard',
       name: 'Hazard Protection',
       match: grp('Hazard Protection Upgrade'),
+      salvage: 'Hazard Protection Upgrade',
       stats: ['Heat drain', 'Cold drain', 'Radiation drain', 'Toxic drain'],
       rows: { X: ['4', '1–10%', '1–10%', '1–10%', '1–10%'] },
       judge: 'All four always roll; keep the module with the best total, or the best for the hazard you face most.',
@@ -128,6 +174,7 @@ const EXOSUIT: Platform = {
       key: 'rad',
       name: 'Radiation Protection',
       match: grp('Radiation Protection Upgrade'),
+      salvage: 'Radiation Protection Upgrade',
       stats: ['Protection', 'Damage taken'],
       rows: { B: ['2', '200–300', '−1 to −5%'], A: ['2', '240–320', '−5 to −15%'], S: ['2', '280–360', '−10 to −20%'] },
       judge: 'Protection (how long the hazard bar lasts). The ranges overlap, so a high A can beat a low S.',
@@ -137,6 +184,7 @@ const EXOSUIT: Platform = {
       key: 'tox',
       name: 'Toxic Protection',
       match: grp('Toxic Protection Upgrade'),
+      salvage: 'Toxic Protection Upgrade',
       stats: ['Protection', 'Damage taken'],
       rows: { B: ['2', '200–300', '−1 to −5%'], A: ['2', '240–320', '−5 to −15%'], S: ['2', '280–360', '−10 to −20%'] },
       judge: 'Protection (how long the hazard bar lasts). The ranges overlap, so a high A can beat a low S.',
@@ -145,6 +193,8 @@ const EXOSUIT: Platform = {
       key: 'hot',
       name: 'Heat Protection',
       match: grp('Thermal Protection Upgrade'),
+      salvage: 'Thermal Protection Upgrade',
+      salvageDesc: /high-temperature/,
       stats: ['Protection', 'Damage taken'],
       rows: { B: ['2', '200–300', '−1 to −5%'], A: ['2', '240–320', '−5 to −15%'], S: ['2', '280–360', '−10 to −20%'] },
       judge: 'Protection (how long the hazard bar lasts). The ranges overlap, so a high A can beat a low S.',
@@ -154,6 +204,8 @@ const EXOSUIT: Platform = {
       key: 'cold',
       name: 'Cold Protection',
       match: grp('Frost Protection Upgrade'),
+      salvage: 'Thermal Protection Upgrade',
+      salvageDesc: /sub-zero/,
       stats: ['Protection', 'Damage taken'],
       rows: { B: ['2', '200–300', '−1 to −5%'], A: ['2', '240–320', '−5 to −15%'], S: ['2', '280–360', '−10 to −20%'] },
       judge: 'Protection (how long the hazard bar lasts). The ranges overlap, so a high A can beat a low S.',
@@ -163,6 +215,7 @@ const EXOSUIT: Platform = {
       name: 'Aeration Membrane',
       // the unprefixed group is B here (no C exists), so the class comes from the price, not the prefix
       match: grp('Underwater Oxygen Upgrade'),
+      salvage: 'Underwater Oxygen Upgrade',
       stats: ['Underwater oxygen'],
       rows: { B: ['1', '90–120'], A: ['1', '120–180'], S: ['1', '180–240'] },
       judge: 'One stat; keep the highest.',
@@ -194,9 +247,10 @@ const FREIGHTER: Platform = {
       key: 'fhyper',
       name: 'Freighter Hyperdrive',
       match: named('Salvaged Hyperdrive Upgrade'),
-      stats: ['Jump distance'],
-      rows: { C: ['1', '50–100 ly'], B: ['1–2', '100–150 ly'], A: ['2', '150–200 ly'], S: ['2', '200–250 ly'] },
-      judge: 'Jump distance. A and S also roll a jumps-per-cell stat, but its stored range is zero, so it adds nothing.',
+      stats: ['Jump distance', 'Warp cell efficiency'],
+      // B is stored as rolling 1–2 stats, but its pool has only jump distance
+      rows: { C: ['1', '50–100 ly', NA], B: ['1', '100–150 ly', NA], A: ['2', '150–200 ly', '+100%'], S: ['2', '200–250 ly', '+100%'] },
+      judge: 'Jump distance. A and S always add warp cell efficiency, stored the same as on a starship Hyperdrive module.',
     },
     fleet('fspeed', 'Expedition Speed', 'Expedition speed', ['Salvaged Fleet Beacon']),
     {
@@ -236,6 +290,7 @@ const STARSHIP: Platform = {
       key: 'pulse',
       name: 'Pulse Engine',
       match: grp('Pulse Engine Upgrade'),
+      salvage: 'Pulse Engine Upgrade',
       stats: ['Fuel efficiency', 'Boost', 'Boost manoeuvrability', 'Manoeuvrability'],
       rows: {
         C: ['1–2', '5–10%', '1–10%', '1–7.5%', '0.5%'],
@@ -251,6 +306,7 @@ const STARSHIP: Platform = {
       key: 'hyper',
       name: 'Hyperdrive',
       match: grp('Hyperdrive Upgrade'),
+      salvage: 'Hyperdrive Upgrade',
       stats: ['Jump range', 'Warp cell efficiency'],
       rows: {
         C: ['1', '50–100 ly', NA],
@@ -266,6 +322,7 @@ const STARSHIP: Platform = {
       key: 'shield',
       name: 'Deflector Shield',
       match: grp('Starship Shield Upgrade'),
+      salvage: 'Deflector Shield Upgrade',
       stats: ['Shield strength'],
       rows: { C: ['1', '5–10%'], B: ['1', '5–10%'], A: ['1', '10–20%'], S: ['1', '20%'], X: ['1', '5–25%'] },
       judge: 'One stat, fixed on S, so only X can beat an S module, and only by a little.',
@@ -275,6 +332,7 @@ const STARSHIP: Platform = {
       key: 'photon',
       name: 'Photon Cannon',
       match: named('Photon Cannon Module'),
+      salvage: 'Photon Cannon Upgrade',
       stats: ['Damage', 'Fire rate', 'Heat dispersion'],
       rows: {
         C: ['1–2', '8–16', '0.1–1.1%', '0.1–1%'],
@@ -290,6 +348,7 @@ const STARSHIP: Platform = {
       key: 'phase',
       name: 'Phase Beam',
       match: named('Phase Beam Module'),
+      salvage: 'Phase Beam Upgrade',
       stats: ['Damage', 'Heat dispersion'],
       rows: {
         C: ['1–2', '30–40', '10–35%'],
@@ -305,21 +364,23 @@ const STARSHIP: Platform = {
       key: 'positron',
       name: 'Positron Ejector',
       match: named('Positron Module'),
+      salvage: 'Positron Ejector Upgrade',
       stats: ['Damage', 'Fire rate', 'Heat dispersion'],
       rows: {
-        C: ['1–2', '0–2', '1–4%', '1–4%'],
+        C: ['1–2', '1–3', '1–4%', '1–4%'],
         B: ['2–3', '3–5', '4–6%', '4–6%'],
         A: ['3', '5–6', '6–10%', '6–10%'],
         S: ['3', '6–8', '6–10%', '6–10%'],
         X: ['2–3', '2–8', '5–10%', '1–10%'],
       },
       judge: 'Fire rate, then heat. A and S share those ranges, so a well-rolled A is nearly an S.',
-      note: 'C-class damage is stored oddly in the game files (as 0–200%); 0–2 is the best reading of it. ' + DMG_NOTE,
+      note: DMG_NOTE,
     },
     {
       key: 'infra',
       name: 'Infra-Knife Accelerator',
       match: named('Infra-Knife Module'),
+      salvage: 'Infra-Knife Accelerator Upgrade',
       stats: ['Damage', 'Fire rate', 'Heat dispersion'],
       rows: {
         C: ['1–2', '2–6', '1–5%', '1–3%'],
@@ -335,6 +396,7 @@ const STARSHIP: Platform = {
       key: 'cyclotron',
       name: 'Cyclotron Ballista',
       match: named('Cyclotron Module'),
+      salvage: 'Cyclotron Ballista Upgrade',
       stats: ['Damage', 'Fire rate', 'Heat dispersion'],
       rows: {
         C: ['1–2', '2–6', '1–5%', '10–20%'],
@@ -350,6 +412,7 @@ const STARSHIP: Platform = {
       key: 'launch',
       name: 'Launch Thrusters',
       match: grp('Launch Thrusters Upgrade'),
+      salvage: 'Launch Thruster Upgrade',
       stats: ['Launch cost', 'Boost'],
       rows: {
         C: ['1', '−5 to −10%', '1%'],
@@ -378,6 +441,7 @@ const LIVING: Platform = {
       key: 'heart',
       name: 'Pulsing Heart',
       match: grp('Pulsing Heart Upgrade'),
+      salvage: 'Pulsing Heart Node',
       stats: ['Fuel efficiency', 'Boost', 'Boost manoeuvrability', 'Manoeuvrability'],
       rows: {
         C: ['1–2', '5–10%', '1–10%', '1–7.5%', '0.5%'],
@@ -391,6 +455,7 @@ const LIVING: Platform = {
       key: 'cortex',
       name: 'Singularity Cortex',
       match: grp('Singularity Cortex Upgrade'),
+      salvage: 'Singularity Cortex Node',
       stats: ['Jump range', 'Warp cell efficiency'],
       rows: { C: ['1', '50–100 ly', NA], B: ['1', '115–165 ly', NA], A: ['1', '165–220 ly', '+100%'], S: ['2', '220–265 ly', '+100%'] },
       judge: 'Jump range. Unlike a starship A module, an A node rolls only one stat, so warp cell efficiency is only sure on S.',
@@ -399,6 +464,7 @@ const LIVING: Platform = {
       key: 'scream',
       name: 'Scream Suppressor',
       match: named('Scream Suppressor Node'),
+      salvage: 'Scream Suppressor Node',
       stats: ['Shield strength'],
       rows: { C: ['1', '5–10%'], B: ['1', '5–10%'], A: ['1', '10–20%'], S: ['1', '20%'] },
       judge: 'One stat, fixed on S. The node card shows it about 1.5 times higher, as for the Deflector Shield.',
@@ -407,6 +473,7 @@ const LIVING: Platform = {
       key: 'neural',
       name: 'Neural Assembly',
       match: grp('Neural Assembly Upgrade'),
+      salvage: 'Neural Assembly Node',
       stats: ['Launch cost', 'Auto recharge'],
       rows: { C: ['1–2', '−5 to −10%', NA], B: ['1–2', '−10 to −15%', NA], A: ['2', '−15 to −20%', NA], S: ['2', '−20%', 'yes'] },
       judge: 'Get an S: it is the only class with auto-recharging launch thrusters. Launch cost is fixed at −20% there.',
@@ -416,6 +483,7 @@ const LIVING: Platform = {
       key: 'vents',
       name: 'Spewing Vents',
       match: named('Spewing Vent Node'),
+      salvage: 'Spewing Vents Node',
       stats: ['Damage', 'Fire rate', 'Heat dispersion'],
       rows: {
         C: ['1–2', '8–16', '0.1–1.1%', '0.1–1%'],
@@ -430,6 +498,7 @@ const LIVING: Platform = {
       key: 'eyes',
       name: 'Grafted Eyes',
       match: named('Grafted Eye Node'),
+      salvage: 'Grafted Eyes Node',
       stats: ['Damage', 'Heat dispersion', 'Shield recharge on hit'],
       rows: {
         C: ['1–2', '30–40', '10–35%', '5–10%'],
