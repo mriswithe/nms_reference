@@ -14,10 +14,11 @@ import { eatRank, eatText, fewestHarvest, ingestor, ingestorRank, ingestorValue,
 import { renderCooking } from '../src/ui/views/cooking';
 import { renderItem } from '../src/ui/views/item';
 import { renderMtUpgrades, renderMultitool } from '../src/ui/views/multitool';
-import { renderExosuit, renderUpgrades } from '../src/ui/views/upgrades';
+import { renderExocraft, renderExosuit, renderUpgrades } from '../src/ui/views/upgrades';
 import { renderReroll } from '../src/ui/views/reroll';
 import { MOD_CLASSES, moduleCatalog, MT_TECH, RANGES, salvageCatalog as mtSalvage, salvageClass, SPECIAL } from '../src/lib/multitool';
-import { EXOSUIT, PLATFORMS, salvageCatalog, SHIP_PLATFORMS, upgradeCatalog } from '../src/lib/upgrades';
+import { EXOCRAFT_PLATFORMS, EXOSUIT, EXPORT_BUILD, PLATFORMS, salvageCatalog, SHIP_PLATFORMS, upgradeCatalog, type Platform } from '../src/lib/upgrades';
+import { readFileSync } from 'node:fs';
 import { createSearch, norm } from '../src/lib/search';
 import { compareKeys, nextSort, numKey, sortRows, textKey } from '../src/lib/tablesort';
 import type { Dataset, Recipe } from '../src/lib/types';
@@ -618,8 +619,7 @@ describe('ship and exosuit upgrades', () => {
         expect(!!mt[t.key][c], `multitool ${t.key} ${c}`).toBe(!!t.sg);
         if (mt[t.key][c]) placed.add(mt[t.key][c]!);
       }
-    // exocraft have no upgrades page yet
-    const missing = db.ids.filter((id) => salvageClass(db.items[id]) && !placed.has(id) && !/Exocraft|Humboldt|Daedalus|Fusion Engine|Mounted Cannon|Nautilon|Minotaur/.test(db.items[id].g));
+    const missing = db.ids.filter((id) => salvageClass(db.items[id]) && !placed.has(id));
     expect(missing).toEqual([]);
     expect(db.items[salvageCatalog(db, EXOSUIT).hot.S![0]].d).toMatch(/high-temperature/);
   });
@@ -669,6 +669,213 @@ describe('ship and exosuit upgrades', () => {
       expect(h).not.toContain('data-upplat=');
       expect(h).toContain('data-go="upgrades"');
     }
+  });
+});
+
+/** exports/modules.json, the game's own module tables (see scripts/modules-export.mjs) */
+interface ExportModule {
+  id: string;
+  platform: string;
+  class: string;
+  procedural: boolean;
+  statsRolled: { min: number; max: number };
+  stats: { stat: string; min: number; max: number }[];
+  upgrades: { id: string }[];
+  products: { siteIds: string[] }[];
+  installedSiteIds: string[];
+}
+const EXPORT = JSON.parse(readFileSync(new URL('../exports/modules.json', import.meta.url), 'utf8')) as { gameVersion: string; modules: ExportModule[] };
+
+/**
+ * How the site shows each stat, declared once per stat id: flat as stored; `up` (v − 1) and `fraction` (v) as a
+ * percent; `down` (1 − v) as a positive percent for stored-below-1 benefits; `cost` (1 − v) as a negative percent.
+ */
+const DISPLAY: Record<string, 'flat' | 'up' | 'down' | 'cost' | 'fraction'> = {
+  Vehicle_GunDamage: 'flat',
+  Vehicle_LaserDamage: 'flat',
+  Vehicle_GunHeatTime: 'down',
+  Vehicle_GunRate: 'down',
+  Vehicle_LaserHeatTime: 'down',
+  Vehicle_EngineFuelUse: 'cost',
+  Vehicle_EngineTopSpeed: 'up',
+  Weapon_FireDOT_Duration: 'up',
+  Vehicle_BoostSpeed: 'fraction',
+  Vehicle_BoostTanks: 'fraction',
+  Vehicle_SubBoostSpeed: 'fraction',
+};
+const num = (x: number) => String(+x.toFixed(3));
+/** the export's stored min/max as the page shows it; min > max and min = max are handled */
+function display(stat: string, min: number, max: number): string {
+  const d = DISPLAY[stat];
+  if (!d) throw new Error(`no display declared for ${stat}`);
+  const conv = (v: number) => (d === 'flat' ? v : d === 'up' ? (v - 1) * 100 : d === 'fraction' ? v * 100 : (1 - v) * 100);
+  const [a, b] = [conv(min), conv(max)].map((v) => +v.toFixed(3)).sort((x, y) => x - y);
+  if (d === 'cost') return a === b ? `−${num(a)}%` : `−${num(a)} to −${num(b)}%`;
+  const pct = d === 'flat' ? '' : '%';
+  return a === b ? `${num(a)}${pct}` : `${num(a)}–${num(b)}${pct}`;
+}
+/** formatting differences that don't change the value: dashes, minus signs, thousands commas, the " ly" suffix */
+const normCell = (s: string) => s.replace(/[−‐-–]/g, '-').replace(/,/g, '').replace(/ ly$/, '').replace(/\s+/g, ' ').trim();
+
+/** platform -> tech -> export id prefix (plus 1–4 for C–S), the technology it upgrades, and its stat ids in column order */
+const CANNON_STATS = ['Vehicle_GunDamage', 'Vehicle_GunHeatTime', 'Vehicle_GunRate'];
+const LASER_STATS = ['Vehicle_LaserDamage', 'Vehicle_LaserHeatTime'];
+const EXO_MAP: Record<string, Record<string, { id: string; up: string; stats: string[] }>> = {
+  exocraft: {
+    cannon: { id: 'UP_EXGUN', up: 'VEHICLE_GUN', stats: CANNON_STATS },
+    laser: { id: 'UP_EXLAS', up: 'VEHICLE_LASER', stats: LASER_STATS },
+    boost: { id: 'UP_BOOST', up: 'VEHICLE_BOOST', stats: ['Vehicle_BoostSpeed', 'Vehicle_BoostTanks'] },
+    engine: { id: 'UP_EXENG', up: 'VEHICLE_ENGINE', stats: ['Vehicle_EngineFuelUse', 'Vehicle_EngineTopSpeed'] },
+  },
+  nautilon: {
+    humboldt: { id: 'UP_EXSUB', up: 'SUB_ENGINE', stats: ['Vehicle_EngineFuelUse', 'Vehicle_EngineTopSpeed', 'Vehicle_SubBoostSpeed'] },
+    subgun: { id: 'UP_SUGUN', up: 'SUB_GUN', stats: ['Vehicle_GunDamage', 'Vehicle_GunRate'] },
+  },
+  minotaur: {
+    mcannon: { id: 'UP_MCGUN', up: 'MECH_GUN', stats: CANNON_STATS },
+    mlaser: { id: 'UP_MCLAS', up: 'MECH_LASER', stats: LASER_STATS },
+    flame: { id: 'UP_MFIRE', up: 'MECH_ARMY_R_ARM', stats: ['Vehicle_GunDamage', 'Vehicle_GunHeatTime', 'Weapon_FireDOT_Duration'] },
+    daedalus: { id: 'UP_MCENG', up: 'MECH_ENGINE', stats: ['Vehicle_EngineFuelUse', 'Vehicle_BoostTanks'] },
+  },
+};
+const CLASS_NO: Record<string, string> = { C: '1', B: '2', A: '3', S: '4' };
+const EXPORT_PLATFORM: Record<string, string> = {
+  'Exocraft (Nomad, Roamer, Pilgrim, Colossus)': 'exocraft',
+  'Exocraft (Nautilon)': 'nautilon',
+  'Exocraft (Minotaur)': 'minotaur',
+};
+const exportById = new Map(EXPORT.modules.map((m) => [m.id, m]));
+const exoPlatform = (key: string): Platform => EXOCRAFT_PLATFORMS.find((p) => p.key === key)!;
+
+describe('exocraft upgrades', () => {
+  it('reads the build the page cites', () => {
+    expect(EXPORT.gameVersion).toContain(EXPORT_BUILD);
+    expect(renderExocraft(createCtx(data))).toContain(EXPORT_BUILD);
+  });
+
+  it('matches the export for every row and stat, by stat id', () => {
+    for (const p of EXOCRAFT_PLATFORMS)
+      for (const t of p.techs) {
+        const m = EXO_MAP[p.key][t.key];
+        expect(m, `${p.key} ${t.key}`).toBeTruthy();
+        expect(m.stats.length, `${t.key} columns`).toBe(t.stats.length);
+        for (const c of MOD_CLASSES) {
+          const row = t.rows[c];
+          if (!row) continue;
+          const e = exportById.get(`${m.id}${CLASS_NO[c]}`);
+          const at = `${p.key}.${t.key}.${c}`;
+          expect(e, at).toBeTruthy();
+          expect(EXPORT_PLATFORM[e!.platform], at).toBe(p.key);
+          expect(e!.class, at).toBe(c);
+          expect(e!.upgrades.map((u) => u.id), at).toContain(m.up);
+          // every stat the export rolls has a column, and every column a stat
+          expect(e!.stats.map((s) => s.stat).sort(), at).toEqual([...m.stats].sort());
+          const { min, max } = e!.statsRolled;
+          expect(normCell(row[0]), `${at} Stats`).toBe(normCell(min === max ? `${min}` : `${min}–${max}`));
+          m.stats.forEach((sid, i) => {
+            const s = e!.stats.find((x) => x.stat === sid);
+            expect(normCell(row[i + 1]), `${at} ${t.stats[i]}`).toBe(normCell(s ? display(sid, s.min, s.max) : '—'));
+          });
+        }
+      }
+  });
+
+  it('lists every procedural Exocraft module in the export', () => {
+    const shown = new Set(
+      EXOCRAFT_PLATFORMS.flatMap((p) => p.techs.flatMap((t) => MOD_CLASSES.filter((c) => t.rows[c]).map((c) => `${EXO_MAP[p.key][t.key].id}${CLASS_NO[c]}`))),
+    );
+    const exo = EXPORT.modules.filter((m) => EXPORT_PLATFORM[m.platform] && m.procedural).map((m) => m.id);
+    expect(exo.filter((id) => !shown.has(id))).toEqual([]);
+    expect([...shown].filter((id) => !exo.includes(id))).toEqual([]);
+  });
+
+  it('picks exactly the module and salvaged items the export names', () => {
+    for (const p of EXOCRAFT_PLATFORMS) {
+      const cat = upgradeCatalog(db, p);
+      const sal = salvageCatalog(db, p);
+      for (const t of p.techs)
+        for (const c of MOD_CLASSES) {
+          if (!t.rows[c]) continue;
+          const e = exportById.get(`${EXO_MAP[p.key][t.key].id}${CLASS_NO[c]}`)!;
+          expect(cat[t.key][c], `${t.key} ${c}`).toEqual(e.products.flatMap((x) => x.siteIds));
+          expect(sal[t.key][c], `${t.key} ${c} salvaged`).toEqual(e.installedSiteIds);
+        }
+    }
+    const flame = upgradeCatalog(db, exoPlatform('minotaur')).flame;
+    expect(Object.values(flame).flat().sort()).toEqual(['conTech115', 'conTech116', 'conTech117']);
+  });
+
+  it('prices C–S modules in nanites as the where-to-get text says; flamethrower modules have no price', () => {
+    const PRICE: Record<string, number> = { C: 60, B: 140, A: 300, S: 480 };
+    for (const p of EXOCRAFT_PLATFORMS) {
+      const cat = upgradeCatalog(db, p);
+      for (const t of p.techs)
+        for (const [c, ids] of Object.entries(cat[t.key]))
+          for (const id of ids!) {
+            const it = db.items[id];
+            expect(it.d, id).toMatch(/exact upgrade statistics are unknown until installation is complete/);
+            if (t.key === 'flame') expect(it.cur, id).toBe('None');
+            else expect([it.cur, it.v], id).toEqual(['Nanites', PRICE[c]]);
+          }
+    }
+    expect(db.items.other761.buy?.join(' ')).toMatch(/Quicksilver Synthesis Companion \(Space Anomaly\) for 2,400 Quicksilver/);
+  });
+
+  it('has no X class on any Exocraft and no C class on the Minotaur', () => {
+    for (const p of EXOCRAFT_PLATFORMS) for (const t of p.techs) expect(t.rows.X, `${p.key} ${t.key}`).toBeUndefined();
+    for (const t of exoPlatform('minotaur').techs) expect(t.rows.C, t.key).toBeUndefined();
+  });
+
+  it('lists every Exocraft blueprint in the export, under the technology it upgrades', () => {
+    const listed = new Map<string, string>();
+    for (const p of EXOCRAFT_PLATFORMS)
+      for (const b of p.blueprints ?? []) {
+        expect(db.items[b.id]?.c, b.id).toBe('Technology');
+        expect(b.tech === 'all' || p.techs.some((t) => t.key === b.tech), `${p.key} ${b.id} ${b.tech}`).toBe(true);
+        listed.set(b.id, p.key);
+        const e = EXPORT.modules.find((m) => !m.procedural && m.installedSiteIds.includes(b.id));
+        expect(e, b.id).toBeTruthy();
+        expect(EXPORT_PLATFORM[e!.platform], b.id).toBe(p.key);
+        const ups = e!.upgrades.map((u) => u.id);
+        if (b.tech === 'all') expect(ups.filter((u) => Object.values(EXO_MAP[p.key]).some((m) => m.up === u)), b.id).toEqual([]);
+        else expect(ups, b.id).toContain(EXO_MAP[p.key][b.tech].up);
+      }
+    const exo = EXPORT.modules.filter((m) => EXPORT_PLATFORM[m.platform] && !m.procedural);
+    for (const m of exo) for (const id of m.installedSiteIds) expect(listed.get(id), `${m.id} ${id}`).toBe(EXPORT_PLATFORM[m.platform]);
+    expect(listed.size).toBe(exo.flatMap((m) => m.installedSiteIds).length);
+  });
+
+  it('renders every Exocraft platform and technology from the game files alone', () => {
+    const ctx = createCtx(data);
+    for (const p of EXOCRAFT_PLATFORMS) {
+      ctx.state.upPlat = p.key;
+      for (const t of p.techs) {
+        ctx.state.upTech[p.key] = t.key;
+        const h = renderExocraft(ctx);
+        expect(h).toContain(`data-upplat="${p.key}" aria-pressed="true"`);
+        expect(h).toContain(`data-uptech="${t.key}" data-plat="${p.key}" aria-pressed="true"`);
+        expect(h).toContain('data-go="upgrades"');
+        expect(h).not.toContain('data-upplat="starship"');
+        expect(h).toContain('>Salvaged</th>');
+        for (const s of ['Forsaken 7.1', 'nomansskyrecipes', 'scrapping', 'NEEDS SOURCE', 'reroll', 'three modules']) expect(h, `${t.key} ${s}`).not.toContain(s);
+        for (const b of p.blueprints ?? []) expect(h, b.id).toContain(`data-go="${b.id}"`);
+      }
+    }
+    ctx.state.upPlat = 'minotaur';
+    ctx.state.upTech.minotaur = 'flame';
+    const flame = renderExocraft(ctx);
+    for (const id of ['conTech115', 'conTech116', 'conTech117', 'tMod179', 'tMod180', 'tMod181']) expect(flame).toContain(`data-go="${id}"`);
+    // the shared upPlat falls back to each page's first platform
+    expect(renderUpgrades(ctx)).toContain('data-upplat="starship" aria-pressed="true"');
+  });
+
+  it('keeps Exocraft tabs off the Ship page and links the new page from the nav and the other pages', () => {
+    const ctx = createCtx(data);
+    const ship = renderUpgrades(ctx);
+    for (const p of EXOCRAFT_PLATFORMS) expect(ship).not.toContain(`data-upplat="${p.key}"`);
+    expect(ship).toContain('data-go="exocraft"');
+    expect(renderReroll(ctx)).toContain('data-go="exocraft"');
+    expect(readFileSync(new URL('../src/components/Header.astro', import.meta.url), 'utf8')).toMatch(/\{ id: 'exocraft', icon: '🚙', label: 'Exocraft upgrades'/);
   });
 });
 
