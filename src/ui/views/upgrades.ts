@@ -1,4 +1,4 @@
-import { MOD_CLASSES, type ModClass, type SpecialTech } from '../../lib/multitool';
+import { MOD_CLASSES, type ExtraRow, type ModClass, type SpecialTech } from '../../lib/multitool';
 import { EXOCRAFT_PLATFORMS, EXOSUIT, EXPORT_BUILD, salvageCatalog, SHIP_PLATFORMS, upgradeCatalog, type Platform } from '../../lib/upgrades';
 import { esc } from '../../lib/format';
 import type { Ctx } from '../context';
@@ -16,6 +16,14 @@ const modChip = (ctx: Ctx, id: string, label: string) => {
 
 const reroll = '<a href="#reroll" class="jl" data-go="reroll">save-and-reload reroll</a>';
 const link = (view: string, text: string) => `<a href="#${view}" class="jl" data-go="${view}">${esc(text)}</a>`;
+
+/** an extra row's label, with a visible marker when its link to these ranges isn't in the game files */
+export const extraLabel = (x: ExtraRow) =>
+  esc(x.label) + (x.unverified ? ` <span class="tag unv" title="The game files don't link this item to these ranges">unverified</span>` : '');
+
+/** the extra rows' notes, each once */
+export const extraNotes = (rows: ExtraRow[] | undefined) =>
+  [...new Set((rows ?? []).map((x) => x.note).filter(Boolean))].map((n) => `<p class="note">${n}</p>`).join('');
 
 export const SALVAGE_NOTE = `<b>Salvaged</b> modules are the unpackaged form of the same upgrade, the kind scrapping a ship or Multi-Tool gives back. They install into a slot the same way and roll the same ranges as the shop module of their class.`;
 
@@ -84,12 +92,12 @@ function platformCards(ctx: Ctx, plat: Platform, text: PageText): string {
   const extra = (tech.extra ?? []).map((x, i) => {
     const [n, ...vals] = x.row;
     const item = (hasItems ? chips(x.ids, x.label) : '') + (hasSal ? chips(x.salvage, x.label) : '');
-    return `<tr class="extra"><th scope="row" data-sort="${MOD_CLASSES.length + i}">${esc(x.label)}</th>${item}<td class="num">${n}</td>${vals.map((v) => `<td class="num">${esc(v)}</td>`).join('')}</tr>`;
+    return `<tr class="extra"><th scope="row" data-sort="${MOD_CLASSES.length + i}">${extraLabel(x)}</th>${item}<td class="num">${n}</td>${vals.map((v) => `<td class="num">${esc(v)}</td>`).join('')}</tr>`;
   });
   return `<section class="card k-craft" id="up-ranges"><h3>${esc(plat.name)} roll ranges <span class="ct">per module class</span></h3>
     ${picker}${table(['Class', ...(hasItems ? ['Module'] : []), ...(hasSal ? ['Salvaged'] : []), 'Stats', ...tech.stats.map(esc)], [...rows, ...extra])}
     <p class="note"><b>Judge a roll on:</b> ${esc(tech.judge)}</p>
-    ${tech.note ? `<p class="note">${esc(tech.note)}</p>` : ''}
+    ${tech.note ? `<p class="note">${esc(tech.note)}</p>` : ''}${extraNotes(tech.extra)}
     ${hasSal ? `<p class="note">${text.salvage}</p>` : ''}
     <p class="note">${text.footer}</p>
   </section>

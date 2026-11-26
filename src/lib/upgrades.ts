@@ -13,7 +13,7 @@
  */
 import type { Db } from './db';
 import type { Item } from './types';
-import { MOD_CLASSES, salvageClass, salvageOf, type ExtraRow, type ModClass, type SpecialTech, type StatTable } from './multitool';
+import { MOD_CLASSES, rusted, salvageClass, salvageOf, type ExtraRow, type ModClass, type SpecialTech, type StatTable } from './multitool';
 
 export interface UpTech extends StatTable {
   key: string;
@@ -127,7 +127,7 @@ const EXOSUIT: Platform = {
         X: ['2', '+5 to +110%', '1–75%'],
       },
       judge: 'Tank size. S tops out at +100%; X can reach +110% but usually rolls lower.',
-      extra: SUIT_SPECIAL(['+5 to +110%', '1–75%']),
+      extra: [...SUIT_SPECIAL(['+5 to +110%', '1–75%']), rusted(['2', '+1 to +5%', '1–5%'])],
       note: 'No C-class Life Support module exists. ' + SUIT_SPECIAL_NOTE,
     },
     {
@@ -144,7 +144,7 @@ const EXOSUIT: Platform = {
         X: ['2–4', '0–140%', '+10 to +60%', '1–60%', '−10 to −30%', '1–20%', '5–40%'],
       },
       judge: 'Jetpack tank first, then recharge and drain. Six stats share at most four rolls, so a module that missed the tank is the one to reroll.',
-      extra: SUIT_SPECIAL([NA, '+10 to +60%', NA, '−5 to −30%', NA, NA]),
+      extra: [...SUIT_SPECIAL([NA, '+10 to +60%', NA, '−5 to −30%', NA, NA]), rusted(['2–4', '0–10%', '+10 to +15%', '1–5%', '−1 to −5%', '1–5%', '1–5%'])],
       note: SUIT_SPECIAL_NOTE,
     },
     {
@@ -161,7 +161,7 @@ const EXOSUIT: Platform = {
         X: ['2', '+10 to +35%', '20'],
       },
       judge: 'Shield strength is the only stat that varies; health is a flat 20 when it rolls.',
-      extra: SUIT_SPECIAL(['+10 to +35%', '20']),
+      extra: [...SUIT_SPECIAL(['+10 to +35%', '20']), rusted(['2', '+5 to +10%', '5'])],
       note: SUIT_SPECIAL_NOTE,
     },
     {
@@ -172,6 +172,7 @@ const EXOSUIT: Platform = {
       stats: ['Heat drain', 'Cold drain', 'Radiation drain', 'Toxic drain'],
       rows: { X: ['4', '1–10%', '1–10%', '1–10%', '1–10%'] },
       judge: 'All four always roll; keep the module with the best total, or the best for the hazard you face most.',
+      extra: [rusted(['4', '1–3%', '1–3%', '1–3%', '1–3%'])],
       note: 'Suspicious (X) only: there is no C–S Hazard Protection module.',
     },
     {
@@ -304,6 +305,7 @@ const STARSHIP: Platform = {
         X: ['2–3', '5–25%', '1–30%', '1–20%', '0.65%'],
       },
       judge: 'Boost, then boost manoeuvrability. Fuel efficiency is fixed at 20% on S.',
+      extra: [rusted(['2–3', '1–5%', '1–5%', '1–5%', '0.05%'])],
       note: 'The small manoeuvrability bonus is fixed per class and comes with every module.',
     },
     {
@@ -320,6 +322,7 @@ const STARSHIP: Platform = {
         X: ['1–2', '50–320 ly', '+100%'],
       },
       judge: 'Jump range. A and S always add warp cell efficiency; X only sometimes.',
+      extra: [rusted(['1', '10–25 ly', NA])],
       note: 'Warp cell efficiency stacks: with one module a jump costs half a cell, with two a third, with three a quarter.',
     },
     {
@@ -330,6 +333,7 @@ const STARSHIP: Platform = {
       stats: ['Shield strength'],
       rows: { C: ['1', '5–10%'], B: ['1', '5–10%'], A: ['1', '10–20%'], S: ['1', '20%'], X: ['1', '5–25%'] },
       judge: 'One stat, fixed on S, so only X can beat an S module, and only by a little.',
+      extra: [rusted(['1', '1–5%'])],
       note: 'These are the game-file values; the module card shows them about 1.5 times higher (S shows +30%). B has the same range as C but rolls toward the top of it.',
     },
     {
@@ -346,6 +350,7 @@ const STARSHIP: Platform = {
         X: ['1–3', '8–32', '0.1–2.6%', '0.1–3.5%'],
       },
       judge: 'Damage: on S it is the only stat that varies.',
+      extra: [rusted(['1–3', '2–4', '0.1–0.3%', '0.1–0.5%'])],
       note: DMG_NOTE,
     },
     {
@@ -426,6 +431,7 @@ const STARSHIP: Platform = {
         X: ['2', '−5 to −25%', '1–10%'],
       },
       judge: 'Below S, launch cost. On S it is fixed at −20%, so judge on boost.',
+      extra: [rusted(['2', '−1 to −5%', '1–5%'])],
       note: 'The wiki gives slightly different stat counts (C and X 1–2, B and A always 2).',
     },
   ],

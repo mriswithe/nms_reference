@@ -1,5 +1,5 @@
 import { MOD_CLASSES, moduleCatalog, MT_TECH, RANGES, salvageCatalog, SPECIAL, type ModClass } from '../../lib/multitool';
-import { SALVAGE_NOTE } from './upgrades';
+import { extraLabel, extraNotes, SALVAGE_NOTE } from './upgrades';
 import { esc, fmt } from '../../lib/format';
 import type { Ctx } from '../context';
 import { chip, pageHead, swatch } from '../html';
@@ -152,7 +152,7 @@ function rangesSection(ctx: Ctx): string {
   const extra = (t.extra ?? []).map((x, i) => {
     const [n, ...vals] = x.row;
     const ids = (l?: string[]) => `<td>${l?.length ? l.map((id) => btn(id, x.label)).join('') : '—'}</td>`;
-    return `<tr class="extra"><th scope="row" data-sort="${MOD_CLASSES.length + i}">${esc(x.label)}</th>${ids(x.ids)}${hasSal ? ids(x.salvage) : ''}<td class="num">${n}</td>${vals.map((v) => `<td class="num">${esc(v)}</td>`).join('')}</tr>`;
+    return `<tr class="extra"><th scope="row" data-sort="${MOD_CLASSES.length + i}">${extraLabel(x)}</th>${ids(x.ids)}${hasSal ? ids(x.salvage) : ''}<td class="num">${n}</td>${vals.map((v) => `<td class="num">${esc(v)}</td>`).join('')}</tr>`;
   });
   const rows = MOD_CLASSES.filter((c) => t.rows[c]).map((c) => {
     const [n, ...vals] = t.rows[c]!;
@@ -163,7 +163,7 @@ function rangesSection(ctx: Ctx): string {
     'k-craft',
     'Roll ranges',
     'per module class',
-    `${picker}${table(['Class', 'Module', ...(hasSal ? ['Salvaged'] : []), 'Stats', ...head], [...rows, ...extra], 'ranges', hasSal ? [1, 2] : [1])}<p class="note"><b>Judge a roll on:</b> ${esc(t.judge)}</p>
+    `${picker}${table(['Class', 'Module', ...(hasSal ? ['Salvaged'] : []), 'Stats', ...head], [...rows, ...extra], 'ranges', hasSal ? [1, 2] : [1])}<p class="note"><b>Judge a roll on:</b> ${esc(t.judge)}</p>${extraNotes(t.extra)}
     ${t.always ? `<p class="note">* Every module rolls this stat; it counts toward the "Stats" number.</p>` : ''}
     ${hasSal ? `<p class="note">${SALVAGE_NOTE}</p>` : ''}
     <p class="note">"Stats" is how many of the listed stats a module rolls; which ones it gets is random when there are more stats than rolls. Damage on the guns is the game's own flat number, not a percent. Negative times are faster. Ranges come from the game files (Forsaken).</p>`,

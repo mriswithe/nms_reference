@@ -16,7 +16,7 @@ import { renderItem } from '../src/ui/views/item';
 import { renderMtUpgrades, renderMultitool } from '../src/ui/views/multitool';
 import { renderExocraft, renderExosuit, renderUpgrades } from '../src/ui/views/upgrades';
 import { renderReroll } from '../src/ui/views/reroll';
-import { MOD_CLASSES, moduleCatalog, MT_TECH, RANGES, salvageCatalog as mtSalvage, salvageClass, SPECIAL } from '../src/lib/multitool';
+import { MOD_CLASSES, moduleCatalog, MT_TECH, RANGES, RUSTED_NOTE, salvageCatalog as mtSalvage, salvageClass, SPECIAL, type StatTable } from '../src/lib/multitool';
 import { EXOCRAFT_PLATFORMS, EXOSUIT, EXPORT_BUILD, PLATFORMS, salvageCatalog, SHIP_PLATFORMS, upgradeCatalog, type Platform } from '../src/lib/upgrades';
 import { readFileSync } from 'node:fs';
 import { createSearch, norm } from '../src/lib/search';
@@ -687,10 +687,11 @@ interface ExportModule {
 const EXPORT = JSON.parse(readFileSync(new URL('../exports/modules.json', import.meta.url), 'utf8')) as { gameVersion: string; modules: ExportModule[] };
 
 /**
- * How the site shows each stat, declared once per stat id: flat as stored; `up` (v − 1) and `fraction` (v) as a
- * percent; `down` (1 − v) as a positive percent for stored-below-1 benefits; `cost` (1 − v) as a negative percent.
+ * How the site shows each stat, declared once per stat id: flat as stored; `count` as +n; `up` (v − 1) and
+ * `fraction` (v) as a percent; `plus` (v) as a +percent (the Exosuit's style); `down` (1 − v) as a positive percent
+ * for stored-below-1 benefits; `cost` (1 − v) as a negative percent.
  */
-const DISPLAY: Record<string, 'flat' | 'up' | 'down' | 'cost' | 'fraction'> = {
+const DISPLAY: Record<string, 'flat' | 'count' | 'up' | 'down' | 'cost' | 'fraction' | 'plus'> = {
   Vehicle_GunDamage: 'flat',
   Vehicle_LaserDamage: 'flat',
   Vehicle_GunHeatTime: 'down',
@@ -702,15 +703,60 @@ const DISPLAY: Record<string, 'flat' | 'up' | 'down' | 'cost' | 'fraction'> = {
   Vehicle_BoostSpeed: 'fraction',
   Vehicle_BoostTanks: 'fraction',
   Vehicle_SubBoostSpeed: 'fraction',
+  // Multi-Tool
+  Weapon_Laser_Mining_Speed: 'down',
+  Weapon_Laser_HeatTime: 'up',
+  Weapon_Laser_Drain: 'up',
+  Weapon_Laser_ReloadTime: 'cost',
+  Weapon_Scan_Radius: 'up',
+  Weapon_Scan_Discovery_Creature: 'fraction',
+  Weapon_Scan_Discovery_Flora: 'fraction',
+  Weapon_Scan_Discovery_Mineral: 'fraction',
+  Weapon_Projectile_Damage: 'flat',
+  Weapon_Projectile_ReloadTime: 'cost',
+  Weapon_Projectile_ClipSize: 'count',
+  Weapon_Projectile_Rate: 'up',
+  Weapon_Projectile_BurstCap: 'count',
+  Weapon_Projectile_BurstCooldown: 'cost',
+  // Exosuit
+  Suit_Energy: 'plus',
+  Suit_Energy_Regen: 'up',
+  Suit_Jetpack_Tank: 'up',
+  Suit_Stamina_Strength: 'plus',
+  Suit_Stamina_Recovery: 'up',
+  Suit_Jetpack_Drain: 'cost',
+  Suit_Jetpack_Ignition: 'up',
+  Suit_Jetpack_Refill: 'up',
+  Suit_Armour_Shield_Strength: 'plus',
+  Suit_Armour_Health: 'flat',
+  Suit_Protection_HeatDrain: 'up',
+  Suit_Protection_ColdDrain: 'up',
+  Suit_Protection_RadDrain: 'up',
+  Suit_Protection_ToxDrain: 'up',
+  // Starship
+  Ship_PulseDrive_MiniJumpFuelSpending: 'down',
+  Ship_Boost: 'up',
+  Ship_BoostManeuverability: 'up',
+  Ship_Maneuverability: 'up',
+  Ship_Launcher_TakeOffCost: 'cost',
+  Ship_Hyperdrive_JumpDistance: 'flat',
+  Ship_Hyperdrive_JumpsPerCell: 'flat',
+  Ship_Armour_Shield_Strength: 'fraction',
+  Ship_Weapons_Guns_Damage: 'flat',
+  Ship_Weapons_Guns_Rate: 'up',
+  Ship_Weapons_Guns_HeatTime: 'up',
 };
 const num = (x: number) => String(+x.toFixed(3));
 /** the export's stored min/max as the page shows it; min > max and min = max are handled */
 function display(stat: string, min: number, max: number): string {
   const d = DISPLAY[stat];
   if (!d) throw new Error(`no display declared for ${stat}`);
-  const conv = (v: number) => (d === 'flat' ? v : d === 'up' ? (v - 1) * 100 : d === 'fraction' ? v * 100 : (1 - v) * 100);
+  const conv = (v: number) =>
+    d === 'flat' || d === 'count' ? v : d === 'up' ? (v - 1) * 100 : d === 'fraction' || d === 'plus' ? v * 100 : (1 - v) * 100;
   const [a, b] = [conv(min), conv(max)].map((v) => +v.toFixed(3)).sort((x, y) => x - y);
   if (d === 'cost') return a === b ? `−${num(a)}%` : `−${num(a)} to −${num(b)}%`;
+  if (d === 'plus') return a === b ? `+${num(a)}%` : `+${num(a)} to +${num(b)}%`;
+  if (d === 'count') return a === b ? `+${num(a)}` : `+${num(a)} to +${num(b)}`;
   const pct = d === 'flat' ? '' : '%';
   return a === b ? `${num(a)}${pct}` : `${num(a)}–${num(b)}${pct}`;
 }
@@ -876,6 +922,97 @@ describe('exocraft upgrades', () => {
     expect(ship).toContain('data-go="exocraft"');
     expect(renderReroll(ctx)).toContain('data-go="exocraft"');
     expect(readFileSync(new URL('../src/components/Header.astro', import.meta.url), 'utf8')).toMatch(/\{ id: 'exocraft', icon: '🚙', label: 'Exocraft upgrades'/);
+  });
+});
+
+/**
+ * Rusted Technology rows: tab -> export SeaTrash module and its stat ids in column order (a column can show several
+ * stats that roll the same range, like the scanner's three analysis rewards)
+ */
+const RUSTED_MAP: Record<string, { id: string; stats: (string | string[])[] }> = {
+  'multitool.mining': { id: 'UP_LASER0', stats: ['Weapon_Laser_Mining_Speed', 'Weapon_Laser_HeatTime', 'Weapon_Laser_Drain', 'Weapon_Laser_ReloadTime'] },
+  'multitool.scanner': { id: 'UP_SCAN0', stats: ['Weapon_Scan_Radius', ['Weapon_Scan_Discovery_Flora', 'Weapon_Scan_Discovery_Creature', 'Weapon_Scan_Discovery_Mineral']] },
+  'multitool.bolt': {
+    id: 'UP_BOLT0',
+    stats: ['Weapon_Projectile_Damage', 'Weapon_Projectile_ReloadTime', 'Weapon_Projectile_ClipSize', 'Weapon_Projectile_Rate', 'Weapon_Projectile_BurstCap', 'Weapon_Projectile_BurstCooldown'],
+  },
+  'exosuit.life': { id: 'UP_ENGY0', stats: ['Suit_Energy', 'Suit_Energy_Regen'] },
+  'exosuit.jet': {
+    id: 'UP_JET0',
+    stats: ['Suit_Jetpack_Tank', 'Suit_Stamina_Strength', 'Suit_Stamina_Recovery', 'Suit_Jetpack_Drain', 'Suit_Jetpack_Ignition', 'Suit_Jetpack_Refill'],
+  },
+  'exosuit.shield': { id: 'UP_SHLD0', stats: ['Suit_Armour_Shield_Strength', 'Suit_Armour_Health'] },
+  'exosuit.hazard': { id: 'UP_HAZ0', stats: ['Suit_Protection_HeatDrain', 'Suit_Protection_ColdDrain', 'Suit_Protection_RadDrain', 'Suit_Protection_ToxDrain'] },
+  'starship.pulse': { id: 'UP_PULSE0', stats: ['Ship_PulseDrive_MiniJumpFuelSpending', 'Ship_Boost', 'Ship_BoostManeuverability', 'Ship_Maneuverability'] },
+  'starship.launch': { id: 'UP_LAUN0', stats: ['Ship_Launcher_TakeOffCost', 'Ship_Boost'] },
+  'starship.hyper': { id: 'UP_HYP0', stats: ['Ship_Hyperdrive_JumpDistance', 'Ship_Hyperdrive_JumpsPerCell'] },
+  'starship.shield': { id: 'UP_S_SHL0', stats: ['Ship_Armour_Shield_Strength'] },
+  'starship.photon': { id: 'UP_SGUN0', stats: ['Ship_Weapons_Guns_Damage', 'Ship_Weapons_Guns_Rate', 'Ship_Weapons_Guns_HeatTime'] },
+};
+/** every tab's table, keyed like RUSTED_MAP */
+const ALL_TABS: [string, StatTable][] = [
+  ...MT_TECH.map((t): [string, StatTable] => [`multitool.${t.key}`, RANGES[t.key]]),
+  ...PLATFORMS.flatMap((p) => p.techs.map((t): [string, StatTable] => [`${p.key}.${t.key}`, t])),
+];
+const rustedRow = (t: StatTable) => t.extra?.find((x) => x.label === 'Rusted Technology');
+
+describe('rusted technology', () => {
+  it('matches the SeaTrash modules in the export, by stat id', () => {
+    for (const [key, m] of Object.entries(RUSTED_MAP)) {
+      const t = ALL_TABS.find(([k]) => k === key)?.[1];
+      expect(t, key).toBeTruthy();
+      const x = rustedRow(t!);
+      expect(x, key).toBeTruthy();
+      const e = exportById.get(m.id)!;
+      expect([e.class, (e as unknown as { quality: string }).quality], key).toEqual(['rusted', 'SeaTrash']);
+      expect(m.stats.length, `${key} columns`).toBe(t!.stats.length);
+      expect(e.stats.map((s) => s.stat).sort(), key).toEqual(m.stats.flat().filter((s) => e.stats.some((x) => x.stat === s)).sort());
+      const { min, max } = e.statsRolled;
+      expect(normCell(x!.row[0]), `${key} Stats`).toBe(normCell(min === max ? `${min}` : `${min}–${max}`));
+      m.stats.forEach((col, i) => {
+        const shown = new Set(
+          [col].flat().map((sid) => {
+            const s = e.stats.find((y) => y.stat === sid);
+            return normCell(s ? display(sid, s.min, s.max) : '—');
+          }),
+        );
+        expect([...shown], `${key} ${t!.stats[i]}`).toEqual([normCell(x!.row[i + 1])]);
+      });
+    }
+  });
+
+  it('shows every rusted module in the export once, and only there', () => {
+    const exp = EXPORT.modules.filter((m) => m.class === 'rusted').map((m) => m.id).sort();
+    expect(Object.values(RUSTED_MAP).map((m) => m.id).sort()).toEqual(exp);
+    const tabs = ALL_TABS.filter(([, t]) => rustedRow(t)).map(([k]) => k).sort();
+    expect(tabs).toEqual(Object.keys(RUSTED_MAP).sort());
+  });
+
+  it('marks every rusted row unverified, with the cur288 chip and the note', () => {
+    for (const [key, t] of ALL_TABS) {
+      const x = rustedRow(t);
+      if (!x) continue;
+      expect(x.ids, key).toEqual(['cur288']);
+      expect(x.unverified, key).toBe(true);
+      expect(x.note, key).toBe(RUSTED_NOTE);
+    }
+    expect(db.items.cur288.n).toBe('Rusted Technology');
+    const ctx = createCtx(data);
+    const pages: [string, () => string][] = [
+      ...['mining', 'scanner', 'bolt'].map((k): [string, () => string] => [k, () => ((ctx.state.mtTech = k), renderMtUpgrades(ctx))]),
+      ...['life', 'jet', 'shield', 'hazard'].map((k): [string, () => string] => [k, () => ((ctx.state.upTech.exosuit = k), renderExosuit(ctx))]),
+      ...['pulse', 'launch', 'hyper', 'shield', 'photon'].map((k): [string, () => string] => [
+        `ship ${k}`,
+        () => ((ctx.state.upPlat = 'starship'), (ctx.state.upTech.starship = k), renderUpgrades(ctx)),
+      ]),
+    ];
+    for (const [k, page] of pages) {
+      const h = page();
+      expect(h, k).toMatch(/Rusted Technology <span class="tag unv"[^>]*>unverified<\/span><\/th><td><button class="chip" data-go="cur288"/);
+      expect(h.split(RUSTED_NOTE).length - 1, k).toBe(1);
+    }
+    ctx.state.mtTech = 'pulse';
+    expect(renderMtUpgrades(ctx)).not.toContain('data-go="cur288"');
   });
 });
 

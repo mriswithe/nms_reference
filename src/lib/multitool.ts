@@ -106,7 +106,17 @@ export interface ExtraRow {
   salvage?: string[];
   /** same shape as a class row: [number of stats rolled, ...one range per stat] */
   row: string[];
+  /** the link from the item to these ranges isn't in the game files; the row is marked */
+  unverified?: boolean;
+  /** shown under the table, once per page even when several rows share it */
+  note?: string;
 }
+
+export const RUSTED_NOTE =
+  `<b>Rusted Technology</b> (caught by fishing) is marked unverified: the game files don't link it to these modules. The item installs "SEA_TRASH", which neither module table defines; the link rests on the modules' SeaTrash quality.`;
+
+/** the SeaTrash-quality module ranges, shown under the Rusted Technology item (cur288); see RUSTED_NOTE */
+export const rusted = (row: string[]): ExtraRow => ({ label: 'Rusted Technology', ids: ['cur288'], unverified: true, note: RUSTED_NOTE, row });
 
 export const RANGES: Record<string, StatTable> = {
   mining: {
@@ -119,6 +129,7 @@ export const RANGES: Record<string, StatTable> = {
       X: ['1–4', '5–20%', '5–55%', '1–25%', '−5 to −25%'],
     },
     judge: 'S always rolls all four and fuel efficiency is fixed at 20%, so judge on heat dispersion (widest range) and then mining speed.',
+    extra: [rusted(['1–4', '1–5%', '1–2%', '1–2%', '−1 to −5%'])],
   },
   scanner: {
     stats: ['Scan radius', 'Flora, fauna and mineral analysis rewards (each)'],
@@ -130,6 +141,7 @@ export const RANGES: Record<string, StatTable> = {
       X: ['2–4', '5–50%', '1,000–11,000%'],
     },
     judge: 'Analysis rewards are where the units and nanites come from; scan radius is a convenience. Flora, fauna and mineral rewards roll as three separate stats with this range, so "Stats" counts out of four. Keep the module with the highest reward rolls.',
+    extra: [rusted(['2–4', '1–4%', '200–300%'])],
   },
   bolt: {
     stats: ['Damage', 'Reload time', 'Clip size', 'Fire rate', 'Shots per burst', 'Burst cooldown'],
@@ -142,7 +154,11 @@ export const RANGES: Record<string, StatTable> = {
       X: ['2–4', '1–5', '−5 to −25%', '+2 to +10', '1–20%', '+1 to +2', '−1 to −20%'],
     },
     judge: 'Damage is always rolled, so an S module picks 3 of the other 5 stats. Judge on damage, then fire rate; a module whose picks went to clip size or shots per burst is the one to reroll.',
-    extra: [{ label: 'Sentinel Weapons Shard', ids: ['prod166'], salvage: ['tMod176'], row: ['2–3', '1–4', '−1 to −15%', '—', '1–20%', '—', '—'] }],
+    extra: [
+      { label: 'Sentinel Weapons Shard', ids: ['prod166'], salvage: ['tMod176'], row: ['2–3', '1–4', '−1 to −15%', '—', '1–20%', '—', '—'] },
+      // burst cooldown is stored min > max (0.99, 0.98)
+      rusted(['2–4', '1', '−1 to −4%', '+1', '1–2%', '+1', '−1 to −2%']),
+    ],
   },
   pulse: {
     stats: ['Damage', 'Fire rate', 'Reload time', 'Clip size'],
