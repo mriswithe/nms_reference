@@ -60,7 +60,7 @@ export function renderMultitool(ctx: Ctx): string {
     ['Sentinel', '25–50', '10–15', '40–50', '17–30', 'Harmonic Camps (free)'],
     ['Atlantid', '10–20', '35–50', '40–50', '17–30', 'Korvax Monolith, after "They Who Returned"'],
     ['Voltaic Staff', '25–50', '10–15', '40–50', '17–30', 'Autophage Synthesis Terminal'],
-    ['Larva Cannon', 'Alien', 'Alien', 'Alien', '36', 'Forsaken Trader, 5 Preserved Grub'],
+    ['Larva Cannon', '20–25 (A)', '10–15 (A)', '40–45 (A)', '19', 'Forsaken Trader, 5 Preserved Grub'],
   ];
   h += card(
     'mt-tool',
@@ -73,7 +73,7 @@ export function renderMultitool(ctx: Ctx): string {
       'types',
     )}
     <p class="note">Lower classes follow the same pattern with smaller numbers. These bonuses are fixed per tool. To get better ones, find another tool of the same type (reload, or re-warp to the same cabinet or Pillar) rather than upgrading.</p>
-    <p class="note"><b>Larva Cannon</b> is an exclusive organic tool, not a type you can hunt. It uses Alien-type bonuses, arrives A-class in a fixed 36-slot layout (30 technology), and every copy is generated from the same seed. Buy it from the Forsaken Trader at a deep-space outpost for 5 Preserved Grub, a haunting memento found in Haunted Caches. It comes with the Mining Beam, Advanced Mining Laser, Optical Drill, Scanner, Analysis Visor, Terrain Manipulator and Boltcaster with Barrel Ioniser installed, plus an X-class Scanner module and an X-class Boltcaster module.</p>
+    <p class="note"><b>Larva Cannon</b> is an exclusive organic tool, not a type you can hunt. It arrives A-class with 19 slots and rolls Alien-type bonuses in the A-class ranges shown above. Every copy is generated from the same seed, so all copies should have the same numbers. Buy it from the Forsaken Trader at a deep-space outpost for 5 Preserved Grub, a haunting memento found in Haunted Caches. It comes with the Mining Beam, Advanced Mining Laser, Optical Drill, Scanner, Analysis Visor, Terrain Manipulator and Boltcaster with Barrel Ioniser installed, plus an X-class Scanner module and an X-class Boltcaster module.</p>
     <p class="note">Sentinel and Atlantid tools come with their own mining lasers; see Special upgrades in ${toPage('mtupgrades', 'Multi-Tool upgrades')}.</p>`,
   );
 
