@@ -113,6 +113,18 @@ const EXOSUIT: Platform = {
     '<b>X (Suspicious)</b>: outlaw stations\' Salvage Dealer. Hazard Protection only comes as X.',
     'Three modules per technology, the same cap as the Multi-Tool. Radiation, Toxic, Heat and Cold protection each have their own three.',
   ],
+  blueprints: [
+    { id: 'tech4', tech: 'life', what: 'life support tanks +10%' },
+    { id: 'tech6', tech: 'jet', what: 'jetpack recharge 10%, sprint distance +10%, sprint recovery 40%' },
+    { id: 'tech7', tech: 'jet', what: 'huge leaps: press jump rapidly' },
+    { id: 'tech142', tech: 'jet', what: 'limited jetpack recharging while airborne' },
+    { id: 'tech17', tech: 'jet', what: 'the jetpack\'s marine jets drain less life support' },
+    { id: 'tech2', tech: 'hazard', what: 'hazard protection +20%' },
+    { id: 'tech18', tech: 'all', what: 'in a breathing emergency, the Aeration Membrane draws oxygen from life support' },
+    { id: 'tech19', tech: 'all', what: 'translates some nearby speech (Words Translated 1)' },
+    { id: 'tech20', tech: 'all', what: 'translates more nearby speech (Words Translated 2)' },
+    { id: 'tech21', tech: 'all', what: 'translates large chunks of nearby speech (Words Translated 3)' },
+  ],
   techs: [
     {
       key: 'life',
@@ -247,6 +259,15 @@ const FREIGHTER: Platform = {
     'Classes run C to S only; there is no Suspicious freighter module.',
     'The fleet bonuses apply to frigate expeditions sent from this freighter.',
   ],
+  blueprints: [
+    { id: 'tech136', tech: 'fhyper', what: '+200 ly jump distance' },
+    { id: 'tech137', tech: 'fhyper', what: '+300 ly jump distance' },
+    { id: 'tech138', tech: 'fhyper', what: '+800 ly jump distance' },
+    { id: 'tech139', tech: 'fhyper', what: 'reach red systems, +50 ly jump distance' },
+    { id: 'tech140', tech: 'fhyper', what: 'reach green systems, +50 ly jump distance' },
+    { id: 'tech141', tech: 'fhyper', what: 'reach blue systems, +50 ly jump distance' },
+    { id: 'tech287', tech: 'fhyper', what: 'reach purple systems, +50 ly jump distance' },
+  ],
   techs: [
     {
       key: 'fhyper',
@@ -289,6 +310,25 @@ const STARSHIP: Platform = {
     '<b>C–S</b>: the Starship Technology Merchant on any space station. Which classes are stocked changes from system to system.',
     '<b>X (Suspicious)</b>: outlaw stations\' Salvage Dealer. The floor is about C-class and the ceiling beats S on most stats.',
     'Three modules per technology, the same cap as the Multi-Tool.',
+  ],
+  blueprints: [
+    { id: 'tech144', tech: 'pulse', what: 'pulse drive fuel efficiency 34%' },
+    { id: 'tech145', tech: 'pulse', what: 'pulse drive power 30%' },
+    { id: 'tech220', tech: 'pulse', what: 'reduces flight assist, so the ship drifts; boost manoeuvrability 10%, manoeuvrability 0.5%' },
+    { id: 'tech26', tech: 'launch', what: 'launch cost −20%' },
+    { id: 'tech27', tech: 'launch', what: 'the Launch Thrusters refuel on their own over time' },
+    { id: 'tech30', tech: 'hyper', what: 'reach red systems' },
+    { id: 'tech31', tech: 'hyper', what: 'reach green systems' },
+    { id: 'tech32', tech: 'hyper', what: 'reach blue systems' },
+    { id: 'tech286', tech: 'hyper', what: 'reach purple systems' },
+    { id: 'tech146', tech: 'hyper', what: 'an instant warp even while combat blocks the hyperdrive, with no destination' },
+    { id: 'tech34', tech: 'shield', what: 'shield strength 5%' },
+    { id: 'tech46', tech: 'photon', what: 'heat dispersion 20%' },
+    { id: 'tech42', tech: 'phase', what: 'heat dispersion 10%, shield recharge on hit 10%' },
+    { id: 'tech44', tech: 'positron', what: 'range 25%' },
+    { id: 'tech147', tech: 'infra', what: 'an extra shot in the fire pattern (total cannon count 3)' },
+    { id: 'tech48', tech: 'cyclotron', what: 'heat dispersion 10%' },
+    { id: 'tech36', tech: 'all', what: 'a Rocket Launcher upgrade that changes its heat recovery' },
   ],
   techs: [
     {
