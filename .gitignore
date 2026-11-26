@@ -6,3 +6,5 @@ dist/
 .env*
 .cache/
 public/icons/
+.venv/
+tools/

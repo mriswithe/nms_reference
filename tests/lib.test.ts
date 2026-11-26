@@ -16,8 +16,8 @@ import { renderItem } from '../src/ui/views/item';
 import { renderMtUpgrades, renderMultitool } from '../src/ui/views/multitool';
 import { renderExosuit, renderUpgrades } from '../src/ui/views/upgrades';
 import { renderReroll } from '../src/ui/views/reroll';
-import { MOD_CLASSES, moduleCatalog, MT_TECH, RANGES, SPECIAL } from '../src/lib/multitool';
-import { EXOSUIT, PLATFORMS, SHIP_PLATFORMS, upgradeCatalog } from '../src/lib/upgrades';
+import { MOD_CLASSES, moduleCatalog, MT_TECH, RANGES, salvageCatalog as mtSalvage, salvageClass, SPECIAL } from '../src/lib/multitool';
+import { EXOSUIT, PLATFORMS, salvageCatalog, SHIP_PLATFORMS, upgradeCatalog } from '../src/lib/upgrades';
 import { createSearch, norm } from '../src/lib/search';
 import { compareKeys, nextSort, numKey, sortRows, textKey } from '../src/lib/tablesort';
 import type { Dataset, Recipe } from '../src/lib/types';
@@ -524,7 +524,21 @@ describe('multi-tool guide', () => {
       const r = RANGES[t.key];
       expect(r, t.key).toBeTruthy();
       for (const c of MOD_CLASSES) expect(r.rows[c]?.length, `${t.key} ${c}`).toBe(r.stats.length + 1);
+      for (const x of r.extra ?? []) {
+        expect(x.row.length, `${t.key} ${x.label}`).toBe(r.stats.length + 1);
+        for (const id of [...x.ids, ...(x.salvage ?? [])]) expect(db.items[id], id).toBeTruthy();
+      }
     }
+  });
+
+  it('puts the Sentinel Weapons Shard in the Boltcaster roll ranges', () => {
+    const ctx = createCtx(data);
+    ctx.state.mtTech = 'bolt';
+    const h = renderMtUpgrades(ctx);
+    const ranges = h.slice(h.indexOf('id="mt-ranges"'), h.indexOf('id="mt-layout"'));
+    expect(ranges).toContain('Sentinel Weapons Shard</th>');
+    expect(ranges).toContain('data-go="prod166"');
+    expect(ranges).toContain('data-go="tMod176"');
   });
 
   it('renders every technology tab on the upgrades half', () => {
@@ -577,8 +591,50 @@ describe('ship and exosuit upgrades', () => {
           // one module per class, except the tab that covers the four identical fleet bonuses
           if (r && t.match) expect(cat[t.key][c]!.length, `${p.key} ${t.key} ${c}`).toBe(t.key === 'fmission' ? 4 : 1);
         }
+        for (const x of t.extra ?? []) {
+          expect(x.row.length, `${t.key} ${x.label}`).toBe(t.stats.length + 1);
+          for (const id of [...x.ids, ...(x.salvage ?? [])]) expect(db.items[id], id).toBeTruthy();
+        }
       }
     }
+  });
+
+  it('finds the salvaged module of every class it lists, and places every salvaged module somewhere', () => {
+    const placed = new Set<string>();
+    for (const p of PLATFORMS) {
+      const cat = salvageCatalog(db, p);
+      for (const t of p.techs) {
+        if (!t.salvage) continue;
+        for (const c of MOD_CLASSES) {
+          const ids = cat[t.key][c] ?? [];
+          expect(ids.length, `${p.key} ${t.key} ${c}`).toBe(t.rows[c] ? 1 : 0);
+          ids.forEach((id) => placed.add(id));
+        }
+      }
+    }
+    const mt = mtSalvage(db);
+    for (const t of MT_TECH)
+      for (const c of MOD_CLASSES) {
+        expect(!!mt[t.key][c], `multitool ${t.key} ${c}`).toBe(!!t.sg);
+        if (mt[t.key][c]) placed.add(mt[t.key][c]!);
+      }
+    // exocraft have no upgrades page yet
+    const missing = db.ids.filter((id) => salvageClass(db.items[id]) && !placed.has(id) && !/Exocraft|Humboldt|Daedalus|Fusion Engine|Mounted Cannon|Nautilon|Minotaur/.test(db.items[id].g));
+    expect(missing).toEqual([]);
+    expect(db.items[salvageCatalog(db, EXOSUIT).hot.S![0]].d).toMatch(/high-temperature/);
+  });
+
+  it('shows a Salvaged column only where salvaged modules exist', () => {
+    const ctx = createCtx(data);
+    ctx.state.upPlat = 'starship';
+    ctx.state.upTech.starship = 'hyper';
+    expect(renderUpgrades(ctx)).toContain('>Salvaged</th>');
+    ctx.state.upPlat = 'freighter';
+    expect(renderUpgrades(ctx)).not.toContain('>Salvaged</th>');
+    ctx.state.mtTech = 'mining';
+    expect(renderMtUpgrades(ctx)).toContain('>Salvaged</th>');
+    ctx.state.mtTech = 'neutron';
+    expect(renderMtUpgrades(ctx)).not.toContain('>Salvaged</th>');
   });
 
   it('renders every ship platform and technology', () => {
@@ -592,6 +648,15 @@ describe('ship and exosuit upgrades', () => {
         expect(h).toContain(`data-uptech="${t.key}" data-plat="${p.key}" aria-pressed="true"`);
         expect(h).not.toContain('data-upplat="exosuit"');
       }
+    }
+  });
+
+  it('lists the Sentinel and Autophage Exosuit modules under each tab they roll into', () => {
+    const ctx = createCtx(data);
+    for (const k of ['life', 'jet', 'shield']) {
+      ctx.state.upTech.exosuit = k;
+      const h = renderExosuit(ctx);
+      for (const id of ['prod167', 'tMod177', 'other404', 'tMod178']) expect(h, `${k} ${id}`).toContain(`data-go="${id}"`);
     }
   });
 
