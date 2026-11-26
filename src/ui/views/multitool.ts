@@ -52,14 +52,14 @@ export function renderMultitool(ctx: Ctx): string {
   );
 
   const types: [string, string, string, string, string, string][] = [
-    ['Pistol', '0', '20–35', '40–50', '9–18', 'Space station / planet cabinets'],
+    ['Pistol', '0', '20–35', '45–50', '9–18', 'Space station / planet cabinets'],
     ['Rifle', '15–20', '0', '15–20', '13–30', 'Cabinets'],
     ['Experimental', '15–25', '25–30', '100', '9–30', 'Cabinets'],
     ['Alien', '25–35', '15–20', '50–60', '9–30', 'Cabinets'],
     ['Royal', '15–25', '25–30', '100', '20', 'Sentinel Pillars'],
-    ['Sentinel', '25–50', '10–15', '40–50', '17–30', 'Harmonic Camps (free)'],
+    ['Sentinel', '32–50', '10–15', '45–55', '17–30', 'Harmonic Camps (free)'],
     ['Atlantid', '10–20', '35–50', '40–50', '17–30', 'Korvax Monolith, after "They Who Returned"'],
-    ['Voltaic Staff', '25–50', '10–15', '40–50', '17–30', 'Autophage Synthesis Terminal'],
+    ['Voltaic Staff', '25–50', '10–15', '40–50', '19', 'Autophage Synthesis Terminal'],
     ['Larva Cannon', '20–25 (A)', '10–15 (A)', '40–45 (A)', '19', 'Forsaken Trader, 5 Preserved Grub'],
   ];
   h += card(
@@ -73,7 +73,7 @@ export function renderMultitool(ctx: Ctx): string {
       'types',
     )}
     <p class="note">Lower classes follow the same pattern with smaller numbers. These bonuses are fixed per tool. To get better ones, find another tool of the same type (reload, or re-warp to the same cabinet or Pillar) rather than upgrading.</p>
-    <p class="note"><b>Larva Cannon</b> is an exclusive organic tool, not a type you can hunt. It arrives A-class with 19 slots and rolls Alien-type bonuses in the A-class ranges shown above. Every copy is generated from the same seed, so all copies should have the same numbers. Buy it from the Forsaken Trader at a deep-space outpost for 5 Preserved Grub, a haunting memento found in Haunted Caches. It comes with the Mining Beam, Advanced Mining Laser, Optical Drill, Scanner, Analysis Visor, Terrain Manipulator and Boltcaster with Barrel Ioniser installed, plus an X-class Scanner module and an X-class Boltcaster module.</p>
+    <p class="note"><b>Larva Cannon</b> is an exclusive organic tool, not a type you can hunt. It arrives A-class with 19 slots and rolls Alien-type bonuses in the A-class ranges shown above. Buy it from the Forsaken Trader at a deep-space outpost for 5 Preserved Grub, a haunting memento found in Haunted Caches. It comes with the Mining Beam, Advanced Mining Laser, Optical Drill, Scanner, Analysis Visor, Terrain Manipulator and Boltcaster with Barrel Ioniser installed, plus an X-class Scanner module and an X-class Boltcaster module.</p>
     <p class="note">Sentinel and Atlantid tools come with their own mining lasers; see Special upgrades in ${toPage('mtupgrades', 'Multi-Tool upgrades')}.</p>`,
   );
 
@@ -89,9 +89,9 @@ export function renderMultitool(ctx: Ctx): string {
           ['Poor', '60%', '30%', '10%', '0%'],
           ['Average', '49%', '35%', '15%', '1%'],
           ['Wealthy', '30%', '40%', '28%', '2%'],
-          ['Outlaw', '85%', '5%', '5%', '5%'],
+          ['Outlaw', '25%', '25%', '25%', '25%'],
         ].map(([e, ...r]) => `<tr><th scope="row">${e}</th>${r.map((v) => `<td class="num">${v}</td>`).join('')}</tr>`),
-      )}<p class="note">How likely a found tool is to be each class, by system economy.</p></div>
+      )}<p class="note">How likely a found tool is to be each class, by system economy. Outlaw systems weight all four classes equally in the game files.</p></div>
       <div>${table(
         ['Upgrade', 'Standard', 'Discounted', 'Expensive'],
         [
@@ -100,7 +100,7 @@ export function renderMultitool(ctx: Ctx): string {
           ['A → S', '50,000', '16,500', '125,000'],
           ['Total', '85,000', '28,050', '212,500'],
         ].map(([e, ...r]) => `<tr><th scope="row">${e}</th>${r.map((v) => `<td class="num">${v}</td>`).join('')}</tr>`),
-      )}<p class="note">Nanites to raise a tool's class at a station's Multi-Tool Upgrade Station, by difficulty setting. It doesn't change the type's bonus ranges.</p></div>
+      )}<p class="note">Nanites to raise a tool's class at a station's Multi-Tool Upgrade Rack, by difficulty setting. It doesn't change the type's bonus ranges.</p></div>
     </div>
     <p class="note"><b>Slot caps by class:</b> C 21, B 30, A 45, S 60. Buy early slots with units, and save ${chip(ctx, 'conTech64')} items for the costly later ones.</p>`,
   );
@@ -141,6 +141,7 @@ function rangesSection(ctx: Ctx): string {
   const picker = `<div class="ctrl" role="group" aria-label="Technology">${MT_TECH.map(
     (m) => `<button data-mttech="${m.key}" aria-pressed="${m.key === tech}">${esc(m.name)}</button>`,
   ).join('')}</div>`;
+  const head = t.stats.map((st) => (t.always?.includes(st) ? `${esc(st)}*` : esc(st)));
   const rows = MOD_CLASSES.filter((c) => t.rows[c]).map((c) => {
     const [n, ...vals] = t.rows[c]!;
     return `<tr><th scope="row" data-sort="${MOD_CLASSES.indexOf(c)}">${CLASS_LABEL[c]}</th><td class="num">${n}</td>${vals.map((v) => `<td class="num">${v}</td>`).join('')}</tr>`;
@@ -150,8 +151,9 @@ function rangesSection(ctx: Ctx): string {
     'k-craft',
     'Roll ranges',
     'per module class',
-    `${picker}${table(['Class', 'Stats', ...t.stats.map(esc)], rows, 'ranges')}<p class="note"><b>Judge a roll on:</b> ${esc(t.judge)}</p>
-    <p class="note">"Stats" is how many of the listed stats a module rolls; which ones it gets is random when there are more stats than rolls. Damage on the guns is the game's own flat number, not a percent. Negative times are faster. Ranges come from the game files (Forsaken 7.1).</p>`,
+    `${picker}${table(['Class', 'Stats', ...head], rows, 'ranges')}<p class="note"><b>Judge a roll on:</b> ${esc(t.judge)}</p>
+    ${t.always ? `<p class="note">* Every module rolls this stat; it counts toward the "Stats" number.</p>` : ''}
+    <p class="note">"Stats" is how many of the listed stats a module rolls; which ones it gets is random when there are more stats than rolls. Damage on the guns is the game's own flat number, not a percent. Negative times are faster. Ranges come from the game files (Forsaken).</p>`,
   );
 }
 
