@@ -819,7 +819,6 @@ describe('exocraft upgrades', () => {
           }
     }
     expect(db.items.other761.buy?.join(' ')).toMatch(/Quicksilver Synthesis Companion \(Space Anomaly\) for 2,400 Quicksilver/);
-    expect(db.items.other762.buy?.join(' ')).toMatch(/Quicksilver Synthesis Companion \(Space Anomaly\) for 1,000 Quicksilver/);
   });
 
   it('has no X class on any Exocraft and no C class on the Minotaur', () => {

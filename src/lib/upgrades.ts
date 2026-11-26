@@ -712,11 +712,7 @@ const MINOTAUR: Platform = {
   blueprints: [
     { id: 'tech176', tech: 'daedalus', what: 'fuel usage −20%' },
     { id: 'tech214', tech: 'daedalus', what: 'fuel usage −10%, boost tank 25%' },
-    {
-      id: 'tech274',
-      tech: 'daedalus',
-      what: 'fuel usage −10%, boost tank 25%. The Liquidator Legs item is sold by the Quicksilver Synthesis Companion on the Space Anomaly for 1,000 Quicksilver.',
-    },
+    { id: 'tech274', tech: 'daedalus', what: 'fuel usage −10%, boost tank 25%' },
     { id: 'tech180', tech: 'mlaser', what: '+50 mining laser power' },
     { id: 'tech212', tech: 'mlaser', what: '+50 mining laser power, sets targets on fire, and more damage to stunned targets' },
   ],
