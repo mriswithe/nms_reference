@@ -1,8 +1,8 @@
-import { MOD_CLASSES, type ModClass } from '../../lib/multitool';
-import { EXOSUIT, salvageCatalog, SHIP_PLATFORMS, upgradeCatalog, type Platform } from '../../lib/upgrades';
+import { MOD_CLASSES, type ModClass, type SpecialTech } from '../../lib/multitool';
+import { EXOCRAFT_PLATFORMS, EXOSUIT, EXPORT_BUILD, salvageCatalog, SHIP_PLATFORMS, upgradeCatalog, type Platform } from '../../lib/upgrades';
 import { esc } from '../../lib/format';
 import type { Ctx } from '../context';
-import { pageHead, swatch } from '../html';
+import { chip, pageHead, swatch } from '../html';
 
 const CLASS_LABEL: Record<ModClass, string> = { C: 'C', B: 'B', A: 'A', S: 'S', X: 'X (Suspicious)' };
 
@@ -14,14 +14,58 @@ const modChip = (ctx: Ctx, id: string, label: string) => {
   return `<button class="chip" data-go="${id}" aria-label="${esc(label)}: ${esc(it.n)}" title="${esc(it.n)} (${esc(it.g)})">${swatch(ctx, id, 'sm')}</button>`;
 };
 
-const RULES = `The same rules as Multi-Tool modules apply: three modules per technology, stats roll on install, and the <a href="#reroll" class="jl" data-go="reroll">save-and-reload reroll</a> works on every module.`;
+const reroll = '<a href="#reroll" class="jl" data-go="reroll">save-and-reload reroll</a>';
+const link = (view: string, text: string) => `<a href="#${view}" class="jl" data-go="${view}">${esc(text)}</a>`;
 
 export const SALVAGE_NOTE = `<b>Salvaged</b> modules are the unpackaged form of the same upgrade, the kind scrapping a ship or Multi-Tool gives back. They install into a slot the same way and roll the same ranges as the shop module of their class.`;
 
-const SOURCES = `<p class="note src">Sources: datamined module tables (nomansskyrecipes.com, Forsaken 7.1), checked against the game's own files. Some of that site's percentages are stored as "value − 100%" and are shown here as the game displays them.</p>`;
+/** text that differs between the upgrade pages: the Starship and Exosuit tables come from a datamined site, the Exocraft ones from the game files alone */
+interface PageText {
+  /** first line under the page head; `cross` links to the other upgrade pages */
+  rules: (cross: string) => string;
+  salvage: string;
+  /** last line of the roll-range card */
+  footer: string;
+  sources: string;
+}
 
-/** roll-range card (technology picker + table) and where-to-get card for one platform */
-function platformCards(ctx: Ctx, plat: Platform): string {
+const DATAMINED: PageText = {
+  rules: (cross) =>
+    `The same rules as Multi-Tool modules apply: three modules per technology, stats roll on install, and the ${reroll} works on every module. ${cross}`,
+  salvage: SALVAGE_NOTE,
+  footer: `"Stats" is how many of the listed stats a module rolls; which ones it gets is random when there are more stats than rolls. Negative times and costs are better. Ranges come from the game files (Forsaken 7.1).`,
+  sources: `<p class="note src">Sources: datamined module tables (nomansskyrecipes.com, Forsaken 7.1), checked against the game's own files. Some of that site's percentages are stored as "value − 100%" and are shown here as the game displays them.</p>`,
+};
+
+const EXOCRAFT_TEXT: PageText = {
+  rules: (cross) => `A module's stats are set when it is installed: the module text says exact statistics are unknown until installation is complete. ${cross}`,
+  salvage: `<b>Salvaged</b> modules are the "Tech module" form of the same upgrade, named by class (such as "C-Class Mounted Cannon Upgrade"). The game files tie each one to the module of its class, so it rolls the same ranges. How to get them isn't in the game data.`,
+  footer: `"Stats" is how many of the listed stats a module rolls; which ones it gets is random when there are more stats than rolls. Negative fuel usage is better. Power efficiency, fire rate and mining laser efficiency are stored below 1 and fall from C to S, so they are shown as the reduction, like Mining speed on the Multi-Tool. Ranges come from the game files (${EXPORT_BUILD}).`,
+  sources: `<p class="note src">Sources: the game's procedural technology, technology and product tables (exports/modules.json, ${EXPORT_BUILD}) for the ranges and blueprint stats; the item dataset for prices.</p>`,
+};
+
+/**
+ * Blueprint (fixed-stat) technologies grouped under the technology they boost, `'all'` ones last without a heading.
+ * `techs` gives the order and names.
+ */
+export function blueprintList(ctx: Ctx, techs: { key: string; name: string }[], list: SpecialTech[]): string {
+  const grouped = techs
+    .filter((t) => list.some((b) => b.tech === t.key))
+    .map((t) => `<li><b>${esc(t.name)}</b>: ${list.filter((b) => b.tech === t.key).map((b) => `${chip(ctx, b.id)} ${esc(b.what)}`).join('; ')}</li>`);
+  const general = list.filter((b) => !techs.some((t) => t.key === b.tech)).map((b) => `<li>${chip(ctx, b.id)} ${esc(b.what)}</li>`);
+  return `<ul class="plain">${grouped.join('')}${general.join('')}</ul>`;
+}
+
+/** one platform's blueprint upgrades; empty when it has none */
+export function blueprintCard(ctx: Ctx, plat: Platform): string {
+  if (!plat.blueprints?.length) return '';
+  return `<section class="card k-use" id="up-blueprints"><h3>${esc(plat.name)} blueprint upgrades <span class="ct">fixed stats</span></h3>
+    <p class="note">Technologies with set stats, not random modules: their stats don't roll.</p>
+    ${blueprintList(ctx, plat.techs, plat.blueprints)}</section>`;
+}
+
+/** roll-range card (technology picker + table), where-to-get card and blueprint card for one platform */
+function platformCards(ctx: Ctx, plat: Platform, text: PageText): string {
   const tech = plat.techs.find((t) => t.key === ctx.state.upTech[plat.key]) ?? plat.techs[0];
   const row = upgradeCatalog(ctx.db, plat)[tech.key];
   const sal = salvageCatalog(ctx.db, plat)[tech.key];
@@ -46,40 +90,76 @@ function platformCards(ctx: Ctx, plat: Platform): string {
     ${picker}${table(['Class', ...(hasItems ? ['Module'] : []), ...(hasSal ? ['Salvaged'] : []), 'Stats', ...tech.stats.map(esc)], [...rows, ...extra])}
     <p class="note"><b>Judge a roll on:</b> ${esc(tech.judge)}</p>
     ${tech.note ? `<p class="note">${esc(tech.note)}</p>` : ''}
-    ${hasSal ? `<p class="note">${SALVAGE_NOTE}</p>` : ''}
-    <p class="note">"Stats" is how many of the listed stats a module rolls; which ones it gets is random when there are more stats than rolls. Negative times and costs are better. Ranges come from the game files (Forsaken 7.1).</p>
+    ${hasSal ? `<p class="note">${text.salvage}</p>` : ''}
+    <p class="note">${text.footer}</p>
   </section>
-  <section class="card k-buy" id="up-where"><h3>Where to get ${esc(plat.name.toLowerCase())} modules</h3><ul class="plain note">${plat.where
+  <section class="card k-buy" id="up-where"><h3>Where to get ${esc(plat.noun ?? plat.name.toLowerCase())} modules</h3><ul class="plain note">${plat.where
     .map((w) => `<li>${w}</li>`)
-    .join('')}</ul></section>`;
+    .join('')}</ul></section>${blueprintCard(ctx, plat)}`;
+}
+
+interface Head {
+  icon: string;
+  title: string;
+  sub: string;
+  /** aria-label of the platform tabs */
+  label: string;
+}
+
+/** an upgrades page: head, rules line, platform tabs (when there are several) and one platform's cards */
+function platformPage(ctx: Ctx, platforms: Platform[], head: Head, cross: string, text: PageText): string {
+  const plat = platforms.find((p) => p.key === ctx.state.upPlat) ?? platforms[0];
+  let h = pageHead(head.icon, 'var(--craft)', head.title, head.sub);
+  h += `<p class="note">${text.rules(cross)}</p>`;
+  if (platforms.length > 1)
+    h += `<div class="ctrl" role="group" aria-label="${esc(head.label)}">${platforms
+      .map((p) => `<button data-upplat="${p.key}" aria-pressed="${p === plat}">${p.icon} ${esc(p.name)}</button>`)
+      .join('')}</div>`;
+  h += platformCards(ctx, plat, text);
+  return h + text.sources;
 }
 
 /** Ship upgrade ranges: starship, living ship, freighter; one platform at a time */
-export function renderUpgrades(ctx: Ctx): string {
-  const plat = SHIP_PLATFORMS.find((p) => p.key === ctx.state.upPlat) ?? SHIP_PLATFORMS[0];
-  let h = pageHead(
-    '🚀',
-    'var(--craft)',
-    'Ship upgrades',
-    'What each upgrade-module class can roll for the starship, living ship and freighter, and which stat to judge a roll on.',
+export const renderUpgrades = (ctx: Ctx): string =>
+  platformPage(
+    ctx,
+    SHIP_PLATFORMS,
+    {
+      icon: '🚀',
+      title: 'Ship upgrades',
+      sub: 'What each upgrade-module class can roll for the starship, living ship and freighter, and which stat to judge a roll on.',
+      label: 'Ship',
+    },
+    `Exosuit and Exocraft modules are on their own pages: ${link('exosuit', 'Exosuit upgrades')} and ${link('exocraft', 'Exocraft upgrades')}.`,
+    DATAMINED,
   );
-  h += `<p class="note">${RULES} Exosuit modules are on their own page: <a href="#exosuit" class="jl" data-go="exosuit">Exosuit upgrades</a>.</p>`;
-  h += `<div class="ctrl" role="group" aria-label="Ship">${SHIP_PLATFORMS.map(
-    (p) => `<button data-upplat="${p.key}" aria-pressed="${p === plat}">${p.icon} ${esc(p.name)}</button>`,
-  ).join('')}</div>`;
-  h += platformCards(ctx, plat);
-  return h + SOURCES;
-}
 
 /** Exosuit upgrade ranges */
-export function renderExosuit(ctx: Ctx): string {
-  let h = pageHead(
-    '🥽',
-    'var(--craft)',
-    'Exosuit upgrades',
-    'What each Exosuit upgrade-module class can roll, from Life Support and the jetpack to each hazard protection, and which stat to judge a roll on.',
+export const renderExosuit = (ctx: Ctx): string =>
+  platformPage(
+    ctx,
+    [EXOSUIT],
+    {
+      icon: '🥽',
+      title: 'Exosuit upgrades',
+      sub: 'What each Exosuit upgrade-module class can roll, from Life Support and the jetpack to each hazard protection, and which stat to judge a roll on.',
+      label: 'Exosuit',
+    },
+    `Starship, living ship and freighter modules are on ${link('upgrades', 'Ship upgrades')}.`,
+    DATAMINED,
   );
-  h += `<p class="note">${RULES} Starship, living ship and freighter modules are on <a href="#upgrades" class="jl" data-go="upgrades">Ship upgrades</a>.</p>`;
-  h += platformCards(ctx, EXOSUIT);
-  return h + SOURCES;
-}
+
+/** Exocraft upgrade ranges: the wheeled Exocraft, the Nautilon and the Minotaur */
+export const renderExocraft = (ctx: Ctx): string =>
+  platformPage(
+    ctx,
+    EXOCRAFT_PLATFORMS,
+    {
+      icon: '🚙',
+      title: 'Exocraft upgrades',
+      sub: 'What each Exocraft upgrade-module class can roll for the Nomad, Roamer, Pilgrim, Colossus, Nautilon and Minotaur, which stat to judge a roll on, and the blueprint upgrades.',
+      label: 'Exocraft',
+    },
+    `Starship, living ship and freighter modules are on ${link('upgrades', 'Ship upgrades')}, and Exosuit modules on ${link('exosuit', 'Exosuit upgrades')}.`,
+    EXOCRAFT_TEXT,
+  );

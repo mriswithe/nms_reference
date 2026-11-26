@@ -9,11 +9,11 @@
  *
  * Checked against the game's own procedural technology table (exports/modules.json, Steam build 26540391), which
  * fixed Positron Ejector C damage and the Freighter Hyperdrive's warp cell efficiency, and supplied the Sentinel
- * and Autophage Exosuit rows.
+ * and Autophage Exosuit rows. The Exocraft rows come from that table alone (EXPORT_BUILD).
  */
 import type { Db } from './db';
 import type { Item } from './types';
-import { MOD_CLASSES, salvageClass, salvageOf, type ExtraRow, type ModClass, type StatTable } from './multitool';
+import { MOD_CLASSES, salvageClass, salvageOf, type ExtraRow, type ModClass, type SpecialTech, type StatTable } from './multitool';
 
 export interface UpTech extends StatTable {
   key: string;
@@ -35,6 +35,10 @@ export interface Platform {
   techs: UpTech[];
   /** where the modules come from */
   where: string[];
+  /** lower-case name for running text ("Where to get … modules"); defaults to `name` in lower case */
+  noun?: string;
+  /** fixed-stat blueprint technologies; `tech` is a key in `techs`, or 'all' */
+  blueprints?: SpecialTech[];
 }
 
 /** class from the module item: "Banned …" group is X, salvage carries its letter, otherwise the nanite price tier */
@@ -512,9 +516,216 @@ const LIVING: Platform = {
   ],
 };
 
-/** the Ship upgrades page; the Exosuit has a page of its own */
+/** the game build the Exocraft rows were read from (exports/modules.json `gameVersion`) */
+export const EXPORT_BUILD = 'Steam build 26540391';
+
+/*
+ * Exocraft rows, read from the procedural technology table (exports/modules.json). Weapon power efficiency, fire
+ * rate and mining laser efficiency are stored below 1 and fall from C to S, so they are shown as 1 − value, like
+ * Mining speed on the Multi-Tool. Fuel usage is a cost (−). Boost power, boost tank and acceleration are stored as
+ * fractions and shown plain (no +).
+ */
+const EXO_PRICE = 'C–S modules are priced in nanites: 60 for C, 140 for B, 300 for A and 480 for S.';
+const ICARUS = (drive: string) => `The game files list these modules as upgrading the Icarus Fuel System as well as the ${drive}.`;
+
+const CANNON_ROWS: Partial<Record<ModClass, string[]>> = {
+  C: ['1–2', '5–10', '1–5%', '1–3%'],
+  B: ['2–3', '10–20', '5–10%', '3–5%'],
+  A: ['3', '20–30', '10–15%', '5–7%'],
+  S: ['3', '30–40', '15–20%', '7–10%'],
+};
+const LASER_ROWS: Partial<Record<ModClass, string[]>> = {
+  C: ['1', '5–10', '1–5%'],
+  B: ['1–2', '10–20', '5–10%'],
+  A: ['1–2', '20–30', '10–15%'],
+  S: ['2', '30–40', '15–20%'],
+};
+/** the Minotaur has no C class */
+const fromB = (r: Partial<Record<ModClass, string[]>>) => ({ B: r.B, A: r.A, S: r.S });
+
+const EXOCRAFT: Platform = {
+  key: 'exocraft',
+  name: 'Nomad / Roamer / Pilgrim / Colossus',
+  noun: 'Nomad, Roamer, Pilgrim and Colossus',
+  icon: '🚙',
+  where: [EXO_PRICE, 'There is no Suspicious (X) class for these Exocraft.'],
+  techs: [
+    {
+      key: 'cannon',
+      name: 'Mounted Cannon',
+      match: named('Exocraft Cannon Module'),
+      salvage: 'Mounted Cannon Upgrade',
+      stats: ['Damage', 'Power efficiency', 'Fire rate'],
+      rows: CANNON_ROWS,
+      judge: 'Damage. A and S always roll all three stats.',
+    },
+    {
+      key: 'laser',
+      name: 'Exocraft Mining Laser',
+      match: named('Exocraft Laser Module'),
+      salvage: 'Exocraft Mining Laser Upgrade',
+      stats: ['Mining laser power', 'Mining laser efficiency'],
+      rows: LASER_ROWS,
+      judge: 'Mining laser power. Only S is sure to roll both.',
+    },
+    {
+      key: 'boost',
+      name: 'Exocraft Boosters',
+      match: grp('Exocraft Boost Upgrade'),
+      salvage: 'Exocraft Boosters Upgrade',
+      stats: ['Boost power', 'Boost tank'],
+      rows: {
+        C: ['1', '10–20%', '10–20%'],
+        B: ['1–2', '20–35%', '15–30%'],
+        A: ['1–2', '35–55%', '30–50%'],
+        S: ['2', '55–70%', '50–60%'],
+      },
+      judge: 'Boost power, then tank. Only S always rolls both.',
+    },
+    {
+      key: 'engine',
+      name: 'Fusion Engine',
+      match: grp('Exocraft Engine Upgrade'),
+      salvage: 'Fusion Engine Upgrade',
+      stats: ['Fuel usage', 'Top speed'],
+      rows: {
+        C: ['1', '−1 to −5%', '1–3%'],
+        B: ['1–2', '−5 to −10%', '3–8%'],
+        A: ['1–2', '−10 to −15%', '8–15%'],
+        S: ['2', '−15 to −20%', '10–15%'],
+      },
+      judge: 'Top speed, then fuel usage. A top speed reaches 15% like S, so a high A matches S there, but A rolls only 1–2 stats, so it may not get top speed.',
+      note: ICARUS('Fusion Engine'),
+    },
+  ],
+  blueprints: [
+    { id: 'tech91', tech: 'engine', what: 'tuned to help the Exocraft drift' },
+    { id: 'tech92', tech: 'engine', what: 'tuned to help the Exocraft turn sharply' },
+    { id: 'tech93', tech: 'engine', what: 'tuned to help the Exocraft slide' },
+    { id: 'tech99', tech: 'laser', what: '+50 mining laser power' },
+    { id: 'tech174', tech: 'all', what: 'the Exocraft Radar also finds Drop Pods, Abandoned Structures and Waste Heaps' },
+    { id: 'tech96', tech: 'all', what: 'the Exocraft Radar also finds Trade Outposts, Ruins and Alien Structures' },
+  ],
+};
+
+const NAUTILON: Platform = {
+  key: 'nautilon',
+  name: 'Nautilon',
+  noun: 'Nautilon',
+  icon: '🐟',
+  where: [EXO_PRICE, 'There is no Suspicious (X) class for the Nautilon.'],
+  techs: [
+    {
+      key: 'humboldt',
+      name: 'Humboldt Drive',
+      match: grp('Submarine Drive Upgrade'),
+      salvage: 'Humboldt Drive Upgrade',
+      stats: ['Fuel usage', 'Top speed', 'Acceleration'],
+      rows: {
+        C: ['1', '−1 to −10%', '2–4%', '10–15%'],
+        B: ['1–2', '−10 to −15%', '4–6%', '15–20%'],
+        A: ['2–3', '−15 to −25%', '6–7.5%', '20–25%'],
+        S: ['3', '−15 to −30%', '7.5%', '25–30%'],
+      },
+      judge: 'Fuel usage. S top speed is fixed at 7.5%, and S fuel usage reaches −30%, further than A\'s −25%.',
+      note: ICARUS('Humboldt Drive'),
+    },
+    {
+      key: 'subgun',
+      name: 'Nautilon Cannon',
+      match: grp('Nautilon Cannon Upgrade'),
+      salvage: 'Nautilon Cannon Upgrade',
+      stats: ['Damage', 'Fire rate'],
+      rows: {
+        C: ['1', '5–10', '1–3%'],
+        B: ['1–2', '10–20', '3–5%'],
+        A: ['1–2', '20–30', '5–7%'],
+        S: ['2', '30–40', '7–10%'],
+      },
+      judge: 'Damage. Only S is sure to roll both.',
+    },
+  ],
+  blueprints: [{ id: 'tech105', tech: 'humboldt', what: 'fuel usage −20%, and a slow recharge of the Humboldt Drive in deep water' }],
+};
+
+const MINOTAUR: Platform = {
+  key: 'minotaur',
+  name: 'Minotaur',
+  noun: 'Minotaur',
+  icon: '🤖',
+  where: [
+    'B–S modules are priced in nanites: 140 for B, 300 for A and 480 for S.',
+    'There is no C or Suspicious (X) class for the Minotaur.',
+    'Flamethrower modules have no nanite price. They upgrade the Liquidator Right Arm, which the Quicksilver Synthesis Companion on the Space Anomaly sells for 2,400 Quicksilver.',
+  ],
+  techs: [
+    {
+      key: 'mcannon',
+      name: 'Minotaur Cannon',
+      match: named('Minotaur Cannon Module'),
+      salvage: 'Minotaur Cannon Upgrade',
+      stats: ['Damage', 'Power efficiency', 'Fire rate'],
+      rows: fromB(CANNON_ROWS),
+      judge: 'Damage. A and S always roll all three stats.',
+      note: 'The same ranges as the Mounted Cannon.',
+    },
+    {
+      key: 'mlaser',
+      name: 'Minotaur Laser',
+      match: named('Minotaur Laser Module'),
+      salvage: 'Minotaur Laser Upgrade',
+      stats: ['Mining laser power', 'Mining laser efficiency'],
+      rows: fromB(LASER_ROWS),
+      judge: 'Mining laser power. Only S is sure to roll both.',
+      note: 'The same ranges as the Exocraft Mining Laser.',
+    },
+    {
+      key: 'flame',
+      name: 'Minotaur Flamethrower',
+      // filed as "Constructed tech" with no price, so isModule doesn't take them
+      match: (it) => it.c === 'Constructed tech' && it.n === 'Minotaur Flamethrower Module',
+      salvage: 'Minotaur Flamethrower Upgrade',
+      stats: ['Damage', 'Power efficiency', 'Fire duration'],
+      rows: {
+        B: ['1–2', '1', '5–10%', '5–10%'],
+        A: ['2–3', '1–2', '10–20%', '10–20%'],
+        S: ['3', '2', '20–30%', '20–35%'],
+      },
+      judge: 'Fire duration and power efficiency. Damage is 1–2 at most, fixed at 2 on S.',
+      note: 'These modules upgrade the Liquidator Right Arm, the Minotaur\'s flamethrower.',
+    },
+    {
+      key: 'daedalus',
+      name: 'Daedalus Engine',
+      match: grp('Minotaur Engine Upgrade'),
+      salvage: 'Daedalus Engine Upgrade',
+      stats: ['Fuel usage', 'Boost tank'],
+      rows: {
+        B: ['1', '−5 to −10%', '10–15%'],
+        A: ['1–2', '−10 to −15%', '15–25%'],
+        S: ['2', '−15 to −20%', '25–30%'],
+      },
+      judge: 'Fuel usage, then boost tank. Only S always rolls both.',
+      note: ICARUS('Daedalus Engine'),
+    },
+  ],
+  blueprints: [
+    { id: 'tech176', tech: 'daedalus', what: 'fuel usage −20%' },
+    { id: 'tech214', tech: 'daedalus', what: 'fuel usage −10%, boost tank 25%' },
+    {
+      id: 'tech274',
+      tech: 'daedalus',
+      what: 'fuel usage −10%, boost tank 25%. The Liquidator Legs item is sold by the Quicksilver Synthesis Companion on the Space Anomaly for 1,000 Quicksilver.',
+    },
+    { id: 'tech180', tech: 'mlaser', what: '+50 mining laser power' },
+    { id: 'tech212', tech: 'mlaser', what: '+50 mining laser power, sets targets on fire, and more damage to stunned targets' },
+  ],
+};
+
+/** the Ship upgrades page; the Exosuit and the Exocraft have pages of their own */
 export const SHIP_PLATFORMS: Platform[] = [STARSHIP, LIVING, FREIGHTER];
+export const EXOCRAFT_PLATFORMS: Platform[] = [EXOCRAFT, NAUTILON, MINOTAUR];
 export { EXOSUIT };
-export const PLATFORMS: Platform[] = [...SHIP_PLATFORMS, EXOSUIT];
+export const PLATFORMS: Platform[] = [...SHIP_PLATFORMS, EXOSUIT, ...EXOCRAFT_PLATFORMS];
 
 export { MOD_CLASSES };

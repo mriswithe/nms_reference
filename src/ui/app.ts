@@ -1,5 +1,5 @@
 /**
- * Browser entry point. Hash routing: `#<itemId>` shows an item, `#cycles` / `#consumables` / `#cooking` / `#multitool` / `#mtupgrades` / `#upgrades` / `#exosuit` / `#reroll` show reference views.
+ * Browser entry point. Hash routing: `#<itemId>` shows an item, `#cycles` / `#consumables` / `#cooking` / `#multitool` / `#mtupgrades` / `#upgrades` / `#exosuit` / `#exocraft` / `#reroll` show reference views.
  * Hash URLs are kept so links to the old single-file site keep working.
  */
 import { esc } from '../lib/format';
@@ -14,7 +14,7 @@ import { renderCooking } from './views/cooking';
 import { renderCycles } from './views/cycles';
 import { renderItem, renderWelcome } from './views/item';
 import { renderMtUpgrades, renderMultitool } from './views/multitool';
-import { renderExosuit, renderUpgrades } from './views/upgrades';
+import { renderExocraft, renderExosuit, renderUpgrades } from './views/upgrades';
 import { renderReroll } from './views/reroll';
 
 const data: Dataset = JSON.parse(document.getElementById('nmsdata')!.textContent!);
@@ -23,7 +23,7 @@ const { db, state } = ctx;
 const search = createSearch(db);
 initPopover(ctx);
 
-const VIEWS: Record<string, (c: typeof ctx) => string> = { cycles: renderCycles, consumables: renderConsumables, cooking: renderCooking, multitool: renderMultitool, mtupgrades: renderMtUpgrades, upgrades: renderUpgrades, exosuit: renderExosuit, reroll: renderReroll };
+const VIEWS: Record<string, (c: typeof ctx) => string> = { cycles: renderCycles, consumables: renderConsumables, cooking: renderCooking, multitool: renderMultitool, mtupgrades: renderMtUpgrades, upgrades: renderUpgrades, exosuit: renderExosuit, exocraft: renderExocraft, reroll: renderReroll };
 const DEFAULT_ITEM = 'Radon';
 /** shown in the empty search box's dropdown and on the welcome page */
 const POPULAR = ['Radon', 'Chromatic Metal', 'Magnetised Ferrite', 'Ionised Cobalt', 'Antimatter', 'Warp Cell', 'Stasis Device', 'Glass']

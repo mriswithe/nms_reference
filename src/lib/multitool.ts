@@ -217,7 +217,7 @@ export const RANGES: Record<string, StatTable> = {
 export interface SpecialTech {
   /** item id in the dataset */
   id: string;
-  /** MT_TECH key of the technology it boosts, or 'all' */
+  /** key of the technology it boosts (MT_TECH here, UpTech on the upgrades pages), or 'all' */
   tech: string;
   what: string;
 }

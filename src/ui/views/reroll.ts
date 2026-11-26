@@ -15,7 +15,7 @@ export function renderReroll(_ctx: Ctx): string {
     'Rerolling upgrades',
     'How upgrade-module stats are rolled, and how to save-and-reload until a module rolls near the top of its range.',
   );
-  h += `<p class="note">For what a good roll looks like, see the roll ranges on ${link('mtupgrades', 'Multi-Tool upgrades')}, ${link('upgrades', 'Ship upgrades')} and ${link('exosuit', 'Exosuit upgrades')}.</p>`;
+  h += `<p class="note">For what a good roll looks like, see the roll ranges on ${link('mtupgrades', 'Multi-Tool upgrades')}, ${link('upgrades', 'Ship upgrades')}, ${link('exosuit', 'Exosuit upgrades')} and ${link('exocraft', 'Exocraft upgrades')}.</p>`;
   h += `<nav class="summary" aria-label="Rerolling upgrades"><a href="#" data-jump="rr-how">How the roll works</a><a href="#" data-jump="rr-steps">The reroll loop</a><a href="#" data-jump="rr-which">What it works on</a><a href="#" data-jump="rr-tips">Tips</a></nav>`;
 
   h += card(
