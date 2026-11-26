@@ -1016,6 +1016,82 @@ describe('rusted technology', () => {
   });
 });
 
+/** export platform -> page platform, for the blueprint lists outside the Exocraft page */
+const SHIP_SUIT_PLATFORM: Record<string, string> = { Starship: 'starship', 'Starship (all ships)': 'starship', Freighter: 'freighter', Exosuit: 'exosuit' };
+/** tab -> the technology id its modules upgrade in the export */
+const TAB_UPGRADES: Record<string, Record<string, string>> = {
+  starship: {
+    pulse: 'SHIPJUMP1',
+    hyper: 'HYPERDRIVE',
+    shield: 'SHIPSHIELD',
+    photon: 'SHIPGUN1',
+    phase: 'SHIPLAS1',
+    positron: 'SHIPSHOTGUN',
+    infra: 'SHIPMINIGUN',
+    cyclotron: 'SHIPPLASMA',
+    launch: 'LAUNCHER',
+  },
+  freighter: { fhyper: 'F_HYPERDRIVE' },
+  exosuit: { life: 'ENERGY', jet: 'JET1', hazard: 'PROTECT' },
+};
+/** fixed-stat export entries deliberately not in a blueprint list */
+const BLUEPRINT_EXCLUDED: Record<string, string> = {
+  UP_SNSUIT: 'Sentinel Exosuit Fragment: a random module, shown as an extra row on the Exosuit tabs',
+  UP_RBSUIT: 'Rebuilt Exosuit Module: a random module, shown as an extra row on the Exosuit tabs',
+  UT_HOT: 'Coolant Network (tech8): its description reads as the base protection technology, not an upgrade',
+  UT_COLD: 'Thermic Layer (tech9): as tech8',
+  UT_TOX: 'Toxic Suppressor (tech10): as tech8',
+  UT_RAD: 'Radiation Deflector (tech11): as tech8',
+  UT_WATER: 'Aeration Membrane (tech12): as tech8',
+  STORY_TRANSLATE: "Artemis' Translator (tech22): a story item, not a blueprint",
+  PHOTONIX_CORE: 'Photonix Core (tech24): nothing in the data says how to get it',
+  SOLAR_SAIL: 'Vesper Sail (tech218): nothing in the data says how to get it',
+};
+
+describe('blueprint upgrades', () => {
+  const plats = [...SHIP_PLATFORMS, EXOSUIT];
+
+  it('lists every Starship, Freighter and Exosuit blueprint in the export, under the technology it upgrades', () => {
+    const listed = new Map<string, string>();
+    for (const p of plats)
+      for (const b of p.blueprints ?? []) {
+        expect(db.items[b.id]?.c, b.id).toBe('Technology');
+        expect(b.tech === 'all' || p.techs.some((t) => t.key === b.tech), `${p.key} ${b.id} ${b.tech}`).toBe(true);
+        expect(listed.has(b.id), `${b.id} listed twice`).toBe(false);
+        listed.set(b.id, p.key);
+        const e = EXPORT.modules.find((m) => !m.procedural && m.installedSiteIds.includes(b.id));
+        expect(e, b.id).toBeTruthy();
+        expect(SHIP_SUIT_PLATFORM[e!.platform], b.id).toBe(p.key);
+        expect(BLUEPRINT_EXCLUDED[e!.id], b.id).toBeUndefined();
+        const ups = e!.upgrades.map((u) => u.id);
+        const tabs = TAB_UPGRADES[p.key];
+        if (b.tech === 'all') expect(ups.filter((u) => Object.values(tabs).includes(u)), b.id).toEqual([]);
+        else expect(ups, b.id).toContain(tabs[b.tech]);
+      }
+    const special = EXPORT.modules.filter((m) => SHIP_SUIT_PLATFORM[m.platform] && m.class === 'special');
+    for (const m of special) {
+      if (BLUEPRINT_EXCLUDED[m.id]) continue;
+      for (const id of m.installedSiteIds) expect(listed.get(id), `${m.id} ${id}`).toBe(SHIP_SUIT_PLATFORM[m.platform]);
+    }
+    for (const id of Object.keys(BLUEPRINT_EXCLUDED)) expect(special.some((m) => m.id === id), id).toBe(true);
+  });
+
+  it('renders each blueprint card, and keeps the Multi-Tool list on the shared one', () => {
+    const ctx = createCtx(data);
+    for (const p of SHIP_PLATFORMS) {
+      ctx.state.upPlat = p.key;
+      const h = renderUpgrades(ctx);
+      expect(h.includes('id="up-blueprints"'), p.key).toBe(!!p.blueprints?.length);
+      for (const b of p.blueprints ?? []) expect(h, b.id).toContain(`data-go="${b.id}"`);
+    }
+    const suit = renderExosuit(ctx);
+    for (const b of EXOSUIT.blueprints!) expect(suit, b.id).toContain(`data-go="${b.id}"`);
+    const mt = renderMtUpgrades(ctx);
+    for (const b of SPECIAL.blueprints) expect(mt, b.id).toContain(`data-go="${b.id}"`);
+    expect(mt).toContain('<li><b>Boltcaster</b>: ');
+  });
+});
+
 describe('sortable tables', () => {
   it('reads numbers, clocks and ranges from cell text', () => {
     expect(numKey('≈ 12%')).toBe(12);

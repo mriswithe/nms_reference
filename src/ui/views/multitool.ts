@@ -1,5 +1,5 @@
 import { MOD_CLASSES, moduleCatalog, MT_TECH, RANGES, salvageCatalog, SPECIAL, type ModClass } from '../../lib/multitool';
-import { extraLabel, extraNotes, SALVAGE_NOTE } from './upgrades';
+import { blueprintList, extraLabel, extraNotes, SALVAGE_NOTE } from './upgrades';
 import { esc, fmt } from '../../lib/format';
 import type { Ctx } from '../context';
 import { chip, pageHead, swatch } from '../html';
@@ -173,11 +173,6 @@ function rangesSection(ctx: Ctx): string {
 function specialSection(ctx: Ctx): string {
   const s = SPECIAL;
   const shard = s.shard;
-  const bp = MT_TECH.filter((m) => s.blueprints.some((b) => b.tech === m.key)).map((m) => {
-    const list = s.blueprints.filter((b) => b.tech === m.key);
-    return `<li><b>${esc(m.name)}</b>: ${list.map((b) => `${chip(ctx, b.id)} ${esc(b.what)}`).join('; ')}</li>`;
-  });
-  const general = s.blueprints.filter((b) => !MT_TECH.some((m) => m.key === b.tech));
   return card(
     'mt-special',
     'k-buy',
@@ -188,7 +183,7 @@ function specialSection(ctx: Ctx): string {
     <p class="note">Its roll ranges are in the Boltcaster tab of <a href="#" class="jl" data-jump="mt-ranges">Roll ranges</a>, under the class rows.</p>
     <h4 class="sub">Blueprint upgrades</h4>
     <p class="note">Fixed-stat technologies, not random modules: they don't roll, don't count toward the cap of three, and get adjacency from the technology they boost, so slot them next to its group.</p>
-    <ul class="plain">${bp.join('')}${general.map((b) => `<li>${chip(ctx, b.id)} ${esc(b.what)}</li>`).join('')}</ul>
+    ${blueprintList(ctx, MT_TECH, s.blueprints)}
     <h4 class="sub">Quest and tool-type technology</h4>
     <ul class="plain">${s.typed.map((b) => `<li>${chip(ctx, b.id)} ${esc(b.what)}</li>`).join('')}</ul>`,
   );
